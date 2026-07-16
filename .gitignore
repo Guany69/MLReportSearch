@@ -1,9 +1,12 @@
 # Precomputed representations — rebuilt on demand with --rebuild
 .cache/
 
-# The report workbooks are not committed (Phase 1 and Phase 2 inputs)
+# Report workbooks are local-only by default, except the two Phase 2 inputs
+# below, which are tracked so the repo carries the real data.
 data/*.xlsx
 data/*.xls
+!data/Phase2_Field_Dictionary.xlsx
+!data/Phase2_Report_Catalog_No_Fields.xlsx
 .DS_Store
 
 # Generated test fixture (regenerate: uv run python tests/make_fixture.py)

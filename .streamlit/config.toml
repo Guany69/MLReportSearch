@@ -1,0 +1,7 @@
+[browser]
+# The project is specified as 100% local. Streamlit collects usage telemetry by
+# default; this turns it off so nothing leaves the machine.
+gatherUsageStats = false
+
+[server]
+headless = true

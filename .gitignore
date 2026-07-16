@@ -1,0 +1,18 @@
+# Precomputed representations — rebuilt on demand with --rebuild
+.cache/
+
+# The report workbooks are not committed (Phase 1 and Phase 2 inputs)
+data/*.xlsx
+data/*.xls
+.DS_Store
+
+# Generated test fixture (regenerate: uv run python tests/make_fixture.py)
+tests/fixtures/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.DS_Store

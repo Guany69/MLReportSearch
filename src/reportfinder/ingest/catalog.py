@@ -1,7 +1,7 @@
-"""Report catalog loader (Phase 2: report metadata, no Fields column).
+"""Report catalog loader: one row of report metadata per catalog row.
 
-Reads the same quirky layout as Phase 1 -- banner row, "End Date" row, real header
-on the third physical row -- but tolerates the absence of `Fields`.
+Reads the export's quirky layout -- banner row, "End Date" row, real header on the
+third physical row -- and tolerates the absence of `Fields`.
 """
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ COLUMN_ALIASES: dict[str, tuple[str, ...]] = {
     "description": ("Description",),
     "created_date": ("Created Date",),
     "available_usage": ("Available Usage",),
-    # "Number of Times Executed" is what the real Phase 2 catalog header says.
+    # "Number of Times Executed" is what a real exported catalog header says.
     # Without it the column resolved to nothing, so every downstream run count --
     # and the family-rank ordering that uses it -- was NaN on the real estate.
     "number_of_times": (
@@ -44,7 +44,7 @@ COLUMN_ALIASES: dict[str, tuple[str, ...]] = {
     "landing_page": ("Landing Page",),
     "report_prompts": ("Report Prompts", "Prompts"),
     "area_where_used": ("Area Where Used",),
-    # Phase 1 only. Present => legacy data; absent => Phase 2 catalog.
+    # Optional: the column that states each row's fields directly.
     "fields": ("Fields",),
 }
 

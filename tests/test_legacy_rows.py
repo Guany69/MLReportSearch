@@ -28,7 +28,7 @@ from reportfinder.ingest.catalog import ReportCatalogLoader
 from reportfinder.ingest.legacy_rows import fields_from_column
 from reportfinder.ingest.models import AmbiguityStatus, MatchMethod
 
-from .phase2_fixtures import catalog_row, write_legacy
+from .ingest_fixtures import catalog_row, write_legacy
 
 REAL_LEGACY = DEFAULT.data_path
 SEED_JUDGMENTS = Path("data/relevance/raw/axis_report_search_seed_judgments.jsonl")

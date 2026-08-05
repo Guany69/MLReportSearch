@@ -182,18 +182,15 @@ split neither was fitted on, and **both were refused by the approval gate**:
   dense search.
 - **Prototypes are catalog-derived seeds, not user language** — generated
   deterministically from titles and fields, marked `catalog_seed` / `unreviewed`.
-- **The Phase 2 estate now runs, and has no evaluation at all.** Both workbooks
-  are in the tree and `configs/phase2_generators.yaml` builds and serves against
-  them (4,368 reports → 4,299 families, 75,689 links). What does not exist is any
-  relevance label, any survival measurement, or any trained artifact for that
-  corpus. Its ingest counts are import counts — they say what was read and
-  linked, never whether a linked field is the right field — and none of its
-  numbers may be compared with the legacy estate's, which is a different corpus
-  with a different field reconstruction.
-- **274 Phase 2 report references remain unresolved**, and 1,023 links are
-  ambiguous by title. An unrecognized `Where_Used` type prefix falls into the
-  unmatched count deliberately rather than being skipped, so a new Workday object
-  type shows up as a diagnostic instead of silently deleting links.
+- **The dual-file ingest path has been removed.** A second mode once read a
+  report catalog plus a separate field dictionary and reconstructed report→field
+  links by inverting the dictionary's `Where_Used` column. The estate states each
+  row's fields directly, so the reconstruction had nothing to do here, and its
+  workbooks, linker, config and tests are gone. What it introduced and what
+  stays is the two-level family/instance corpus shape the whole architecture now
+  depends on. `ambiguous_link_fraction` and `has_ambiguous_fields` remain in the
+  legacy LTR feature vector, constant at 0.0 and False, because a link read
+  directly from a column is never ambiguous.
 - **mypy covers 10 packages, not the repository.** `ingest`, `cli`, `ranking`,
   `confidence` and the top-level modules lean on untyped pandas and are separate
   work.

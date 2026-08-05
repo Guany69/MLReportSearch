@@ -1,6 +1,6 @@
 """The three public answerability statuses, on the real estate.
 
-Previously skipped as Phase-2-blocked. Nothing here depends on dual-file
+Previously skipped for an absent dual-file estate. Nothing here depends on that
 ingestion -- the statuses are decided by field existence and score evidence.
 """
 

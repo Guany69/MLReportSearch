@@ -15,7 +15,6 @@ import time
 from pathlib import Path
 
 from reportfinder.config import DEFAULT
-from reportfinder.ingest.models import IngestMode
 from reportfinder.model import ReportFinder, explain_fields, why_matched
 from reportfinder.represent import load_or_build
 
@@ -74,22 +73,11 @@ def _demo_generators(finder, cfg) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run the acceptance demo queries.")
     parser.add_argument("--data", type=Path, default=None, help="Workbook to use.")
-    parser.add_argument(
-        "--mode",
-        choices=[m.value for m in IngestMode],
-        default=None,
-        help="Ingestion mode (default: legacy_single_file).",
-    )
-    parser.add_argument("--catalog", type=Path, default=None)
-    parser.add_argument("--field-dictionary", type=Path, default=None)
     parser.add_argument("--rebuild", action="store_true")
     args = parser.parse_args(argv)
 
     cfg = DEFAULT.with_overrides(
         data_path=args.data,
-        ingest_mode=args.mode,
-        catalog_path=args.catalog,
-        field_dictionary_path=args.field_dictionary,
     )
 
     try:

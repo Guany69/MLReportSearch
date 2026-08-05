@@ -26,13 +26,12 @@ Before this overhaul, the catalog metadata above was dropped at enrichment. It i
 
 ## Measured truncation and ambiguity
 
-Measured on the supplied **synthetic** Phase 2 estate with the real BGE tokenizer on 2026-07-17:
+Measured on a **synthetic** dual-file estate with the real BGE tokenizer on 2026-07-17:
 
-> The real Phase 2 workbooks are now in the tree and produce different figures —
-> 4,368 reports, 4,299 families, 75,689 links, 1,023 ambiguous. See
-> `artifacts/phase2_ingest_validation.json` and the README's Phase 2 section. The
-> counts in this section describe the synthetic estate this audit was performed
-> against and are kept as the record of that audit, not as current facts.
+> That ingest path and its workbooks have since been removed. The counts in this
+> section describe the estate this audit was performed against and are kept as the
+> record of that audit, not as current facts. Anything about reconstructed
+> report→field links no longer describes a code path that exists.
 
 | statistic | tokens |
 |---|---:|

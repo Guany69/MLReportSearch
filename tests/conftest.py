@@ -6,10 +6,9 @@ Two things live here:
    against, and it is gitignored, so it is present locally and absent in CI.
    Tests needing it skip *there* rather than failing.
 
-   This replaces the old `requires_phase2_workbooks`. Those workbooks are not in
-   this tree and 30 tests were skipping for them while asserting claims that hold
-   perfectly well against `Reports.xlsx` -- the guard was standing in for an
-   ingest-mode string in a fixture, not for anything the assertions needed.
+   This replaced a guard naming a second pair of workbooks, back when 30 tests
+   skipped for them while asserting claims that hold perfectly well against
+   `Reports.xlsx`. That dual-file ingest path has since been removed entirely.
 
 2. The `integration` marker for tests that load real model checkpoints. These are
    deselected by default via `addopts` in `pyproject.toml`, so a plain `pytest`

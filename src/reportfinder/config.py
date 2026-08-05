@@ -13,12 +13,8 @@ from pathlib import Path
 # Repo root = three levels up from this file (src/reportfinder/config.py).
 ROOT = Path(__file__).resolve().parents[2]
 
-# Phase 1: single workbook, fields read from its `Fields` column.
+# The estate: one workbook, fields read from its `Fields` column.
 DATA_PATH = ROOT / "data" / "Reports.xlsx"
-
-# Phase 2: report catalog (no Fields) + supplemental field dictionary.
-CATALOG_PATH = ROOT / "data" / "Phase2_Report_Catalog_No_Fields.xlsx"
-FIELD_DICTIONARY_PATH = ROOT / "data" / "Phase2_Field_Dictionary.xlsx"
 
 CACHE_DIR = ROOT / ".cache"
 
@@ -540,7 +536,7 @@ class Config:
         top_k: How many candidates to show when the posterior is ambiguous.
         use_field_expert: Toggle the optional third (field-term) expert.
         field_expert_weight: Exponent on P_field in the product of experts.
-        ingest_mode: "legacy_single_file" or "phase2_dual_file". Both modes produce
+        ingest_mode: recorded as corpus and bundle provenance. One value; it produces
             the same corpus contract; this only selects how it is assembled.
         ambiguity_policy: What to do when a Where_Used name matches several catalog
             rows. "permissive" attaches to all candidates (higher recall, may attach
@@ -660,15 +656,14 @@ class Config:
     w_report_type: int = 1
     w_tags: int = 1
 
-    # -- Phase 2 zones -------------------------------------------------
-    # New signals default to weight 1 -- deliberately conservative, so they enrich
-    # the representation without displacing the Phase 1 zones that ranking is
-    # already tuned around. Legacy mode emits none of these, leaving doc(r)
-    # byte-identical to Phase 1.
+    # -- per-field metadata zones ---------------------------------------
+    # Weight 1 -- deliberately conservative, so they enrich the representation
+    # without displacing the report-level zones ranking is already tuned around.
+    # A corpus carrying no per-field metadata emits none of these.
     #
     # Note: `Authorized Usage` is intentionally absent. It has exactly ONE distinct
     # value across all 3234 dictionary rows, so it carries zero discriminating
-    # signal -- the same trap as Phase 1's `Description` (7 distinct values). It is
+    # signal -- the same trap as the catalog's `Description` (7 distinct values). It is
     # kept as displayable metadata but never enters doc(r) or scoring.
     w_field_description: int = 1
     w_business_object: int = 1
@@ -679,16 +674,13 @@ class Config:
     w_related_business_object: int = 1
 
     # -- ingestion -----------------------------------------------------
+    # One mode. Kept as a setting because it is recorded as corpus and bundle
+    # provenance, and because a config naming the removed dual-file mode must
+    # fail loudly rather than silently read the wrong workbook.
     ingest_mode: str = "legacy_single_file"
-    ambiguity_policy: str = "permissive"
-    enable_composite_match: bool = True
-    enable_fuzzy_match: bool = False
-    fuzzy_threshold: float = 0.93
 
     dense_model: str = DENSE_MODEL
     data_path: Path = DATA_PATH
-    catalog_path: Path = CATALOG_PATH
-    field_dictionary_path: Path = FIELD_DICTIONARY_PATH
     cache_dir: Path = CACHE_DIR
 
     # -- generator architecture ----------------------------------------
@@ -723,7 +715,7 @@ class Config:
         # the annotation and every consumer expect a Path. Coerced here rather
         # than at each use site, where one missed `.name` or `.exists()` is an
         # AttributeError on a path that is perfectly valid.
-        for name in ("data_path", "catalog_path", "field_dictionary_path", "cache_dir"):
+        for name in ("data_path", "cache_dir"):
             value = getattr(self, name, None)
             if isinstance(value, str):
                 object.__setattr__(self, name, Path(value))

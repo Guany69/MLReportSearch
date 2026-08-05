@@ -247,13 +247,14 @@ def test_nested_ingestion_settings_survive_cli_loading(tmp_path):
 
     path = tmp_path / "c.yaml"
     path.write_text(
-        "ingest_mode: phase2_dual_file\n"
+        "ingest_mode: legacy_single_file\n"
         "corpus_granularity: report_row\n"
         "shortlist:\n  diversify_families: false\n"
     )
     cfg = base_config(path)
 
-    assert cfg.ingest_mode == "phase2_dual_file"
+    assert cfg.ingest_mode == "legacy_single_file"
+    assert cfg.corpus_granularity == "report_row"
     assert cfg.shortlist.diversify_families is False
 
 
@@ -310,35 +311,24 @@ def test_a_missing_config_file_is_reported_not_traced(tmp_path, capsys):
     assert "cannot read --config" in capsys.readouterr().err
 
 
-def test_the_phase2_config_selects_the_dual_file_estate():
-    """The config exists to be runnable; these are the settings that make it so."""
+def test_the_single_ingest_mode_is_the_only_one_accepted():
+    """The dual-file mode was removed along with its workbooks. A config still
+    naming it must fail loudly here rather than fall through to reading the
+    single workbook it was not describing."""
+    from reportfinder.ingest.models import IngestMode
+
+    assert [m.value for m in IngestMode] == ["legacy_single_file"]
+    with pytest.raises(ValueError):
+        IngestMode("phase2_dual_file")
+
+
+def test_the_shipped_config_reads_the_single_workbook():
     from reportfinder.config import from_mapping
 
     cfg = from_mapping(
-        yaml.safe_load((CONFIG_DIR / "phase2_generators.yaml").read_text())
+        yaml.safe_load((CONFIG_DIR / "legacy_generators.yaml").read_text())
     )
-    assert cfg.ingest_mode == "phase2_dual_file"
-    assert cfg.corpus_granularity == "report_row"
-    assert cfg.catalog_path.name == "Phase2_Report_Catalog_No_Fields.xlsx"
-    assert cfg.field_dictionary_path.name == "Phase2_Field_Dictionary.xlsx"
-    # No artifact fitted on the legacy estate may be pointed at this one.
+    assert cfg.ingest_mode == "legacy_single_file"
+    assert cfg.data_path.name == "Reports.xlsx"
     assert cfg.fusion.artifact_path is None
     assert cfg.decision.artifact_path is None
-
-
-def test_the_phase2_workbooks_the_config_names_are_present():
-    """Separate from the config contract above, which holds regardless.
-
-    Both workbooks are tracked in git, so this should pass in a fresh clone --
-    but it asserts a fact about the tree, not about the config, and a tree
-    without them should say so rather than fail the config test."""
-    from reportfinder.config import from_mapping
-
-    cfg = from_mapping(
-        yaml.safe_load((CONFIG_DIR / "phase2_generators.yaml").read_text())
-    )
-    for path in (cfg.catalog_path, cfg.field_dictionary_path):
-        if not path.exists():
-            pytest.skip(f"{path.name} absent from data/ -- blocked, not regressed")
-    assert cfg.catalog_path.stat().st_size > 0
-    assert cfg.field_dictionary_path.stat().st_size > 0

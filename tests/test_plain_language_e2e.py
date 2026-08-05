@@ -1,7 +1,7 @@
 """Plain-English queries must reach the right canonical fields.
 
-Previously skipped as Phase-2-blocked; the fixture named `phase2_dual_file`, but
-nothing asserted here touches dual-file ingestion. Now runs against the real
+Previously skipped because the fixture named a dual-file ingest mode whose
+workbooks were absent, though nothing asserted here touched it. Runs against the real
 estate.
 """
 

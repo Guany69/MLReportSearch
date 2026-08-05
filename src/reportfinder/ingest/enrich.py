@@ -1,20 +1,18 @@
 """Enrichment: turn catalog records + linked fields into the ML-facing corpus.
 
-This is the seam of Phase 2. Both ingestion modes converge here on one contract --
-the same `ReportCorpus` the Phase 1 pipeline already consumes -- so no mode
-conditional ever reaches the ranking code.
+This is the seam between reading spreadsheets and everything downstream: no
+ingestion detail reaches the ranking code, which sees only a `ReportCorpus`.
 
 The contract downstream depends on (`represent.py`, `model.py`, `render.py`,
-`app.py`) is that `frame["fields"]` is a `list[str]` of field names. That column
-means exactly what it meant in Phase 1. Phase 2 metadata is *additive*: it arrives
-in new columns that are empty in legacy mode.
+`app.py`) is that `frame["fields"]` is a `list[str]` of field names. Per-field
+metadata is *additive*, arriving in separate columns alongside it.
 """
 
 from __future__ import annotations
 
 import pandas as pd
 
-from ..data import ReportCorpus, collapse_families
+from ..data import ReportCorpus
 from .models import EnrichedField, ImportSummary, ReportCatalogRecord
 
 
@@ -58,81 +56,6 @@ def _records_to_frame(records: list[ReportCatalogRecord]) -> pd.DataFrame:
     for name, values in extra.items():
         frame[name] = values
     return frame
-
-
-def build_enriched_frame(
-    records: list[ReportCatalogRecord],
-    linked_fields: dict[int, list[EnrichedField]],
-    summary: ImportSummary,
-) -> ReportCorpus:
-    """Attach reconstructed fields to catalog rows, then collapse into families.
-
-    Fields are written into the raw frame's `Fields` column *before* collapsing, so
-    family identity (title + field set) is computed on the reconstructed fields --
-    exactly as Phase 1 computes it on the authored ones.
-    """
-    frame = _records_to_frame(records)
-
-    # Reconstructed field names, in the linker's deterministic order.
-    frame["Fields"] = [
-        "; ".join(f.field_name for f in linked_fields.get(i, []))
-        for i in range(len(records))
-    ]
-
-    collapsed = collapse_families(frame)
-
-    # Map each surviving family back to its representative row so the Phase 2
-    # metadata travels with it. collapse_families picks the most-run copy, so we
-    # re-derive the mapping by family key rather than assuming positions.
-    frame["_row_index"] = range(len(records))
-    frame["_fields_list"] = [
-        [f.field_name for f in linked_fields.get(i, [])] for i in range(len(records))
-    ]
-    from ..data import _family_key  # local import: internal helper, avoids cycle
-
-    frame["_family_key"] = [
-        _family_key(str(t), f)
-        for t, f in zip(frame["Custom Report"], frame["_fields_list"], strict=True)
-    ]
-    # Representative = first row of each family in collapse order; collapse_families
-    # sorts by runs desc, so mirror that selection here.
-    runs = pd.to_numeric(frame["Number of Times"], errors="coerce")
-    order = frame.assign(_runs=runs).sort_values(
-        by="_runs", ascending=False, na_position="last", kind="mergesort"
-    )
-    rep_row = order.groupby("_family_key", sort=False)["_row_index"].first()
-
-    rep_indices = [rep_row[key] for key in collapsed["family_key"]]
-
-    field_meta: list[list[EnrichedField]] = [
-        linked_fields.get(int(i), []) for i in rep_indices
-    ]
-    collapsed["field_meta"] = field_meta
-    collapsed["has_ambiguous_fields"] = [
-        any(f.is_ambiguous for f in metas) for metas in field_meta
-    ]
-    collapsed["ambiguous_field_count"] = [
-        sum(1 for f in metas if f.is_ambiguous) for metas in field_meta
-    ]
-    collapsed["source_row"] = [records[int(i)].source.source_row for i in rep_indices]
-    metadata = [
-        "report_id", "description", "area_where_used", "landing_page",
-        "chart_type", "owner", "created_by", "created_date",
-        "available_usage", "last_run_by", "worklet", "worklet_landing_pages",
-    ]
-    for name in metadata:
-        collapsed[name] = [frame.iloc[int(i)][name] for i in rep_indices]
-    collapsed["field_link_confidence"] = [
-        (sum(f.match_confidence for f in metas) / len(metas)) if metas else 0.0
-        for metas in field_meta
-    ]
-    collapsed["ambiguous_link_fraction"] = [
-        (sum(f.is_ambiguous for f in metas) / len(metas)) if metas else 0.0
-        for metas in field_meta
-    ]
-
-    summary.families_after_collapse = len(collapsed)
-    return ReportCorpus(frame=collapsed, raw_row_count=len(records))
 
 
 def build_row_level_frame(
@@ -200,7 +123,7 @@ def build_row_level_frame(
 
 
 def attach_empty_enrichment(corpus: ReportCorpus) -> ReportCorpus:
-    """Give a legacy corpus the Phase 2 columns, empty.
+    """Give a family-granularity corpus the per-field metadata columns, empty.
 
     Downstream code can then read the same columns in both modes without asking
     which mode produced them.

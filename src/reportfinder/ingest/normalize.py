@@ -1,4 +1,4 @@
-"""Shared normalization primitives for Phase 2 ingestion.
+"""Shared normalization primitives for ingestion.
 
 Two rules govern everything here:
 

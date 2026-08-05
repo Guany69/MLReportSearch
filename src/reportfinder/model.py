@@ -83,7 +83,7 @@ class ExpertTrace:
 
 @dataclass
 class FieldMatch:
-    """A Phase 2 field that contributed to a report surfacing."""
+    """A field that contributed to a report surfacing."""
 
     field_name: str
     business_object: str
@@ -103,7 +103,7 @@ class Candidate:
     trace: ExpertTrace
     matched_terms: list[str] = field(default_factory=list)
     matched_fields: list[str] = field(default_factory=list)
-    # Phase 2 only; empty in legacy mode.
+    # Empty unless the corpus carries per-field metadata.
     field_matches: list[FieldMatch] = field(default_factory=list)
     field_coverage: float | None = None  # share of query concepts covered by fields
     concepts_total: int = 0
@@ -366,7 +366,7 @@ class ReportFinder:
         return matched_terms, matched_fields[:6]
 
     def _explain_fields(self, query: str, index: int) -> tuple[list[FieldMatch], int, int]:
-        """Which Phase 2 fields explain this report, and how much of the query they cover.
+        """Which fields explain this report, and how much of the query they cover.
 
         Coverage is measured over query *concepts* (content tokens), counting a
         concept covered if any field name or description mentions it. This is an
@@ -854,7 +854,7 @@ def why_matched(candidate: Candidate) -> str:
 
 
 def explain_fields(candidate: Candidate) -> list[str]:
-    """Phase 2 field-level explanation lines.
+    """Field-level explanation lines.
 
     Deliberately worded as evidence rather than certainty: link confidence is an
     ordinal record of *how* a link was made, not a probability, so it is never

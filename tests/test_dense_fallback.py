@@ -2,7 +2,7 @@
 
 Both assertions are about the retrieval fallback path and are blind to which
 workbook the corpus came from; the fixture merely happened to name
-`phase2_dual_file`, which is why they were skipped.
+a dual-file ingest mode, which is why they were skipped.
 """
 
 from __future__ import annotations

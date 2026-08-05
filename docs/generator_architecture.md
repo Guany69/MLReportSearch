@@ -295,8 +295,8 @@ uv run reportfinder-bundle build   --config configs/legacy_generators.yaml -v
 uv run reportfinder-bundle verify  --config configs/legacy_generators.yaml
 uv run reportfinder-bundle inspect --config configs/legacy_generators.yaml
 
-uv run python -m reportfinder --mode legacy_single_file \
-    --retrieval-mode generators "why are we losing people"
+uv run python -m reportfinder --config configs/legacy_generators.yaml \
+    "why are we losing people"
 
 uv run reportfinder-train decision --relevance-root data/relevance
 uv run reportfinder-train fusion   --config configs/legacy_generators.yaml

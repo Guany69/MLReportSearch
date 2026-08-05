@@ -27,7 +27,7 @@ def _corpus_model(cfg):
         )
     corpus, _ = build_corpus(cfg, verbose=False)
     source = (
-        cfg.data_path if cfg.ingest_mode == "legacy_single_file" else cfg.catalog_path
+        cfg.data_path
     )
     return build_corpus_model(
         corpus.frame, ingest_mode=cfg.ingest_mode, source_file=str(source)

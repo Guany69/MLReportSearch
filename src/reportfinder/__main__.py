@@ -12,7 +12,6 @@ import time
 from pathlib import Path
 
 from .config import DEFAULT
-from .ingest.models import AmbiguityPolicy, IngestMode
 from .model import ReportFinder
 from .render import format_result
 from .represent import load_or_build
@@ -40,37 +39,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     ingest = parser.add_argument_group("ingestion")
     ingest.add_argument(
-        "--mode",
-        choices=[m.value for m in IngestMode],
-        default=None,
-        help="legacy_single_file reads the Phase 1 Fields column; phase2_dual_file "
-        "reconstructs fields from the catalog + field dictionary. "
-        "Default: legacy_single_file.",
-    )
-    ingest.add_argument("--data", type=Path, default=None, help="Phase 1 workbook (legacy mode).")
-    ingest.add_argument("--catalog", type=Path, default=None, help="Phase 2 report catalog.")
-    ingest.add_argument(
-        "--field-dictionary", type=Path, default=None, help="Phase 2 field dictionary."
-    )
-    ingest.add_argument(
-        "--ambiguity-policy",
-        choices=[p.value for p in AmbiguityPolicy],
-        default=None,
-        help="How to handle Where_Used names matching several catalog rows. "
-        "permissive attaches to all candidates; strict withholds. Both flag the "
-        "ambiguity in diagnostics.",
-    )
-    ingest.add_argument(
-        "--fuzzy",
-        action="store_true",
-        default=None,
-        help="Enable constrained fuzzy report-name matching (off by default).",
-    )
-    ingest.add_argument(
-        "--no-composite",
-        action="store_true",
-        default=None,
-        help="Disable business-object corroboration for ambiguous names.",
+        "--data", type=Path, default=None,
+        help="Report workbook. Default: data/Reports.xlsx.",
     )
 
     knobs = parser.add_argument_group("model knobs")
@@ -167,12 +137,6 @@ def main(argv: list[str] | None = None) -> int:
         dense_mode=args.dense_mode,
         use_query_expansion=(False if args.no_query_expansion else None),
         data_path=args.data,
-        ingest_mode=args.mode,
-        catalog_path=args.catalog,
-        field_dictionary_path=args.field_dictionary,
-        ambiguity_policy=args.ambiguity_policy,
-        enable_fuzzy_match=args.fuzzy,
-        enable_composite_match=(False if args.no_composite else None),
     )
 
     if not 0.0 <= cfg.alpha <= 1.0:

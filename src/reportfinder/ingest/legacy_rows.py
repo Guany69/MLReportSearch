@@ -1,6 +1,6 @@
 """Row-level ingestion for the legacy single-file workbook.
 
-The Phase 2 path reconstructs a report's fields by inverting the field dictionary's
+A removed dual-file path reconstructed a report's fields by inverting a dictionary's
 `Where_Used` column, which is why it needs a linker. The legacy workbook needs no
 such reconstruction: it carries a `Fields` column that already states, per row,
 exactly which fields that report uses. This module turns that column into the same
@@ -10,7 +10,7 @@ both modes without knowing which workbook it was handed.
 Why this exists at all: `data.load_corpus` collapses the legacy workbook to one row
 per *family*, which discards the per-row identity the two-level Report Family /
 Report Instance model is built on. Legacy mode needs an instance-level corpus for
-the same reason Phase 2 does.
+the same reason the reconstruction path did.
 
 Field provenance in this mode is deliberately thin. The workbook gives a field's
 *name* and nothing else, so business object, domain, categories and field-level
@@ -38,7 +38,7 @@ LEGACY_LINK_CONFIDENCE = 1.0
 def _field_key(field_name: str) -> str:
     """Identity for a legacy field.
 
-    Phase 2 keys a field by ``business_object|field_name`` because the same field
+    The dual-file path keyed a field by ``business_object|field_name`` because the same field
     name means different things on different objects. The legacy workbook has no
     business object, so the object half is empty. The separator is kept so the two
     modes produce keys of the same shape.

@@ -7,15 +7,14 @@ are not inflated, and that results are deterministic.
 These build a real index (dense encoder + LSA), so they are the slow tests in the
 suite.
 
-Previously `test_phase2_search.py`, skipped in full because it named the absent
-Phase 2 workbooks. Nine of its eleven assertions are about ranking and explanation
-behaviour that holds for any corpus; those are here. Two were genuinely about
-dual-file mechanics -- ambiguous `Where_Used` link disclosure, and the presence of
-field-dictionary description text in the document string -- and legacy row-level
-ingest cannot produce either (it links fields directly, so `ambiguous_field_count`
-is 0 by construction). Those were deleted rather than weakened into assertions
-that would pass without testing anything; the dual-file linker keeps its coverage
-in `test_phase2_regression.py`, which runs today against synthetic fixtures.
+This began as a suite for a dual-file ingest path whose workbooks were absent, so
+it skipped in full. Nine of its eleven assertions were about ranking and
+explanation behaviour that holds for any corpus; those are here. Two were about
+link reconstruction -- ambiguous link disclosure, and field-dictionary description
+text in the document string -- which the single-file path cannot produce, because
+it reads each row's fields directly. Those were deleted rather than weakened into
+assertions that would pass without testing anything, and the reconstruction path
+they covered has since been removed.
 
 Run: uv run pytest tests/test_real_estate_search.py -v
 """

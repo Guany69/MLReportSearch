@@ -1,4 +1,4 @@
-"""Typed models for Phase 2 ingestion.
+"""Typed models for ingestion.
 
 Plain dataclasses, matching the style already used in `data.py` / `model.py`.
 Every record carries its source file and source row so any downstream claim can be
@@ -7,26 +7,32 @@ traced back to a cell in a spreadsheet.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
 
 class IngestMode(str, Enum):
-    """How the corpus is assembled. Both modes produce the same ReportCorpus."""
+    """How the corpus is assembled.
+
+    One member since the dual-file path was removed. Kept as an enum rather than
+    dropped because it is recorded on the corpus and in the bundle manifest as
+    provenance, and because `IngestMode(value)` is what makes a config naming the
+    removed mode fail loudly instead of silently reading the wrong file.
+    """
 
     LEGACY_SINGLE_FILE = "legacy_single_file"
-    PHASE2_DUAL_FILE = "phase2_dual_file"
 
 
 class MatchMethod(str, Enum):
-    """How a report-field link was established. Recorded on every link."""
+    """How a report-field link was established. Recorded on every link.
 
-    EXACT_NAME = "exact_name"
-    NORMALIZED_NAME = "normalized_name"
-    COMPOSITE_BUSINESS_OBJECT = "composite_business_object"
-    AMBIGUOUS_MULTI = "ambiguous_multi"
-    FUZZY = "fuzzy"
+    The workbook states each row's fields directly, so there is one way to
+    establish a link and it is exact. The reconstruction methods this once had
+    (normalized, composite, fuzzy, ambiguous) belonged to the removed dual-file
+    path, where links were inferred rather than read.
+    """
+
     LEGACY_FIELDS_COLUMN = "legacy_fields_column"
 
 
@@ -35,20 +41,6 @@ class AmbiguityStatus(str, Enum):
 
     RESOLVED = "resolved"
     AMBIGUOUS = "ambiguous"
-
-
-class AmbiguityPolicy(str, Enum):
-    """What to do when a report name matches several catalog rows.
-
-    STRICT   -- withhold the link entirely (spec-literal). Reports whose links are
-                all ambiguous end up with no fields.
-    PERMISSIVE -- attach to every surviving candidate. Higher recall, at the cost of
-                attaching a field to a report that may not truly have it. Links are
-                still flagged AMBIGUOUS either way; this only controls attachment.
-    """
-
-    STRICT = "strict"
-    PERMISSIVE = "permissive"
 
 
 @dataclass(frozen=True)
@@ -92,7 +84,7 @@ class ReportCatalogRecord:
     report_prompts: str = ""
     area_where_used: str = ""
 
-    # Phase 1 only. None in Phase 2 (the column does not exist there).
+    # The workbook column that states this row's fields.
     fields_raw: str | None = None
 
     @property
@@ -101,68 +93,8 @@ class ReportCatalogRecord:
         return self.report_key
 
 
-@dataclass
-class FieldDictionaryRecord:
-    """One logical field, merged across however many rows defined it.
-
-    Identity is business object + field name, so `Worker|Status` and
-    `Job Requisition|Status` stay distinct fields.
-    """
-
-    field_key: str
-    business_object: str
-    field_name: str
-    sources: list[SourceRef] = field(default_factory=list)
-
-    description: str = ""
-    report_field_type: str = ""
-    related_business_object_name: str = ""
-    built_in_prompts: str = ""
-    domain: str = ""
-    categories: str = ""
-    authorized_usage: str = ""
-
-    where_used_raw: str = ""
-    where_used_report_names: list[str] = field(default_factory=list)
-
-    # Non-empty metadata that disagreed across duplicate rows. Recorded rather than
-    # overwritten: we do not get to pick a winner arbitrarily.
-    conflicts: list[MetadataConflict] = field(default_factory=list)
 
 
-@dataclass(frozen=True)
-class MetadataConflict:
-    """Two rows claimed different non-empty values for the same field attribute."""
-
-    field_key: str
-    attribute: str
-    existing: str
-    incoming: str
-    source: SourceRef
-
-
-@dataclass(frozen=True)
-class ReportFieldLink:
-    """A resolved (or knowingly ambiguous) edge between a report row and a field."""
-
-    report_key: str
-    field_key: str
-    match_method: MatchMethod
-    match_confidence: float
-    ambiguity_status: AmbiguityStatus
-    source_field_row: int
-    report_row_index: int
-    # All catalog rows the name could have meant. Length > 1 => ambiguous.
-    candidate_row_indices: tuple[int, ...] = ()
-
-
-@dataclass(frozen=True)
-class UnmatchedWhereUsed:
-    """A Where_Used entry naming a report that is not in the catalog."""
-
-    report_name: str
-    field_key: str
-    source: SourceRef
 
 
 @dataclass
@@ -184,31 +116,9 @@ class ImportSummary:
     duplicate_report_identities: int | None = None
     duplicate_report_rows: int | None = None
 
-    field_rows_read: int = 0
-    valid_field_rows_loaded: int = 0
-    unique_field_identities: int = 0
-    fields_with_no_where_used: int = 0
-
     report_field_links_created: int = 0
-    exact_name_links: int = 0
-    normalized_name_links: int = 0
-    composite_links: int = 0
-    fuzzy_links: int = 0
-    ambiguous_links: int = 0
-    duplicate_links_removed: int = 0
-
-    where_used_entries: int = 0
-    unmatched_where_used: int = 0
-    # Where_Used entries naming a recognized Workday object that is not a report
-    # (a calculated field, a condition rule). Counted separately because they are
-    # not reports that went missing, and folding them into `unmatched` buries the
-    # entries that genuinely did -- on the supplied estate they outnumber real
-    # report references by roughly an order of magnitude.
-    non_report_where_used_skipped: int = 0
     reports_with_zero_fields: int = 0
-    fields_with_no_matched_reports: int = 0
 
-    metadata_conflicts: int = 0
     row_validation_errors: int = 0
 
     families_after_collapse: int = 0
@@ -225,25 +135,11 @@ class ImportSummary:
                 f" over {self.duplicate_report_rows} rows"
             )
         lines = [f"Import summary [{self.mode}]", reports_line]
-        if self.field_rows_read:
+        if self.report_field_links_created:
             lines += [
-                f"  fields:  {self.field_rows_read} rows read -> {self.valid_field_rows_loaded} valid"
-                f" -> {self.unique_field_identities} unique identities",
-                f"  links:   {self.report_field_links_created} created from"
-                f" {self.where_used_entries} Where_Used entries",
-                f"           exact={self.exact_name_links}"
-                f" normalized={self.normalized_name_links}"
-                f" composite={self.composite_links}"
-                f" fuzzy={self.fuzzy_links}"
-                f" ambiguous={self.ambiguous_links}",
-                f"           {self.duplicate_links_removed} duplicate links removed",
-                f"  gaps:    {self.unmatched_where_used} unmatched Where_Used"
-                f" | {self.non_report_where_used_skipped} non-report references skipped"
-                f" | {self.reports_with_zero_fields} reports with zero fields"
-                f" | {self.fields_with_no_matched_reports} fields matched to no report"
-                f" | {self.fields_with_no_where_used} fields with empty Where_Used",
-                f"  quality: {self.metadata_conflicts} metadata conflicts"
-                f" | {self.row_validation_errors} row errors",
+                f"  fields:  {self.report_field_links_created} report-field links"
+                f" | {self.reports_with_zero_fields} reports with zero fields",
+                f"  quality: {self.row_validation_errors} row errors",
             ]
         lines.append(
             f"  corpus:  {self.families_after_collapse} families"
@@ -278,11 +174,10 @@ class EnrichedField:
         return self.ambiguity_status == AmbiguityStatus.AMBIGUOUS.value
 
     def embedding_text(self) -> str:
-        """Deterministic template for field text (per Phase 2 spec).
+        """Deterministic template for field text.
 
-        Only non-empty attributes are emitted so sparse metadata (e.g. Related
-        Business Object is ~22% filled) does not inject empty labels into the
-        document and dilute the representation.
+        Only non-empty attributes are emitted so sparse metadata does not inject
+        empty labels into the document and dilute the representation.
         """
         parts = [
             ("Field Name", self.field_name),
@@ -297,12 +192,3 @@ class EnrichedField:
         return "\n".join(f"{label}: {value}" for label, value in parts if value)
 
 
-@dataclass
-class LinkResult:
-    """Output of the linker."""
-
-    linked_reports: dict[int, list[EnrichedField]] = field(default_factory=dict)
-    report_field_links: list[ReportFieldLink] = field(default_factory=list)
-    unmatched_where_used: list[UnmatchedWhereUsed] = field(default_factory=list)
-    ambiguous_matches: list[ReportFieldLink] = field(default_factory=list)
-    validation_metrics: ImportSummary = field(default_factory=ImportSummary)

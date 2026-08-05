@@ -23,17 +23,8 @@ from reportfinder.represent import load_or_build
 st.set_page_config(page_title="Report Finder", page_icon="🔎", layout="centered")
 
 
-def _ingest_paths(cfg) -> list[tuple[Path, str]]:
-    """Which input files this ingest mode actually needs."""
-    if cfg.ingest_mode == "phase2_dual_file":
-        return [(cfg.catalog_path, "Report catalog"),
-                (cfg.field_dictionary_path, "Field dictionary")]
-    return [(cfg.data_path, "Report workbook")]
-
-
 @st.cache_resource(show_spinner="Building index (first run only)...")
-def get_finder(mode: str, data_path: str, catalog_path: str, dictionary_path: str,
-               top_k: int):
+def get_finder(data_path: str, top_k: int):
     """Built once per process, keyed on the inputs that change what it returns.
 
     Streamlit reruns this script top to bottom on every interaction. Without the
@@ -41,10 +32,7 @@ def get_finder(mode: str, data_path: str, catalog_path: str, dictionary_path: st
     bundle -- would be rebuilt on each keystroke.
     """
     cfg = DEFAULT.with_overrides(
-        ingest_mode=mode,
         data_path=Path(data_path),
-        catalog_path=Path(catalog_path),
-        field_dictionary_path=Path(dictionary_path),
         top_k=int(top_k),
     )
     finder = ReportFinder(load_or_build(cfg, rebuild=False, verbose=False), cfg)
@@ -134,15 +122,7 @@ st.caption(
 
 with st.sidebar:
     st.header("Ingestion")
-    mode = st.selectbox(
-        "Mode", ["legacy_single_file", "phase2_dual_file"],
-        index=0 if DEFAULT.ingest_mode == "legacy_single_file" else 1,
-    )
     data_path = st.text_input("Report workbook", value=str(DEFAULT.data_path))
-    catalog_path = st.text_input("Report catalog", value=str(DEFAULT.catalog_path))
-    dictionary_path = st.text_input(
-        "Field dictionary", value=str(DEFAULT.field_dictionary_path)
-    )
 
     st.header("Search")
     top_k = st.number_input("results to show", 1, 20, DEFAULT.top_k)
@@ -152,23 +132,18 @@ with st.sidebar:
         "which report answers your question; it never fabricates report data."
     )
 
-_probe = DEFAULT.with_overrides(
-    ingest_mode=mode, data_path=Path(data_path),
-    catalog_path=Path(catalog_path), field_dictionary_path=Path(dictionary_path),
-)
-for _path, _label in _ingest_paths(_probe):
-    if not Path(_path).exists():
-        st.error(f"{_label} not found at `{_path}`. Point the sidebar at a valid file.")
-        st.stop()
+if not Path(data_path).exists():
+    st.error(f"Report workbook not found at `{data_path}`. Point the sidebar at a valid file.")
+    st.stop()
 
 try:
-    finder, cfg = get_finder(mode, data_path, catalog_path, dictionary_path, int(top_k))
+    finder, cfg = get_finder(data_path, int(top_k))
 except Exception as exc:  # noqa: BLE001 - surface build/ingest errors in the UI
     st.error(f"Could not build the index: {exc}")
     st.stop()
 
 if finder.rep.import_summary is not None:
-    with st.expander(f"Import summary — {len(finder.rep)} report families ({mode})"):
+    with st.expander(f"Import summary — {len(finder.rep)} report families"):
         st.code(finder.rep.import_summary.render(), language="text")
 
 with st.form("query_form"):

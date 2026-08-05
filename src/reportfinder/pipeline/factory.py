@@ -32,7 +32,7 @@ from .orchestrator import SearchPipeline
 
 def build_corpus_for(cfg, frame):
     source = (
-        cfg.data_path if cfg.ingest_mode == "legacy_single_file" else cfg.catalog_path
+        cfg.data_path
     )
     return build_corpus_model(
         frame, ingest_mode=cfg.ingest_mode, source_file=str(source)

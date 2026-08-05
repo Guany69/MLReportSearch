@@ -71,10 +71,9 @@ def build_doc(row: pd.Series, cfg: Config) -> str:
     scoring rule: the emphasis is baked into the vector, and both experts then
     read the same document independently.
 
-    Phase 2 field metadata (descriptions, business objects, domains, ...) is
-    appended afterwards at weight 1. It enriches the document without displacing
-    the zones ranking is already tuned around. In legacy mode there is no field
-    metadata, so this produces byte-identical output to Phase 1.
+    Per-field metadata (descriptions, business objects, domains, ...) is appended
+    afterwards at weight 1, where the corpus carries any. It enriches the document
+    without displacing the zones ranking is already tuned around.
     """
     zones: list[str] = []
 
@@ -91,14 +90,14 @@ def build_doc(row: pd.Series, cfg: Config) -> str:
     add(str(row["report_type"]), cfg.w_report_type)
     add(str(row["tags"]).replace(";", ", "), cfg.w_tags)
 
-    for text, weight in _phase2_zones(row, cfg):
+    for text, weight in _field_metadata_zones(row, cfg):
         add(text, weight)
 
     return " . ".join(zones)
 
 
-def _phase2_zones(row: pd.Series, cfg: Config) -> list[tuple[str, int]]:
-    """Phase 2 field-metadata zones, deduplicated across the report's fields.
+def _field_metadata_zones(row: pd.Series, cfg: Config) -> list[tuple[str, int]]:
+    """Per-field metadata zones, deduplicated across the report's fields.
 
     Values are deduplicated because dozens of fields on one report typically share
     a handful of domains/business objects; repeating them once per field would
@@ -265,29 +264,18 @@ def _file_stamp(path: Path, label: str) -> dict:
 def _cache_signature(cfg: Config, data_path: Path) -> str:
     """Fingerprint every input that changes the representation.
 
-    Includes the ingest mode and both Phase 2 inputs, so switching modes or
-    editing either workbook rebuilds rather than silently serving vectors built
-    from the other source. Query-time knobs (alpha, T, tau, delta) are excluded on
-    purpose -- they don't affect the cached vectors, so they can be swept freely.
+    Includes the workbook's own stamp, so editing it rebuilds rather than
+    silently serving vectors built from the previous contents. Query-time knobs
+    (alpha, T, tau, delta) are excluded on purpose -- they don't affect the cached
+    vectors, so they can be swept freely.
     """
     from .ingest.models import IngestMode
 
     mode = IngestMode(cfg.ingest_mode)
-    inputs: dict[str, object] = {"mode": mode.value}
-
-    if mode is IngestMode.LEGACY_SINGLE_FILE:
-        inputs["data"] = _file_stamp(data_path, "Report workbook")
-    else:
-        inputs["catalog"] = _file_stamp(Path(cfg.catalog_path), "Report catalog")
-        inputs["dictionary"] = _file_stamp(
-            Path(cfg.field_dictionary_path), "Field dictionary"
-        )
-        inputs["linking"] = [
-            cfg.ambiguity_policy,
-            cfg.enable_composite_match,
-            cfg.enable_fuzzy_match,
-            cfg.fuzzy_threshold,
-        ]
+    inputs: dict[str, object] = {
+        "mode": mode.value,
+        "data": _file_stamp(data_path, "Report workbook"),
+    }
 
     payload = {
         "version": CACHE_VERSION,
@@ -317,7 +305,7 @@ def _cache_signature(cfg: Config, data_path: Path) -> str:
             cfg.w_report_type,
             cfg.w_tags,
         ],
-        "phase2_zones": [
+        "field_metadata_zones": [
             cfg.w_field_description,
             cfg.w_business_object,
             cfg.w_domain,

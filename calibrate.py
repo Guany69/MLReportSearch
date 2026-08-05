@@ -31,7 +31,6 @@ from pathlib import Path
 import numpy as np
 
 from reportfinder.config import DEFAULT
-from reportfinder.ingest.models import IngestMode
 from reportfinder.model import ReportFinder
 from reportfinder.represent import load_or_build
 
@@ -39,14 +38,6 @@ from reportfinder.represent import load_or_build
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--data", type=Path, default=None)
-    parser.add_argument(
-        "--mode",
-        choices=[m.value for m in IngestMode],
-        default=None,
-        help="Ingestion mode (default: legacy_single_file).",
-    )
-    parser.add_argument("--catalog", type=Path, default=None)
-    parser.add_argument("--field-dictionary", type=Path, default=None)
     parser.add_argument("--n", type=int, default=300, help="How many probe queries to sample.")
     parser.add_argument("--alpha", type=float, default=None)
     parser.add_argument("--t-dense", type=float, default=None)
@@ -60,9 +51,6 @@ def main(argv: list[str] | None = None) -> int:
         alpha=args.alpha,
         t_dense=args.t_dense,
         t_lsa=args.t_lsa,
-        ingest_mode=args.mode,
-        catalog_path=args.catalog,
-        field_dictionary_path=args.field_dictionary,
     )
     try:
         rep = load_or_build(cfg, verbose=True)

@@ -24,18 +24,16 @@ and no score is presented as a probability. Read
 
 ## Setup and search
 
-> **Two estates, and they are not comparable.** `data/Reports.xlsx` (4,000 rows →
-> 3,280 families) is the legacy single-file estate: every measured number in
-> `docs/` — recall, survival, the threshold sweep, both learned artifacts — was
-> produced on it, with `configs/legacy_generators.yaml`. It is gitignored, so a
-> fresh clone skips the tests that need it.
+> **`data/Reports.xlsx` is the estate.** 4,000 rows → 3,280 families, and every
+> measured number in `docs/` — recall, survival, the threshold sweep, both learned
+> artifacts — was produced on it with `configs/legacy_generators.yaml`. The
+> workbook is gitignored, so a fresh clone skips the tests that need it.
 >
-> The Phase 2 dual-file estate — `data/Phase2_Report_Catalog_No_Fields.xlsx` +
-> `data/Phase2_Field_Dictionary.xlsx`, 4,368 rows → 4,299 families — **is** in
-> this tree and is now runnable via `configs/phase2_generators.yaml`. It has no
-> relevance labels and no evaluation of its own, so nothing about its quality is
-> claimed here and its ingest counts must not be read as accuracy. See
-> [Phase 2](#phase-2-dual-file-estate).
+> A second ingest path once read a report catalog plus a separate field dictionary
+> and reconstructed report→field links by inverting the dictionary's `Where_Used`
+> column. It has been removed along with its workbooks: this workbook states each
+> row's fields directly, so there is nothing to reconstruct. `ingest_mode` survives
+> as recorded provenance with one legal value.
 
 ```bash
 uv sync --dev
@@ -74,10 +72,10 @@ uv run python demo.py
 
 The first run downloads BGE, builds dense/LSA representations, and writes `.cache/`. Later runs load locally. `--rebuild` invalidates explicitly; input hashes, schema versions, model/dependency versions, and representation settings invalidate automatically.
 
-The legacy single-file interface remains supported:
+Point it at a different workbook with `--data`:
 
 ```bash
-uv run python -m reportfinder --mode legacy_single_file --data data/Reports.xlsx "..."
+uv run python -m reportfinder --data /path/to/Reports.xlsx "..."
 ```
 
 `Config.retrieval_mode="legacy_weighted_logit"` reproduces the historical fusion. Its former “product of experts” description was incorrect: after renormalization it is exactly a softmax over a weighted sum of temperature-scaled logits. See [the audit](docs/current_model_audit.md).
@@ -135,67 +133,24 @@ The harness reports ranking, status confusion, ambiguity/no-answer decisions, sl
 
 ## Data and ingestion
 
-Both ingestion modes yield the same family-level corpus. Phase 2 reconstructs report→field links from dictionary `Where_Used` values. Report titles are not unique; `report_id` is the catalog row index. Each link retains method, confidence, ambiguity, and provenance.
+The workbook is read at row granularity and collapsed into title families, so one
+title occurring on several rows becomes one family with several instances. That
+two-level shape is what family-first expansion and max-oriented aggregation
+operate on. `report_id` is the catalog row index; report titles are not unique and
+are never used as identifiers.
 
-The default permissive ambiguity policy attaches undecidable fields to all title candidates for recall while flagging every link. `strict` withholds them.
+Catalog description, area-where-used, landing/worklet/chart, ownership,
+creator/date, usage, and last-run metadata are preserved. Authorized usage is
+retained but not scored: it has no discriminating variation in the source data.
 
-Catalog description, area-where-used, landing/worklet/chart, ownership, creator/date, usage, and last-run metadata are preserved. Authorized usage is retained but not scored because it has no discriminating variation in the supplied dictionary.
-
-### Phase 2 dual-file estate
-
-`Where_Used` is **not** a list of report titles. It is a list of typed Workday
-references, and only one of the 60 observed types names a row in a report catalog:
-
-```
-Custom Report - Headcount by Supervisory Organization    ← a report
-Calculated Field - CF_TF_CSO                             ← not a report
-Condition Rule - Location is US Region 4                 ← not a report
-```
-
-Comparing those raw against catalog titles matched **0 of 20,951** distinct
-entries, because the catalog stores `Headcount by Supervisory Organization` and
-the dictionary stores `Custom Report - Headcount by Supervisory Organization`.
-Resolution order:
-
-1. **the raw value first**, exact then normalized — a report may legitimately be
-   titled `Position Management Report - Calculations`, and stripping before
-   matching would destroy such a title;
-2. on a miss, split at the first `Type - ` whose left side is one of the
-   enumerated types;
-3. `Custom Report` → strip and re-resolve through the same exact / normalized /
-   composite / ambiguity / opt-in-fuzzy path;
-4. any other recognized type → **skipped**, counted in
-   `non_report_where_used_skipped`, *not* recorded as unmatched;
-5. an unrecognized prefix → treated as untyped, and an untyped miss stays in
-   `unmatched_where_used`, which is the actionable channel. A new Workday type
-   surfaces there for a human to add rather than silently deleting links.
-
-Import counts on the supplied workbooks, reproduced by
-`uv run reportfinder-data phase2-ingest` into
-`artifacts/phase2_ingest_validation.json`:
-
-| | |
-|---|---|
-| valid reports | 4,368 |
-| families | 4,299 |
-| report→field links | 75,689 |
-| ambiguous links | 1,023 |
-| typed non-report references skipped | 37,272 |
-| unmatched report references | 274 |
-| reports with zero linked fields | 96 |
-
-**These are import counts, not quality metrics.** They say what was read and
-linked; nothing here measures whether a linked field is the *right* field. No
-relevance labels exist for this estate, so none of its numbers may be compared
-with the legacy estate's — different corpus, different field reconstruction.
-
-Commands:
+Fields come from the workbook's own `Fields` column. A workbook without that
+column cannot be read — the loader says so rather than silently producing reports
+with no fields.
 
 ```bash
-uv run reportfinder-bundle build  --config configs/phase2_generators.yaml -v
-uv run reportfinder-bundle verify --config configs/phase2_generators.yaml
-uv run python -m reportfinder --config configs/phase2_generators.yaml "<query>"
-uv run reportfinder-data phase2-ingest --config configs/phase2_generators.yaml
+uv run reportfinder-bundle build  --config configs/legacy_generators.yaml -v
+uv run reportfinder-bundle verify --config configs/legacy_generators.yaml
+uv run python -m reportfinder --config configs/legacy_generators.yaml "<query>"
 ```
 
 `--config` is how the CLI runs the configuration its bundle was built with; flags
@@ -203,7 +158,7 @@ still override individual values. The API server reads `REPORTFINDER_CONFIG`
 instead:
 
 ```bash
-REPORTFINDER_CONFIG=configs/phase2_generators.yaml \
+REPORTFINDER_CONFIG=configs/legacy_generators.yaml \
   uv run uvicorn reportfinder.api.service:app --port 8080
 ```
 

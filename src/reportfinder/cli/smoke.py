@@ -1,9 +1,9 @@
 """`reportfinder-smoke` -- prove the serving path answers a query end to end.
 
-Previously this hard-coded `phase2_dual_file`, so it could only run against
-workbooks that are not present in this tree. It now takes a config (or an explicit
-mode) so it can smoke-test whichever estate is actually available, and it verifies
-the generator architecture rather than only the legacy one.
+This once hard-coded an ingest mode whose workbooks were absent, so it could not
+run at all. It now takes a config so it smoke-tests whatever is actually
+configured, and it verifies the generator architecture rather than only the
+legacy one.
 
 It fails on a silent degradation as well as on an error: a run that returns
 candidates while a *required* component is missing is not a passing smoke test.
@@ -39,18 +39,13 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="reportfinder-smoke")
     parser.add_argument("--config", default=None,
                         help="Config file; defaults to the built-in defaults.")
-    parser.add_argument("--mode", default=None,
-                        choices=["legacy_single_file", "phase2_dual_file"])
     parser.add_argument("--query", default=DEFAULT_QUERY)
     parser.add_argument("--allow-fallback", action="store_true",
                         help="Tolerate optional components running on fallbacks.")
     args = parser.parse_args(argv)
 
     cfg = from_mapping(load_yaml(args.config)) if args.config else DEFAULT
-    overrides = {"corpus_granularity": "report_row"}
-    if args.mode:
-        overrides["ingest_mode"] = args.mode
-    cfg = cfg.with_overrides(**overrides)
+    cfg = cfg.with_overrides(corpus_granularity="report_row")
 
     if cfg.retrieval_mode == "generators":
         corpus, _ = build_corpus(cfg, verbose=False)

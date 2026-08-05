@@ -31,7 +31,7 @@ def test_signature_tracks_representation_config_not_query_thresholds(source):
     """A knob that changes doc(r) must invalidate the cache; a query knob must not.
 
     (This was parametrized over both ingest modes to assert mode-parity. The
-    Phase 2 arm was permanently skipped, so the parametrize proved parity with
+    dual-file arm was permanently skipped, so the parametrize proved parity with
     nothing; the claim is about the signature, not about which workbook fed it.)
     """
     cfg = DEFAULT.with_overrides(ingest_mode="legacy_single_file", dense_mode="off")

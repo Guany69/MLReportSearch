@@ -100,7 +100,7 @@ def main() -> None:
         })
     # Fingerprint whichever workbook this mode actually read.
     source = (
-        cfg.catalog_path if cfg.ingest_mode == "phase2_dual_file" else cfg.data_path
+        cfg.data_path
     )
     catalog_bytes = Path(source).read_bytes()
     artifact = {

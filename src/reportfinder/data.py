@@ -26,9 +26,8 @@ COL_LAST_RUN = "Last Run Date"
 COL_LAST_UPDATED = "Last Updated Date"
 COL_SHARED = "Shared"
 
-# Legacy (Phase 1) requires Fields: it is the sole source of the field signal in a
-# single-file import. The Phase 2 catalog has no Fields column -- that path goes
-# through `ingest/` instead, which reconstructs fields from the field dictionary.
+# `Fields` is required: it is the sole source of the field signal. A workbook
+# without it cannot be read here, and there is no longer a reconstruction path.
 REQUIRED_COLUMNS = [COL_TITLE, COL_FIELDS]
 
 # Description is deliberately excluded: only 7 distinct values across 4000 rows,
@@ -92,11 +91,11 @@ def load_raw(path: Path) -> pd.DataFrame:
     if missing:
         hint = ""
         if missing == [COL_FIELDS] and COL_TITLE in frame.columns:
-            # Almost certainly a Phase 2 catalog fed to the legacy loader.
             hint = (
-                "\nThis looks like a Phase 2 report catalog (no Fields column).\n"
-                "Use Phase 2 mode, which reconstructs fields from the field dictionary:\n"
-                "  python -m reportfinder --mode phase2_dual_file \"your query\""
+                "\nThe workbook has report titles but no `Fields` column, so no field\n"
+                "signal can be read from it. A dual-file path that reconstructed\n"
+                "fields from a separate field dictionary has been removed; export the\n"
+                "catalog with its Fields column instead."
             )
         raise ValueError(
             f"Workbook is missing required column(s): {missing}\n"

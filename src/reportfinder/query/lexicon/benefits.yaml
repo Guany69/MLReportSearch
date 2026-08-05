@@ -1,0 +1,17 @@
+domain: benefits
+schema: 1
+rules:
+  - id: benefits.coverage
+    phrases: ["benefits coverage", "benefit enrollment", "benefit election"]
+    emits:
+      - {canonical: "Benefit Plan", kind: field, confidence: 0.86}
+      - {canonical: "Election Status", kind: field, confidence: 0.84}
+  - id: benefits.group
+    phrases: ["benefits group", "benefit population"]
+    emits:
+      - {canonical: "Benefit Group", kind: field, confidence: 0.84}
+  - id: benefits.coverage_dates
+    phrases: ["coverage dates", "benefit effective dates", "coverage window"]
+    emits:
+      - {canonical: "Coverage Begin Date", kind: field, confidence: 0.88}
+      - {canonical: "Coverage End Date", kind: field, confidence: 0.88}

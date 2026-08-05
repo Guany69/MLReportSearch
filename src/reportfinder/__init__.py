@@ -1,4 +1,4 @@
-"""reportfinder: unsupervised report retrieval by product of experts."""
+"""reportfinder: structured multi-channel report retrieval."""
 
 from .config import DEFAULT, Config
 from .model import Candidate, ReportFinder, Result, why_matched
@@ -16,7 +16,7 @@ __all__ = [
     "find",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 def find(query: str, cfg: Config | None = None, rebuild: bool = False) -> Result:

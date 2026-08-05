@@ -1,0 +1,33 @@
+domain: recruiting
+schema: 1
+rules:
+  - id: recruiting.applicant
+    phrases: ["applicant", "applicants", "job seeker", "job seekers"]
+    emits:
+      - {canonical: "Candidate", kind: field, confidence: 0.90}
+  - id: recruiting.recruiter
+    phrases: ["talent acquisition", "ta recruiter", "ta partner", "recruiting partner"]
+    priority: 20
+    suppresses: ["Time Away"]
+    emits:
+      - {canonical: "Recruiter", kind: field, confidence: 0.85}
+  - id: recruiting.stage
+    phrases: ["recruiting stage", "hiring stage", "application step"]
+    emits:
+      - {canonical: "Application Stage", kind: field, confidence: 0.88}
+  - id: recruiting.application
+    phrases: ["candidate application", "job application", "application pipeline"]
+    emits:
+      - {canonical: "Application Date", kind: field, confidence: 0.84}
+      - {canonical: "Application Stage", kind: field, confidence: 0.88}
+      - {canonical: "Application Status", kind: field, confidence: 0.88}
+  - id: recruiting.requisition
+    phrases: ["job opening", "job openings", "open role", "open roles", "vacancy", "vacancies", "hiring requisition"]
+    emits:
+      - {canonical: "Job Requisition", kind: field, confidence: 0.90}
+      - {canonical: "Position Status", kind: field, confidence: 0.86}
+      - {canonical: "Filled Indicator", kind: field, confidence: 0.84}
+  - id: recruiting.time_to_fill
+    phrases: ["days to hire", "hiring turnaround", "requisition cycle time"]
+    emits:
+      - {canonical: "Time to Fill", kind: field, confidence: 0.90}

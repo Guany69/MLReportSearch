@@ -103,7 +103,8 @@ class ReportCatalogLoader:
             fields_col = cols.get("fields")
             records.append(
                 ReportCatalogRecord(
-                    report_key=normalize_match(name),
+                    report_key=f"R{physical_row:04d}",
+                    title_key=normalize_match(name),
                     report_name=name,
                     source=source,
                     row_index=len(records),
@@ -133,4 +134,8 @@ class ReportCatalogLoader:
                     ),
                 )
             )
+        keys = [record.report_key for record in records]
+        duplicates = sorted({key for key in keys if keys.count(key) > 1})
+        if duplicates:
+            raise ValueError(f"Duplicate catalog report_key values: {duplicates[:10]}")
         return records

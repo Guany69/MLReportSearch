@@ -5,3 +5,9 @@ gatherUsageStats = false
 
 [server]
 headless = true
+
+# Bind to loopback. Streamlit defaults to 0.0.0.0, which made the app reachable
+# from the LAN -- and it runs as DEVELOPMENT_PRINCIPAL under AllowAllResolver, so
+# anyone on the network could search the whole estate. The project is specified as
+# 100% local; this makes the network posture match that.
+address = "127.0.0.1"

@@ -1,0 +1,20 @@
+domain: absence_time
+schema: 1
+rules:
+  - id: absence.plan
+    phrases: ["pto plan", "leave plan", "vacation plan"]
+    emits:
+      - {canonical: "Time Off Plan", kind: field, confidence: 0.88}
+  - id: absence.type
+    phrases: ["leave type", "absence type", "kind of leave"]
+    emits:
+      - {canonical: "Time Off Type", kind: field, confidence: 0.86}
+      - {canonical: "Leave Type", kind: field, confidence: 0.84}
+  - id: absence.status
+    phrases: ["leave status", "absence status", "currently on leave"]
+    emits:
+      - {canonical: "Leave Status", kind: field, confidence: 0.88}
+  - id: absence.return
+    phrases: ["return to work", "back from leave", "expected return"]
+    emits:
+      - {canonical: "Return Date", kind: field, confidence: 0.90}

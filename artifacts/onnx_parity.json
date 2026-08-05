@@ -1,0 +1,16 @@
+{
+  "latency_ms_per_40_pairs": {
+    "onnx_p50": 367.7,
+    "torch_p50": 606.8
+  },
+  "max_abs_logit_delta": 7e-06,
+  "measured_on": "single CPU host; not a production latency claim",
+  "onnx_non_finite_scores": 0,
+  "ordering_mismatches": 0,
+  "pairs_compared": 200,
+  "passed": true,
+  "queries": 5,
+  "tolerance": 0.001,
+  "torch_dtype": "float64",
+  "torch_dtype_escalated": true
+}

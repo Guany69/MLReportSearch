@@ -1,0 +1,29 @@
+domain: core
+schema: 1
+rules:
+  - id: core.manager.boss
+    phrases: ["boss", "bosses", "team leader", "people leader"]
+    priority: 20
+    suppresses: ["Leader"]
+    emits:
+      - {canonical: "Manager", kind: field, confidence: 0.90}
+  - id: core.headcount.team_size
+    phrases: ["team size", "how big is each team", "how many people", "number of employees"]
+    emits:
+      - {canonical: "Headcount", kind: field, confidence: 0.88}
+  - id: core.location.workplace
+    phrases: ["where does each employee work", "work location", "workplace"]
+    emits:
+      - {canonical: "Location", kind: field, confidence: 0.88}
+  - id: core.pay_period
+    phrases: ["paycheck period", "pay cycle", "payroll period"]
+    emits:
+      - {canonical: "Pay Period", kind: field, confidence: 0.90}
+  - id: core.net_pay
+    phrases: ["take home pay", "take-home pay", "pay after taxes"]
+    emits:
+      - {canonical: "Net Pay", kind: field, confidence: 0.92}
+  - id: core.deductions
+    phrases: ["deduction", "deductions", "payroll deductions"]
+    emits:
+      - {canonical: "Deductions", kind: field, confidence: 0.90}

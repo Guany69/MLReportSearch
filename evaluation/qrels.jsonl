@@ -1,0 +1,6 @@
+{"answerable": true, "label_source": "weak_title", "query": "AXIS - Worker Snapshot by Company - Summary", "query_id": "title-0", "relevant": {"R0004": 2}, "slice": "title"}
+{"answerable": true, "label_source": "weak_title", "query": "CR_Compensation Statement by Manager - Summary", "query_id": "title-1", "relevant": {"R0005": 2, "R0006": 2}, "slice": "title"}
+{"answerable": true, "label_source": "weak_title", "query": "HCM Manager Hierarchy by Region - Audit", "query_id": "title-3", "relevant": {"R0007": 2, "R0011": 2}, "slice": "title"}
+{"answerable": true, "label_source": "weak_field", "query": "report with Worker ID", "query_id": "field-0", "relevant": {"R0004": 1}, "slice": "field_name"}
+{"answerable": true, "label_source": "weak_field", "query": "report with Compensation Plan", "query_id": "field-1", "relevant": {"R0005": 1}, "slice": "field_name"}
+{"answerable": false, "label_source": "synthetic_negative", "query": "quantum submarine telemetry", "query_id": "noanswer-1", "relevant": {}, "slice": "no_answer"}

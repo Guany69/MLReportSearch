@@ -1,0 +1,74 @@
+{
+  "approved": false,
+  "architecture": "pytorch_mlp_32_16_3",
+  "bundle_label_mapping": {
+    "0": "NO_CONFIDENT_MATCH",
+    "1": "ASK_CLARIFICATION",
+    "2": "RETURN_RESULTS"
+  },
+  "calibration_split_size": 293,
+  "caveat": "Trained on synthetic weak supervision. These labels were produced by a generator, not by Axis employees, so metrics computed against them measure agreement with the generator, not production accuracy.",
+  "class_weights": [
+    0.43985307216644287,
+    2.9844236373901367,
+    2.554666757583618
+  ],
+  "epochs": 200,
+  "excluded_label_derived_columns": [
+    "top_candidate_is_seed_positive",
+    "seed_positive_present_in_pool",
+    "is_no_answer_family",
+    "is_conflicting_family",
+    "is_missing_context_family"
+  ],
+  "expected_calibration_error": 0.1068,
+  "feature_hash": "f54cf25186585c7d",
+  "feature_names": [
+    "top_family_score",
+    "score_margin_top_two",
+    "cross_encoder_top",
+    "cross_encoder_margin",
+    "cross_encoder_mean_top5",
+    "score_entropy_top10",
+    "family_count",
+    "candidate_count",
+    "authorized_candidate_count_log",
+    "generator_agreement_top",
+    "source_exclusive_ratio_top",
+    "risk_low",
+    "risk_medium",
+    "risk_high",
+    "risk_reason_count",
+    "query_token_count",
+    "stated_facet_count",
+    "query_variant_count",
+    "distinguishing_facet_present",
+    "top_family_instance_count"
+  ],
+  "feature_source": "serving_pipeline_pass",
+  "final_loss": 0.75039,
+  "human_judgement_count": 0,
+  "human_validated": false,
+  "input_dim": 20,
+  "label_distribution": {
+    "ASK_CLARIFICATION": 107,
+    "NO_CONFIDENT_MATCH": 125,
+    "RETURN_RESULTS": 726
+  },
+  "per_class_recall": {
+    "ASK_CLARIFICATION": 0.6667,
+    "NO_CONFIDENT_MATCH": 0.7097,
+    "RETURN_RESULTS": 0.4876
+  },
+  "seed": 20260720,
+  "splits": {
+    "calibrated_on": "calibration",
+    "evaluated_on": "validation",
+    "trained_on": "train"
+  },
+  "temperature": 0.8437684774398804,
+  "train_size": 958,
+  "training_label_source": "synthetic_v2_generative",
+  "validation_split_size": 265,
+  "weights_sha256": "e100ccae7c9c386fac7d415b8be782e1"
+}

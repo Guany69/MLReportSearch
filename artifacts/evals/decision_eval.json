@@ -1,0 +1,98 @@
+{
+  "artifact": {
+    "feature_hash": "f54cf25186585c7d",
+    "path": "artifacts/models/decision.pt",
+    "weights_sha256": "e100ccae7c9c386fac7d415b8be782e1"
+  },
+  "config": {
+    "bundle_version": "b-d196fdc6dba2f2ba-021cf6db",
+    "path": "configs/legacy_generators.yaml"
+  },
+  "dataset": {
+    "dataset_version": "2.0.0",
+    "human_validated": false,
+    "label_source": "synthetic_v2_generative",
+    "root": "data/relevance_v2"
+  },
+  "generated_at": "2026-08-05T16:44:23+00:00",
+  "kind": "decision",
+  "label_basis": "synthetic_v2_generative; measures agreement with the label generator, not production relevance",
+  "metrics": {
+    "candidate": {
+      "abstain_rate": 0.3208,
+      "accuracy": 0.5358,
+      "confusion_matrix": {
+        "ASK_CLARIFICATION": {
+          "ASK_CLARIFICATION": 22,
+          "NO_CONFIDENT_MATCH": 6,
+          "RETURN_RESULTS": 5
+        },
+        "NO_CONFIDENT_MATCH": {
+          "ASK_CLARIFICATION": 3,
+          "NO_CONFIDENT_MATCH": 22,
+          "RETURN_RESULTS": 6
+        },
+        "RETURN_RESULTS": {
+          "ASK_CLARIFICATION": 46,
+          "NO_CONFIDENT_MATCH": 57,
+          "RETURN_RESULTS": 98
+        }
+      },
+      "ece": 0.1068,
+      "macro_per_class_recall": 0.6213,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.6667,
+        "NO_CONFIDENT_MATCH": 0.7097,
+        "RETURN_RESULTS": 0.4876
+      },
+      "predicted_distribution": {
+        "ASK_CLARIFICATION": 71,
+        "NO_CONFIDENT_MATCH": 85,
+        "RETURN_RESULTS": 109
+      }
+    },
+    "fallback": {
+      "abstain_rate": 0.2792,
+      "accuracy": 0.5208,
+      "confusion_matrix": {
+        "ASK_CLARIFICATION": {
+          "ASK_CLARIFICATION": 24,
+          "NO_CONFIDENT_MATCH": 3,
+          "RETURN_RESULTS": 6
+        },
+        "NO_CONFIDENT_MATCH": {
+          "ASK_CLARIFICATION": 0,
+          "NO_CONFIDENT_MATCH": 31,
+          "RETURN_RESULTS": 0
+        },
+        "RETURN_RESULTS": {
+          "ASK_CLARIFICATION": 78,
+          "NO_CONFIDENT_MATCH": 40,
+          "RETURN_RESULTS": 83
+        }
+      },
+      "fallback_name": "deterministic_three_way_policy",
+      "macro_per_class_recall": 0.7134,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.7273,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.4129
+      },
+      "predicted_distribution": {
+        "ASK_CLARIFICATION": 102,
+        "NO_CONFIDENT_MATCH": 74,
+        "RETURN_RESULTS": 89
+      }
+    }
+  },
+  "primary_metric": {
+    "candidate": 0.6213,
+    "delta": -0.0921,
+    "fallback": 0.7134,
+    "name": "macro_per_class_recall"
+  },
+  "query_count": 265,
+  "schema_version": "1",
+  "slices": {},
+  "split": "validation"
+}

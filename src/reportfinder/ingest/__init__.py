@@ -11,8 +11,9 @@ import time
 
 from ..data import load_corpus as load_legacy_corpus
 from .catalog import ReportCatalogLoader
-from .enrich import attach_empty_enrichment, build_enriched_frame
+from .enrich import attach_empty_enrichment, build_enriched_frame, build_row_level_frame
 from .field_dictionary import FieldDictionaryLoader
+from .legacy_rows import fields_from_column
 from .linker import ReportFieldLinker
 from .models import (
     AmbiguityPolicy,
@@ -29,6 +30,7 @@ from .models import (
 
 __all__ = [
     "build_corpus",
+    "fields_from_column",
     "ReportCatalogLoader",
     "FieldDictionaryLoader",
     "ReportFieldLinker",
@@ -55,14 +57,38 @@ def build_corpus(cfg, verbose: bool = False):
     mode = IngestMode(cfg.ingest_mode)
 
     if mode is IngestMode.LEGACY_SINGLE_FILE:
-        corpus = attach_empty_enrichment(load_legacy_corpus(cfg.data_path))
-        summary = ImportSummary(
-            mode=mode.value,
-            report_rows_read=corpus.raw_row_count,
-            valid_reports_loaded=corpus.raw_row_count,
-            families_after_collapse=len(corpus.frame),
-            import_duration_s=time.perf_counter() - started,
-        )
+        if cfg.corpus_granularity == "family":
+            corpus = attach_empty_enrichment(load_legacy_corpus(cfg.data_path))
+            summary = ImportSummary(
+                mode=mode.value,
+                report_rows_read=corpus.raw_row_count,
+                valid_reports_loaded=corpus.raw_row_count,
+                families_after_collapse=len(corpus.frame),
+                import_duration_s=time.perf_counter() - started,
+            )
+            if verbose:
+                print(summary.render())
+            return corpus, summary
+
+        # Row-level legacy import. The workbook's own `Fields` column already
+        # states each row's fields, so no linker is needed -- but the resulting
+        # corpus has the same instance-level shape Phase 2 produces, which is what
+        # the two-level family/instance model requires.
+        catalog_loader = ReportCatalogLoader()
+        records = catalog_loader.load(cfg.data_path)
+        linked = fields_from_column(records, source_file=str(cfg.data_path))
+
+        summary = ImportSummary(mode=mode.value)
+        corpus = build_row_level_frame(records, linked, summary)
+
+        summary.report_rows_read = catalog_loader.rows_read
+        summary.valid_reports_loaded = len(records)
+        summary.row_validation_errors = len(catalog_loader.errors)
+        duplicate_keys = _count_duplicate_identities(records)
+        summary.duplicate_report_identities = duplicate_keys[0]
+        summary.duplicate_report_rows = duplicate_keys[1]
+        summary.import_duration_s = time.perf_counter() - started
+
         if verbose:
             print(summary.render())
         return corpus, summary
@@ -82,7 +108,8 @@ def build_corpus(cfg, verbose: bool = False):
     )
     result = linker.link(records, field_records)
 
-    corpus = build_enriched_frame(records, result.linked_reports, result.validation_metrics)
+    builder = build_row_level_frame if cfg.corpus_granularity == "report_row" else build_enriched_frame
+    corpus = builder(records, result.linked_reports, result.validation_metrics)
 
     summary = result.validation_metrics
     summary.mode = mode.value
@@ -110,6 +137,6 @@ def _count_duplicate_identities(records: list[ReportCatalogRecord]) -> tuple[int
     """How many report identities repeat, and over how many rows."""
     import collections
 
-    counts = collections.Counter(r.report_key for r in records)
+    counts = collections.Counter(r.title_key for r in records)
     dupes = {k: v for k, v in counts.items() if v > 1}
     return len(dupes), sum(dupes.values())

@@ -1,0 +1,47 @@
+{
+  "implementation_status": "complete",
+  "static_validation": {
+    "compileall": "passed"
+  },
+  "tests": {
+    "passed": 116,
+    "failed": 0,
+    "duration_seconds": 186.51
+  },
+  "synthetic_evaluation": {
+    "development": {
+      "queries": 18,
+      "hit_at_1": 0.8888888888888888,
+      "hit_at_5": 0.8888888888888888,
+      "mrr_at_10": 0.8888888888888888,
+      "no_answer_precision": 1.0,
+      "no_answer_recall": 1.0,
+      "latency_p50_ms": 203.8524585000232
+    },
+    "heldout": {
+      "queries": 15,
+      "hit_at_1": 0.6666666666666666,
+      "hit_at_5": 0.7333333333333333,
+      "mrr_at_10": 0.7,
+      "no_answer_precision": 1.0,
+      "no_answer_recall": 1.0,
+      "latency_p50_ms": 188.21462500000052
+    },
+    "transfer": {
+      "queries": 12,
+      "hit_at_1": 0.75,
+      "hit_at_5": 0.75,
+      "mrr_at_10": 0.75,
+      "no_answer_precision": 1.0,
+      "no_answer_recall": 1.0,
+      "latency_p50_ms": 217.7113755001301
+    }
+  },
+  "integrity": {
+    "human_relevance_judgments": 0,
+    "adjudicated_judgments": 0,
+    "metrics_are_production_accuracy": false,
+    "answerability_is_calibrated": false,
+    "note": "All reported evaluation slices are author-synthetic. The 10,000-scenario bundle remains weak-label evidence."
+  }
+}

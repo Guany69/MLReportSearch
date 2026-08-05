@@ -63,10 +63,11 @@ class SourceRef:
 class ReportCatalogRecord:
     """One row of the report catalog (report-level metadata, no fields)."""
 
-    report_key: str  # normalized identity; NOT unique when titles repeat
+    report_key: str  # stable catalog-row identity, R####
     report_name: str  # display value
     source: SourceRef
     row_index: int  # 0-based position in the loaded frame; unique per row
+    title_key: str = ""  # normalized title; intentionally not unique
     # Normalized data_source, precomputed for composite disambiguation.
     data_source_key: str = ""
 
@@ -93,6 +94,11 @@ class ReportCatalogRecord:
 
     # Phase 1 only. None in Phase 2 (the column does not exist there).
     fields_raw: str | None = None
+
+    @property
+    def report_key_id(self) -> str:
+        """Compatibility spelling used by early relevance-data prototypes."""
+        return self.report_key
 
 
 @dataclass

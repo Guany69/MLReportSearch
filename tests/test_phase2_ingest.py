@@ -29,7 +29,6 @@ from .phase2_fixtures import (
     write_dictionary,
 )
 
-
 # --- normalization ----------------------------------------------------------
 
 
@@ -151,7 +150,8 @@ def test_catalog_whitespace_normalized_but_display_preserved(tmp_path):
     path = write_catalog([catalog_row("  Alpha  Report ")], tmp_path / "cat.xlsx")
     record = ReportCatalogLoader().load(path)[0]
     assert record.report_name == "Alpha  Report"  # display: inner spacing kept
-    assert record.report_key == "alpha report"  # match: collapsed
+    assert record.report_key == "R0004"  # stable physical catalog-row identity
+    assert record.title_key == "alpha report"  # normalized title lookup
 
 
 def test_catalog_duplicate_names_are_distinct_rows(tmp_path):
@@ -160,7 +160,8 @@ def test_catalog_duplicate_names_are_distinct_rows(tmp_path):
     )
     records = ReportCatalogLoader().load(path)
     assert len(records) == 2
-    assert records[0].report_key == records[1].report_key
+    assert records[0].report_key != records[1].report_key
+    assert records[0].title_key == records[1].title_key
     assert records[0].row_index != records[1].row_index
 
 

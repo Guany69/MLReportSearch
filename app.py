@@ -1,6 +1,11 @@
-"""Minimal Streamlit UI: one text box -> ranked report-definition cards.
+"""Streamlit UI: one text box -> a three-way decision and ranked report families.
 
     uv run streamlit run app.py
+
+This is on the structured `search(SearchRequest) -> SearchOutcome` contract rather
+than the deprecated `query()` adapter, so the decision, the family/instance split,
+the grounded clarification, the active fallbacks and the catalog and bundle versions
+all reach the screen instead of being flattened away.
 """
 
 from __future__ import annotations
@@ -10,30 +15,44 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from reportfinder.auth import DEVELOPMENT_PRINCIPAL, SearchRequest
 from reportfinder.config import DEFAULT
-from reportfinder.ingest.models import IngestMode
 from reportfinder.model import ReportFinder, explain_fields, why_matched
 from reportfinder.represent import load_or_build
 
 st.set_page_config(page_title="Report Finder", page_icon="🔎", layout="centered")
 
 
-@st.cache_resource(show_spinner="Building index (first run only)...")
-def get_representation(
-    mode: str, data_path: str, catalog_path: str, dictionary_path: str
-):
-    """Built once per process; the encoder stays resident so queries are sub-second.
+def _ingest_paths(cfg) -> list[tuple[Path, str]]:
+    """Which input files this ingest mode actually needs."""
+    if cfg.ingest_mode == "phase2_dual_file":
+        return [(cfg.catalog_path, "Report catalog"),
+                (cfg.field_dictionary_path, "Field dictionary")]
+    return [(cfg.data_path, "Report workbook")]
 
-    Keyed on the ingest inputs so switching mode in the sidebar rebuilds rather
-    than silently reusing the other mode's index.
+
+@st.cache_resource(show_spinner="Building index (first run only)...")
+def get_finder(mode: str, data_path: str, catalog_path: str, dictionary_path: str,
+               top_k: int):
+    """Built once per process, keyed on the inputs that change what it returns.
+
+    Streamlit reruns this script top to bottom on every interaction. Without the
+    cache the whole representation -- and, in generator mode, every index in the
+    bundle -- would be rebuilt on each keystroke.
     """
     cfg = DEFAULT.with_overrides(
         ingest_mode=mode,
         data_path=Path(data_path),
         catalog_path=Path(catalog_path),
         field_dictionary_path=Path(dictionary_path),
+        top_k=int(top_k),
     )
-    return load_or_build(cfg, rebuild=False, verbose=False), cfg
+    finder = ReportFinder(load_or_build(cfg, rebuild=False, verbose=False), cfg)
+    if cfg.retrieval_mode == "generators":
+        # Construct the pipeline eagerly, inside the cache, so the first query does
+        # not pay for loading every checkpoint.
+        _ = finder.pipeline
+    return finder, cfg
 
 
 def fmt_date(value, missing: bool) -> str:
@@ -55,9 +74,22 @@ def render_card(candidate, rank: int | None = None) -> None:
                 + (f" · tags: {row['tags']}" if str(row["tags"]).strip() else "")
             )
         with right:
-            st.metric("confidence", f"{candidate.confidence_pct:.1f}%")
+            if candidate.cross_encoder_score is not None:
+                # A raw logit, labelled as one. It is not a probability and there is
+                # no calibration artifact that would make it one.
+                st.metric("reranker", f"{candidate.cross_encoder_score:+.2f}")
+            elif candidate.instance_id:
+                st.metric("reranker", "n/a")
+            else:
+                st.metric("retrieval share", f"{candidate.confidence_pct:.1f}%")
 
-        st.progress(min(candidate.probability * 4, 1.0))
+        if candidate.instance_id:
+            st.caption(
+                f"instance `{candidate.instance_id}` · admitted via "
+                f"`{candidate.admitted_via}`"
+            )
+        else:
+            st.progress(min(candidate.probability * 4, 1.0))
 
         fields = list(row["fields"])
         st.markdown(f"**Fields ({len(fields)})**")
@@ -86,9 +118,8 @@ def render_card(candidate, rank: int | None = None) -> None:
 
         field_lines = explain_fields(candidate)
         if field_lines:
-            ambiguous = candidate.has_ambiguous_links
             body = "\n".join(f"- {line}" for line in field_lines)
-            if ambiguous:
+            if candidate.has_ambiguous_links:
                 st.warning(body, icon="⚠️")
             else:
                 st.success(body, icon="🧩")
@@ -96,76 +127,49 @@ def render_card(candidate, rank: int | None = None) -> None:
 
 st.title("🔎 Report Finder")
 st.caption(
-    "Describe what you need in plain English. Answers come from an unsupervised "
-    "dual-space product-of-experts model over the report estate."
+    "Describe what you need in plain English. Independent retrievers nominate "
+    "candidates, a cross-encoder reranks the full shortlist, and the system "
+    "answers, asks, or declines."
 )
 
 with st.sidebar:
     st.header("Ingestion")
-    mode = st.radio(
-        "Mode",
-        options=[m.value for m in IngestMode],
-        index=0,
-        help="legacy_single_file reads the Phase 1 Fields column. "
-        "phase2_dual_file reconstructs fields from the catalog + field dictionary.",
+    mode = st.selectbox(
+        "Mode", ["legacy_single_file", "phase2_dual_file"],
+        index=0 if DEFAULT.ingest_mode == "legacy_single_file" else 1,
     )
-    if mode == IngestMode.LEGACY_SINGLE_FILE.value:
-        data_path = st.text_input("Workbook", value=str(DEFAULT.data_path))
-        catalog_path, dictionary_path = str(DEFAULT.catalog_path), str(
-            DEFAULT.field_dictionary_path
-        )
-    else:
-        data_path = str(DEFAULT.data_path)
-        catalog_path = st.text_input("Report catalog", value=str(DEFAULT.catalog_path))
-        dictionary_path = st.text_input(
-            "Field dictionary", value=str(DEFAULT.field_dictionary_path)
-        )
+    data_path = st.text_input("Report workbook", value=str(DEFAULT.data_path))
+    catalog_path = st.text_input("Report catalog", value=str(DEFAULT.catalog_path))
+    dictionary_path = st.text_input(
+        "Field dictionary", value=str(DEFAULT.field_dictionary_path)
+    )
 
-    st.header("Model knobs")
-    alpha = st.slider("α — dense vs LSA", 0.0, 1.0, DEFAULT.alpha, 0.05,
-                      help="1.0 = dense only, 0.0 = LSA only")
-    t_dense = st.slider("T_d — dense temperature", 0.01, 0.30, DEFAULT.t_dense, 0.01)
-    t_lsa = st.slider("T_l — LSA temperature", 0.01, 0.30, DEFAULT.t_lsa, 0.01)
-    tau = st.slider("τ — confidence threshold", 0.0, 0.6, DEFAULT.tau, 0.01)
-    delta = st.slider("δ — margin threshold", 0.0, 0.2, DEFAULT.delta, 0.01)
-    top_k = st.number_input("top-k when ambiguous", 1, 20, DEFAULT.top_k)
-    field_expert = st.checkbox("Enable field-term expert", value=DEFAULT.use_field_expert)
+    st.header("Search")
+    top_k = st.number_input("results to show", 1, 20, DEFAULT.top_k)
     st.divider()
     st.caption(
         "These are report **definitions**, not result-sets. The app identifies "
         "which report answers your question; it never fabricates report data."
     )
 
-_required = (
-    [(data_path, "Workbook")]
-    if mode == IngestMode.LEGACY_SINGLE_FILE.value
-    else [(catalog_path, "Report catalog"), (dictionary_path, "Field dictionary")]
+_probe = DEFAULT.with_overrides(
+    ingest_mode=mode, data_path=Path(data_path),
+    catalog_path=Path(catalog_path), field_dictionary_path=Path(dictionary_path),
 )
-for _path, _label in _required:
+for _path, _label in _ingest_paths(_probe):
     if not Path(_path).exists():
         st.error(f"{_label} not found at `{_path}`. Point the sidebar at a valid file.")
         st.stop()
 
 try:
-    rep, base_cfg = get_representation(mode, data_path, catalog_path, dictionary_path)
+    finder, cfg = get_finder(mode, data_path, catalog_path, dictionary_path, int(top_k))
 except Exception as exc:  # noqa: BLE001 - surface build/ingest errors in the UI
     st.error(f"Could not build the index: {exc}")
     st.stop()
 
-cfg = base_cfg.with_overrides(
-    alpha=alpha,
-    t_dense=t_dense,
-    t_lsa=t_lsa,
-    tau=tau,
-    delta=delta,
-    top_k=int(top_k),
-    use_field_expert=field_expert,
-)
-finder = ReportFinder(rep, cfg)
-
-if rep.import_summary is not None:
-    with st.expander(f"Import summary — {len(rep)} report families ({mode})"):
-        st.code(rep.import_summary.render(), language="text")
+if finder.rep.import_summary is not None:
+    with st.expander(f"Import summary — {len(finder.rep)} report families ({mode})"):
+        st.code(finder.rep.import_summary.render(), language="text")
 
 with st.form("query_form"):
     query = st.text_input(
@@ -175,38 +179,61 @@ with st.form("query_form"):
     submitted = st.form_submit_button("Find report", type="primary")
 
 if submitted and query.strip():
-    result = finder.query(query)
-
-    if result.confident:
-        st.success(
-            f"Confident match — top-1 {result.p1:.1%} (≥ τ={cfg.tau:.0%}), "
-            f"margin {result.margin:.1%} (≥ δ={cfg.delta:.0%})"
-        )
-        render_card(result.candidates[0])
-    else:
-        st.warning(
-            f"**Ambiguous — did you mean one of these?** "
-            f"Top-1 is {result.p1:.1%} with a {result.margin:.1%} margin, which doesn't "
-            f"clear τ={cfg.tau:.0%} / δ={cfg.delta:.0%}. The posterior is spread across "
-            f"several reports."
-        )
+    if cfg.retrieval_mode != "generators":
+        # Deprecated compatibility path, kept reachable for ablation.
+        result = finder.query(query)
+        st.warning(f"Running the deprecated `{cfg.retrieval_mode}` runtime.")
         for i, candidate in enumerate(result.candidates, 1):
             render_card(candidate, rank=i)
+        st.stop()
 
-    with st.expander("Posterior diagnostics"):
-        cols = st.columns(4)
-        cols[0].metric("top-1 p₁", f"{result.p1:.3f}")
-        cols[1].metric("runner-up p₂", f"{result.p2:.3f}")
-        cols[2].metric("margin", f"{result.margin:.3f}")
-        cols[3].metric("H(P)", f"{result.entropy_bits:.2f} bits")
-        st.caption(
-            f"Posterior over {result.n_reports} report families · "
-            f"normalized entropy {result.normalized_entropy:.3f} "
-            f"(0 = one certain answer, 1 = uniform / no information) · "
-            f"max entropy {result.n_reports.bit_length() - 1}–"
-            f"{result.n_reports.bit_length()} bits"
+    outcome = finder.search(
+        SearchRequest(query, DEVELOPMENT_PRINCIPAL, top_k=int(top_k))
+    )
+
+    decision = outcome.decision.value
+    detail = outcome.decision_detail
+    if decision == "RETURN_RESULTS":
+        st.success("Answerable")
+    elif decision == "ASK_CLARIFICATION":
+        st.warning("Needs clarification")
+    else:
+        st.error("No confident match")
+
+    for reason in (detail.reasons if detail is not None else ()):
+        st.caption(reason)
+
+    if outcome.clarification is not None:
+        st.markdown(f"**{outcome.clarification.question}**")
+        for option in outcome.clarification.options:
+            st.markdown(f"- {option}")
+
+    for warning in outcome.warnings:
+        st.caption(f"⚠️ {warning}")
+
+    if outcome.active_fallbacks:
+        # Disclosed on every response. A fallback nobody can see is a fallback that
+        # gets mistaken for a trained model.
+        st.info(
+            "Running with fallbacks: " + ", ".join(sorted(outcome.active_fallbacks)),
+            icon="🧪",
         )
-        if result.field_expert_used:
-            st.caption(f"Field expert active — detected: {', '.join(result.detected_fields)}")
+
+    # NO_CONFIDENT_MATCH deliberately carries no families: a ranked list reads as an
+    # answer whatever status sits above it.
+    for i, family in enumerate(outcome.families, 1):
+        render_card(finder.candidate_for(family), rank=i)
+
+    with st.expander("Diagnostics"):
+        cols = st.columns(3)
+        cols[0].metric("families", len(outcome.families))
+        cols[1].metric("latency", f"{outcome.latency_ms:.0f} ms")
+        cols[2].metric("risk band", outcome.telemetry.risk.get("risk_band", "?"))
+        st.caption(
+            f"catalog `{outcome.catalog_version}` · bundle "
+            f"`{outcome.model_bundle_version or 'none'}` · request "
+            f"`{outcome.request_id}`"
+        )
+        st.json(outcome.telemetry.as_dict(), expanded=False)
 elif submitted:
     st.error("Enter a query first.")

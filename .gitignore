@@ -1,6 +1,11 @@
 # Precomputed representations — rebuilt on demand with --rebuild
 .cache/
 
+# Retrieval index bundle — rebuilt with `uv run reportfinder-bundle build`.
+# Kept out of git deliberately: it holds model-derived vectors that are large,
+# machine-specific, and fully reproducible from the workbook plus the manifest.
+.bundle/
+
 # Report workbooks are local-only by default, except the two Phase 2 inputs
 # below, which are tracked so the repo carries the real data.
 data/*.xlsx
@@ -18,4 +23,21 @@ __pycache__/
 .venv/
 *.egg-info/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .DS_Store
+
+# Exported inference graphs -- large, host-specific, and reproducible from the
+# pinned checkpoint via scripts/export_cross_encoder_onnx.py.
+artifacts/onnx/
+
+# Cached pipeline feature passes. Keyed on bundle id, so they are valid only on
+# the host that built that bundle; regenerate with `reportfinder-train`.
+artifacts/feature_cache/
+
+# v1 annotation scaffolding. Three CSVs totalling 322 MB, two of them over
+# GitHub's 100 MB file limit. They are named for a human-judgement process that
+# never ran -- no human labels exist (docs/known_limitations.md) -- and the v1
+# labels are no longer used for evaluation. The v2 set in data/relevance_v2/ is
+# what is measured against, and it is tracked.
+data/relevance/annotation/

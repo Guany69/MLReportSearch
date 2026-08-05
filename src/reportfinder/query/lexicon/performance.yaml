@@ -1,0 +1,13 @@
+domain: performance
+schema: 1
+rules:
+  - id: performance.score
+    phrases: ["review score", "performance score", "employee rating", "review rating", "review ratings"]
+    priority: 20
+    suppresses: ["Review Rating"]
+    emits:
+      - {canonical: "Performance Rating", kind: field, confidence: 0.88}
+  - id: performance.review
+    phrases: ["talent review", "performance review", "review outcomes", "employee appraisal"]
+    emits:
+      - {canonical: "Performance Rating", kind: field, confidence: 0.90}

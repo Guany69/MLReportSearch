@@ -9,10 +9,13 @@ Both are fit unsupervised on the corpus itself. Nothing here sees a label.
 from __future__ import annotations
 
 import hashlib
+import importlib.metadata
 import json
 import logging
+import platform
 import time
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 import joblib
@@ -23,12 +26,39 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import Normalizer
 
-from . import data as data_mod
-from .config import BGE_QUERY_PREFIX, Config, DENSE_MODEL_FALLBACK
+from .config import BGE_QUERY_PREFIX, DENSE_MODEL_FALLBACK, Config
 
 log = logging.getLogger(__name__)
 
-CACHE_VERSION = "v1"
+CACHE_VERSION = "v5-expansion-hybrid"
+CANONICAL_SCHEMA_VERSION = "2"
+REPRESENTATION_FEATURE_SCHEMA_VERSION = "2"
+
+
+def _dependency_version(name: str) -> str:
+    try:
+        return importlib.metadata.version(name)
+    except importlib.metadata.PackageNotFoundError:
+        return "missing"
+
+
+def _dense_cache_state(cfg: Config) -> str:
+    """Cheap local-only fingerprint of whether a dense model is available."""
+    if not cfg.use_dense or cfg.dense_mode == "off":
+        return "disabled"
+    if _dependency_version("sentence-transformers") == "missing":
+        return "dependency-missing"
+    try:
+        from huggingface_hub import try_to_load_from_cache
+        primary = try_to_load_from_cache(cfg.dense_model, "config.json")
+        fallback = try_to_load_from_cache(DENSE_MODEL_FALLBACK, "config.json")
+    except (ImportError, OSError, ValueError):
+        return "cache-state-unknown"
+    if isinstance(primary, str):
+        return f"primary:{Path(primary).stat().st_mtime_ns}"
+    if isinstance(fallback, str):
+        return f"fallback:{Path(fallback).stat().st_mtime_ns}"
+    return "model-not-cached"
 
 
 def build_doc(row: pd.Series, cfg: Config) -> str:
@@ -111,26 +141,59 @@ def _l2_normalize(matrix: np.ndarray) -> np.ndarray:
     return matrix / norms
 
 
-def load_encoder(model_name: str):
+def load_encoder(model_name: str, mode: str = "auto"):
     """Load the local sentence-transformer, falling back if the primary fails.
 
     Returns (model, resolved_name). The fallback exists because the primary may
     not be present in the local HF cache and the box may be offline.
     """
-    from sentence_transformers import SentenceTransformer
+    if mode == "off":
+        return None, "disabled"
+    try:
+        from sentence_transformers import SentenceTransformer
+    except ImportError as exc:
+        if mode == "local":
+            raise RuntimeError(
+                "dense_mode='local' requires sentence-transformers; install it "
+                "or set dense_mode='off'"
+            ) from exc
+        log.warning("sentence-transformers unavailable (%s); dense retrieval disabled.", exc)
+        return None, "unavailable"
 
     try:
-        return SentenceTransformer(model_name), model_name
-    except Exception as exc:  # noqa: BLE001 - any load failure should fall back
+        # Prefer the local cache. Newer transformers releases otherwise perform
+        # a network HEAD request even when every model artifact is available,
+        # which makes an offline deployment fail unnecessarily.
+        return SentenceTransformer(model_name, local_files_only=True), model_name
+    except (OSError, RuntimeError, ValueError) as exc:
+        if mode == "local":
+            raise RuntimeError(
+                f"dense_mode='local' could not load {model_name!r} from local files: {exc}"
+            ) from exc
+        try:
+            return SentenceTransformer(model_name), model_name
+        except (OSError, RuntimeError, ValueError):
+            pass
         if model_name == DENSE_MODEL_FALLBACK:
-            raise
+            log.warning("Dense model %r unavailable (%s); dense retrieval disabled.", model_name, exc)
+            return None, "unavailable"
         log.warning(
             "Could not load dense model %r (%s). Falling back to %r.",
             model_name,
             exc,
             DENSE_MODEL_FALLBACK,
         )
-        return SentenceTransformer(DENSE_MODEL_FALLBACK), DENSE_MODEL_FALLBACK
+        try:
+            return SentenceTransformer(DENSE_MODEL_FALLBACK, local_files_only=True), DENSE_MODEL_FALLBACK
+        except (OSError, RuntimeError, ValueError):
+            try:
+                return SentenceTransformer(DENSE_MODEL_FALLBACK), DENSE_MODEL_FALLBACK
+            except (OSError, RuntimeError, ValueError) as fallback_exc:
+                log.warning(
+                    "Dense fallback %r unavailable (%s); using LSA only.",
+                    DENSE_MODEL_FALLBACK, fallback_exc,
+                )
+                return None, "unavailable"
 
 
 def encode_query_text(text: str, model_name: str) -> str:
@@ -150,6 +213,7 @@ class Representation:
     lsa: np.ndarray  # U: (n, k) L2-normalized
     lsa_pipeline: object  # fitted TfidfVectorizer -> SVD -> Normalizer
     dense_model_name: str
+    dense_mode: str
     field_vocab: dict[str, np.ndarray]  # field name -> report indices having it
     raw_row_count: int
     encoder: object | None = None  # lazily attached
@@ -161,8 +225,12 @@ class Representation:
         return len(self.frame)
 
     def get_encoder(self):
+        if self.dense_mode != "native":
+            raise RuntimeError(f"Dense encoder is not active (state={self.dense_mode}).")
         if self.encoder is None:
-            self.encoder, _ = load_encoder(self.dense_model_name)
+            self.encoder, resolved = load_encoder(self.dense_model_name, "local")
+            if self.encoder is None:
+                raise RuntimeError(f"Dense encoder {resolved}.")
         return self.encoder
 
 
@@ -189,7 +257,9 @@ def _file_stamp(path: Path, label: str) -> dict:
             "Place the .xlsx there, or pass an explicit path."
         )
     stat = path.stat()
-    return {"path": str(path), "size": stat.st_size, "mtime": int(stat.st_mtime)}
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    return {"path": str(path.resolve()), "size": stat.st_size,
+            "mtime": int(stat.st_mtime), "sha256": digest}
 
 
 def _cache_signature(cfg: Config, data_path: Path) -> str:
@@ -221,8 +291,19 @@ def _cache_signature(cfg: Config, data_path: Path) -> str:
 
     payload = {
         "version": CACHE_VERSION,
+        "canonical_schema": CANONICAL_SCHEMA_VERSION,
+        "feature_schema": REPRESENTATION_FEATURE_SCHEMA_VERSION,
+        "python": platform.python_version(),
+        "dependencies": {
+            name: _dependency_version(name)
+            for name in ("numpy", "pandas", "scikit-learn", "sentence-transformers")
+        },
         "inputs": inputs,
         "dense_model": cfg.dense_model,
+        "dense_mode": cfg.dense_mode,
+        "resolved_dense_cache_state": _dense_cache_state(cfg),
+        "use_dense": cfg.use_dense,
+        "corpus_granularity": cfg.corpus_granularity,
         "svd_components": cfg.svd_components,
         "tfidf_min_df": cfg.tfidf_min_df,
         "tfidf_max_df": cfg.tfidf_max_df,
@@ -289,17 +370,26 @@ def build(cfg: Config, verbose: bool = True) -> Representation:
         )
 
     # --- Space A: dense semantic ---
-    encoder, resolved_name = load_encoder(cfg.dense_model)
-    if verbose:
-        print(f"  dense: encoding {n_docs} docs with {resolved_name} ...")
-    dense = encoder.encode(
-        docs,
-        batch_size=64,
-        convert_to_numpy=True,
-        normalize_embeddings=True,
-        show_progress_bar=verbose,
-    ).astype(np.float32)
-    dense = _l2_normalize(dense)
+    encoder, resolved_name = load_encoder(
+        cfg.dense_model, "off" if not cfg.use_dense else cfg.dense_mode,
+    )
+    if encoder is None:
+        dense = np.zeros((n_docs, 1), dtype=np.float32)
+        dense_state = "disabled" if resolved_name == "disabled" else "lsa-fallback"
+        if verbose:
+            print(f"  dense: {dense_state}")
+    else:
+        if verbose:
+            print(f"  dense: encoding {n_docs} docs with {resolved_name} ...")
+        dense = encoder.encode(
+            docs,
+            batch_size=64,
+            convert_to_numpy=True,
+            normalize_embeddings=True,
+            show_progress_bar=verbose,
+        ).astype(np.float32)
+        dense = _l2_normalize(dense)
+        dense_state = "native"
 
     field_vocab = build_field_vocab(frame)
 
@@ -313,6 +403,7 @@ def build(cfg: Config, verbose: bool = True) -> Representation:
         lsa=lsa,
         lsa_pipeline=lsa_pipeline,
         dense_model_name=resolved_name,
+        dense_mode=dense_state,
         field_vocab=field_vocab,
         raw_row_count=corpus.raw_row_count,
         encoder=encoder,
@@ -321,6 +412,8 @@ def build(cfg: Config, verbose: bool = True) -> Representation:
 
 
 def save(rep: Representation, cfg: Config, signature: str) -> None:
+    from .query.expansion.rules import lexicon_content_hash
+    from .ranking.features import FEATURE_HASH
     cache_dir = Path(cfg.cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -334,10 +427,20 @@ def save(rep: Representation, cfg: Config, signature: str) -> None:
     joblib.dump(
         {
             "signature": signature,
+            "cache_version": CACHE_VERSION,
+            "canonical_schema_version": CANONICAL_SCHEMA_VERSION,
+            "feature_schema_version": REPRESENTATION_FEATURE_SCHEMA_VERSION,
+            "built_at": datetime.now(UTC).isoformat(),
             "dense_model_name": rep.dense_model_name,
+            "dense_mode": rep.dense_mode,
             "docs": rep.docs,
             "raw_row_count": rep.raw_row_count,
             "import_summary": rep.import_summary,
+            "runtime_signature": {
+                "lexicon_hash": lexicon_content_hash(),
+                "use_query_expansion": cfg.use_query_expansion,
+                "ranking_feature_hash": FEATURE_HASH,
+            },
         },
         cache_dir / "meta.joblib",
     )
@@ -361,6 +464,20 @@ def try_load(cfg: Config, signature: str) -> Representation | None:
         log.warning("Cache unreadable (%s); rebuilding.", exc)
         return None
 
+    from .query.expansion.rules import lexicon_content_hash
+    from .ranking.features import FEATURE_HASH
+    cached_runtime = meta.get("runtime_signature", {})
+    current_runtime = {
+        "lexicon_hash": lexicon_content_hash(),
+        "use_query_expansion": cfg.use_query_expansion,
+        "ranking_feature_hash": FEATURE_HASH,
+    }
+    if cached_runtime and cached_runtime != current_runtime:
+        log.warning(
+            "Query-time lexicon/ranking settings changed since this representation "
+            "was built; reusing matrices because runtime changes do not affect them."
+        )
+
     return Representation(
         frame=frame,
         docs=meta["docs"],
@@ -368,6 +485,9 @@ def try_load(cfg: Config, signature: str) -> Representation | None:
         lsa=matrices["lsa"],
         lsa_pipeline=pipeline,
         dense_model_name=meta["dense_model_name"],
+        # Old caches omitted this field and used a one-column zero matrix. Treat
+        # that shape as lexical/LSA fallback, never as a native encoder.
+        dense_mode=meta.get("dense_mode", "lsa-fallback"),
         field_vocab=build_field_vocab(frame),
         raw_row_count=meta["raw_row_count"],
         encoder=None,  # loaded lazily on first query

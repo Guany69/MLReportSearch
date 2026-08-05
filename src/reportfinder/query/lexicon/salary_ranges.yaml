@@ -1,0 +1,13 @@
+domain: salary_ranges
+schema: 1
+rules:
+  - id: salary_ranges.bounds
+    phrases: ["salary band", "pay band", "compensation range", "range spread"]
+    emits:
+      - {canonical: "Range Minimum", kind: field, confidence: 0.90}
+      - {canonical: "Range Midpoint", kind: field, confidence: 0.90}
+      - {canonical: "Range Maximum", kind: field, confidence: 0.90}
+  - id: salary_ranges.midpoint
+    phrases: ["market midpoint", "range middle", "salary midpoint"]
+    emits:
+      - {canonical: "Range Midpoint", kind: field, confidence: 0.92}

@@ -1,0 +1,35 @@
+domain: location_mobility
+schema: 1
+rules:
+  - id: location.company
+    phrases: ["legal entity", "employing company"]
+    emits:
+      - {canonical: "Company", kind: field, confidence: 0.86}
+  - id: location.supervisory_org
+    phrases: ["supervisory org", "supervisory team", "management organization"]
+    emits:
+      - {canonical: "Supervisory Organization", kind: field, confidence: 0.90}
+  - id: org.grouped_by_org
+    phrases: ["organization", "org"]
+    priority: 20
+    context:
+      requires_any: ["grouped by", "broken down", "breakdown", "split by", "by organization", "organization headcount"]
+      window: 5
+    suppresses: ["Organization"]
+    emits:
+      - {canonical: "Supervisory Organization", kind: field, confidence: 0.94}
+  - id: mobility.previous_manager
+    phrases: ["prior boss", "former boss", "old boss", "previous boss", "prior manager", "former manager"]
+    priority: 20
+    suppresses: ["Manager"]
+    emits:
+      - {canonical: "Previous Manager", kind: field, confidence: 0.94}
+  - id: mobility.manager_change
+    phrases: ["manager change", "changed managers", "new boss"]
+    emits:
+      - {canonical: "Previous Manager", kind: field, confidence: 0.88}
+      - {canonical: "New Manager", kind: field, confidence: 0.88}
+  - id: mobility.previous_org
+    phrases: ["previous department", "former department", "old organization", "moved from"]
+    emits:
+      - {canonical: "Previous Organization", kind: field, confidence: 0.88}

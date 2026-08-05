@@ -1,0 +1,55 @@
+{
+  "cross_encoder_dtype": "float64",
+  "decisions": {
+    "ASK_CLARIFICATION": 10,
+    "NO_CONFIDENT_MATCH": 24,
+    "RETURN_RESULTS": 26
+  },
+  "family_mrr": 0.2508,
+  "family_ndcg@5": 0.2426,
+  "instance_recall@1_within_correct_family": 0.2,
+  "label_basis": "synthetic weak supervision; not production accuracy",
+  "latency_ms": {
+    "mean": 3649.1,
+    "p50": 3182.9,
+    "p95": 7353.6
+  },
+  "loss_by_boundary": {
+    "final": 23,
+    "never_generated": 11,
+    "shortlist": 5,
+    "survived": 26
+  },
+  "positive_loss_rate_by_boundary": {
+    "final": 0.3538,
+    "never_generated": 0.1692,
+    "shortlist": 0.0769,
+    "survived": 0.4
+  },
+  "query_count": 60,
+  "recall_by_generator": {
+    "bm25f": 0.8639,
+    "dense_identity": 0.25,
+    "dense_purpose": 0.0333,
+    "dense_schema": 0.5083,
+    "prototype": 0.25,
+    "splade": 0.7167
+  },
+  "recall_by_stage": {
+    "final": 0.425,
+    "fusion": 0.8,
+    "generated": 0.8722,
+    "rerank": 0.8,
+    "shortlist": 0.8,
+    "union": 0.8722
+  },
+  "relevant_instances_total": 65,
+  "unique_relevant_contributed_by_generator": {
+    "bm25f": 5,
+    "dense_identity": 0,
+    "dense_purpose": 0,
+    "dense_schema": 0,
+    "prototype": 0,
+    "splade": 1
+  }
+}

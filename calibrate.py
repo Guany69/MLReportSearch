@@ -1,4 +1,4 @@
-"""Self-supervised calibration probe: pick τ and δ for YOUR corpus, without labels.
+"""Legacy title-leak smoke test. This does not calibrate answerability.
 
 The decision rule (`p1 >= τ and margin >= δ`) is only as good as the thresholds,
 and the right thresholds depend on the shape of the corpus -- specifically on how
@@ -6,7 +6,7 @@ many semantically near-identical reports it contains. A corpus of 4000 genuinely
 distinct reports concentrates posterior mass; one with deep clusters of clones
 spreads it. So τ cannot be chosen in the abstract.
 
-The probe: use each report's own title as a query. The correct answer is known by
+The smoke test uses each report's own title as a query. The answer is assumed by
 construction (that report), so we get an accuracy signal with no hand labels --
 the supervision comes from the corpus's own structure.
 
@@ -14,11 +14,10 @@ the supervision comes from the corpus's own structure.
     p1    -- the confidence distribution when it does
     τ sweep -- precision/coverage trade-off at each threshold
 
-CAVEAT, stated plainly: titles are part of doc(r) (weighted x3), so this probe is
-LEAKY and optimistic. It is an upper bound, useful for setting a ceiling on τ and
-for comparing knob settings against each other -- not an estimate of real-world
-accuracy on paraphrased queries. Real queries will score lower; a sane τ sits
-meaningfully below the p1 seen here.
+CAVEAT: titles are part of doc(r) (weighted x3), so this is severely leaky and
+optimistic. It is not calibration, production accuracy, or an answerability
+estimate. Use ``python -m reportfinder.evaluation.benchmark`` for the labeled
+weak/synthetic harness and collect human judgments before fitting a calibrator.
 
     uv run python calibrate.py --data tests/fixtures/fixture_reports.xlsx --n 300
 """
@@ -56,6 +55,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     cfg = DEFAULT.with_overrides(
+        retrieval_mode="legacy_weighted_logit",
         data_path=args.data,
         alpha=args.alpha,
         t_dense=args.t_dense,
@@ -99,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"margin mean {margins.mean():.3f} | median {np.median(margins):.3f}")
     print(f"normalized entropy mean {np.mean(entropies):.3f}")
 
-    print("\ntau sweep (delta fixed at %.2f):" % cfg.delta)
+    print(f"\ntau sweep (delta fixed at {cfg.delta:.2f}):")
     print(f"{'tau':>6} {'coverage':>10} {'precision':>11} {'note':>26}")
     print("-" * 56)
     for tau in [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50]:

@@ -1,23 +1,27 @@
-"""Backward compatibility and search regression for Phase 2.
+"""Backward compatibility and search regression for the dual-file ingest path.
 
 Two questions this file exists to answer:
 
 1. Does Phase 2 reconstruct what Phase 1 read directly? (equivalence)
 2. Does adding Phase 2 metadata break or distort existing ranking? (regression)
 
-The equivalence test runs against the *real* workbooks when present, because a
-synthetic fixture can only prove the code is self-consistent -- not that it
-reconstructs the actual estate. It falls back to a controlled fixture otherwise.
+Both are answered against controlled synthetic fixtures built by
+`phase2_fixtures.py`, which is what lets them run at all: the real Phase 2
+workbooks are not in this tree.
+
+Four further tests used to assert against those real workbooks -- reconstruction
+precision/recall of 1.0, the exact link counters, and the strict/composite policy
+trade-offs. They were permanently skipped and have been removed rather than left
+as decoration. What they measured was the linker's behaviour *on one specific
+estate*; the mechanics they exercised are covered here synthetically. Restoring
+them means restoring the workbooks, at which point they are worth rewriting
+against whatever the new estate actually contains rather than against numbers
+copied from a dataset nobody has.
 
 Run: uv run pytest tests/test_phase2_regression.py -v
 """
 
 from __future__ import annotations
-
-from pathlib import Path
-
-import numpy as np
-import pytest
 
 from reportfinder.config import DEFAULT
 from reportfinder.ingest import build_corpus
@@ -30,16 +34,6 @@ from .phase2_fixtures import (
     write_dictionary,
     write_legacy,
 )
-
-REAL_LEGACY = DEFAULT.data_path
-REAL_CATALOG = DEFAULT.catalog_path
-REAL_DICTIONARY = DEFAULT.field_dictionary_path
-
-have_real_data = REAL_LEGACY.exists() and REAL_CATALOG.exists() and REAL_DICTIONARY.exists()
-requires_real_data = pytest.mark.skipif(
-    not have_real_data, reason="real Phase 1/Phase 2 workbooks not present in data/"
-)
-
 
 # --- backward compatibility: controlled fixture -----------------------------
 
@@ -117,16 +111,77 @@ def test_both_modes_produce_the_same_corpus_contract(tmp_path):
         assert isinstance(value, list) and all(isinstance(v, str) for v in value)
 
 
-def test_legacy_mode_has_empty_phase2_enrichment(tmp_path):
+def test_phase2_preserves_catalog_metadata_and_link_aggregates(tmp_path):
+    catalog = write_catalog([catalog_row(
+        "Alpha", Description="Useful report description", **{
+            "Area Where Used": "Benefits Hub", "Landing Page": "People",
+            "Chart Type": "Bar", "Owner": "Reporting Team",
+        })], tmp_path / "cat.xlsx")
+    dictionary = write_dictionary(
+        [dictionary_row("Worker", "Status", "Alpha")], tmp_path / "dict.xlsx"
+    )
+    corpus, _ = build_corpus(DEFAULT.with_overrides(
+        ingest_mode="phase2_dual_file", catalog_path=catalog,
+        field_dictionary_path=dictionary,
+    ))
+    row = corpus.frame.iloc[0]
+    assert row["report_id"] == 0
+    assert row["description"] == "Useful report description"
+    assert row["area_where_used"] == "Benefits Hub"
+    assert row["landing_page"] == "People" and row["chart_type"] == "Bar"
+    assert row["field_link_confidence"] == 1.0
+    assert row["ambiguous_link_fraction"] == 0.0
+
+
+def test_legacy_family_mode_has_empty_phase2_enrichment(tmp_path):
+    """Family granularity still attaches the Phase 2 columns empty."""
     legacy_path = write_legacy(
         [dict(catalog_row("Alpha"), Fields="Status")], tmp_path / "legacy.xlsx"
     )
     corpus, _ = build_corpus(
-        DEFAULT.with_overrides(ingest_mode="legacy_single_file", data_path=legacy_path)
+        DEFAULT.with_overrides(
+            ingest_mode="legacy_single_file",
+            corpus_granularity="family",
+            # Family granularity cannot run under the `generators` default.
+            retrieval_mode="hybrid",
+            data_path=legacy_path,
+        )
     )
     row = corpus.frame.iloc[0]
     assert row["field_meta"] == []
     # Value, not identity: pandas stores this column as numpy bool.
+    assert not row["has_ambiguous_fields"]
+    assert row["ambiguous_field_count"] == 0
+
+
+def test_legacy_row_mode_links_fields_without_phase2_metadata(tmp_path):
+    """Row granularity populates `field_meta`, but with no Phase 2 *content*.
+
+    Row-level legacy ingestion needs per-field provenance to give instances an
+    identity. What it must not do is invent Phase 2 metadata it never read: the
+    business object, domain, categories and field descriptions stay empty, which
+    is what keeps `doc(r)` byte-identical (asserted separately below).
+    """
+    legacy_path = write_legacy(
+        [dict(catalog_row("Alpha"), Fields="Status")], tmp_path / "legacy.xlsx"
+    )
+    corpus, _ = build_corpus(
+        DEFAULT.with_overrides(
+            ingest_mode="legacy_single_file",
+            corpus_granularity="report_row",
+            data_path=legacy_path,
+        )
+    )
+    row = corpus.frame.iloc[0]
+    assert [f.field_name for f in row["field_meta"]] == ["Status"]
+    assert all(
+        f.business_object == ""
+        and f.domain == ""
+        and f.categories == ""
+        and f.description == ""
+        and f.built_in_prompts == ""
+        for f in row["field_meta"]
+    )
     assert not row["has_ambiguous_fields"]
     assert row["ambiguous_field_count"] == 0
 
@@ -247,80 +302,3 @@ def test_phase2_zones_dedupe_shared_values(tmp_path):
     # Domain zone weight is 1; three fields share the domain but it appears once
     # in that zone (the category zone contributes the other occurrence).
     assert doc.count("Worker Data") <= 2
-
-
-# --- real-data equivalence --------------------------------------------------
-
-
-@requires_real_data
-def test_phase2_reconstructs_real_phase1_fields():
-    """The acceptance gate: reconstruction vs authored ground truth.
-
-    Compared per report *title*. Where_Used records that a field is used by a
-    report of a given name; it cannot say which duplicate-titled row. Title level
-    is therefore the granularity the source data actually supports -- and is the
-    granularity family collapse operates at.
-    """
-    legacy, _ = build_corpus(DEFAULT.with_overrides(ingest_mode="legacy_single_file"))
-    phase2, _ = build_corpus(DEFAULT.with_overrides(ingest_mode="phase2_dual_file"))
-
-    def by_title(corpus):
-        out: dict[str, set[str]] = {}
-        for _, row in corpus.frame.iterrows():
-            out.setdefault(row["title"].casefold(), set()).update(
-                f.casefold() for f in row["fields"]
-            )
-        return out
-
-    truth, got = by_title(legacy), by_title(phase2)
-    assert set(truth) == set(got), "no report titles lost or invented"
-
-    precision, recall = [], []
-    for key, want in truth.items():
-        have = got[key]
-        if not want:
-            continue
-        precision.append(len(want & have) / len(have) if have else 0.0)
-        recall.append(len(want & have) / len(want))
-
-    assert np.mean(recall) == 1.0, "every authored field must be reconstructed"
-    assert np.mean(precision) == 1.0, "and no field invented"
-
-
-@requires_real_data
-def test_real_import_metrics_are_within_expected_bounds():
-    """Guards the linking result on the real estate against silent drift."""
-    _, summary = build_corpus(DEFAULT.with_overrides(ingest_mode="phase2_dual_file"))
-
-    assert summary.report_rows_read == 4000
-    assert summary.unmatched_where_used == 0, "every Where_Used name exists in catalog"
-    assert summary.reports_with_zero_fields == 0, "permissive leaves no report field-blind"
-    assert summary.exact_name_links > 30000
-    assert summary.composite_links > 10000, "business-object corroboration is carrying weight"
-    assert summary.ambiguous_links > 0, "genuinely undecidable links exist and are reported"
-    assert summary.duplicate_report_identities == 533
-    assert summary.import_duration_s < 60
-
-
-@requires_real_data
-def test_strict_policy_leaves_reports_field_blind_on_real_data():
-    """Documents the trade-off behind choosing permissive, on real data."""
-    _, strict = build_corpus(
-        DEFAULT.with_overrides(
-            ingest_mode="phase2_dual_file", ambiguity_policy="strict"
-        )
-    )
-    assert strict.reports_with_zero_fields > 0, (
-        "strict withholds undecidable links, so some reports get no fields at all"
-    )
-
-
-@requires_real_data
-def test_composite_matching_can_be_disabled():
-    _, without = build_corpus(
-        DEFAULT.with_overrides(
-            ingest_mode="phase2_dual_file", enable_composite_match=False
-        )
-    )
-    assert without.composite_links == 0
-    assert without.ambiguous_links > 1936, "without corroboration, more stays ambiguous"

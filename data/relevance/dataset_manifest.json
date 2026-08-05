@@ -1,0 +1,57 @@
+{
+  "dataset_name": "axis_report_search_relevance_pipeline",
+  "version": "1.0.0",
+  "created_date": "2026-07-20",
+  "human_validated": false,
+  "source_of_truth": {
+    "report_catalog": "Phase2_Report_Catalog_No_Fields.xlsx",
+    "field_dictionary": "Phase2_Field_Dictionary.xlsx",
+    "report_identity_rule": "Report Key R#### equals the original Excel row number in the no-fields catalog."
+  },
+  "counts": {
+    "reports": 4000,
+    "scenarios": 10000,
+    "seed_judgments": 10874,
+    "candidate_pairs": 290876,
+    "train_queries": 7000,
+    "validation_queries": 1500,
+    "test_queries": 1500
+  },
+  "label_policy": {
+    "synthetic_relevance": {
+      "2": "synthetic complete/best single-report seed",
+      "1": "synthetic report-bundle member",
+      "0": "synthetic hard negative",
+      "null": "pooled candidate with no synthetic judgment"
+    },
+    "human_relevance": {
+      "2": "best or complete answer",
+      "1": "useful but partial or secondary",
+      "0": "irrelevant"
+    },
+    "answerability": {
+      "0": "no answer",
+      "1": "needs clarification",
+      "2": "answerable"
+    }
+  },
+  "important_limitations": [
+    "Synthetic labels are weak supervision and are not human ground truth.",
+    "Dense embedding and cross-encoder feature columns are null and marked unavailable until model inference populates them.",
+    "Fields are linked through Phase2_Field_Dictionary.xlsx Where_Used values; duplicate report titles are explicitly flagged as ambiguous."
+  ],
+  "files": {
+    "raw/axis_report_search_scenarios_10000.csv": "Original 10,000 scenario bundle.",
+    "raw/axis_report_search_seed_judgments.jsonl": "Original synthetic seed judgments.",
+    "annotation/candidate_pool.csv": "Blended candidate pool derived from the no-fields catalog and field dictionary.",
+    "annotation/human_judgments.csv": "Blinded, blank human-labeling template.",
+    "annotation/adjudicated_judgments.csv": "Blank adjudication template.",
+    "processed/query_plans.parquet": "Structured weak-supervision query plans.",
+    "processed/ranking_features.parquet": "One row per query-candidate pair with baseline ranking features.",
+    "processed/answerability_features.parquet": "One row per query with answerability features.",
+    "splits/train_queries.txt": "Training scenario IDs.",
+    "splits/validation_queries.txt": "Validation scenario IDs.",
+    "splits/test_queries.txt": "Locked test scenario IDs.",
+    "validation_report.json": "Cross-file integrity and source-grounding checks."
+  }
+}

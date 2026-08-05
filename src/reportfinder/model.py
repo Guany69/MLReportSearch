@@ -1,4 +1,4 @@
-"""The dual-space product-of-experts retrieval model.
+"""Multi-channel retrieval, structured ranking, and answerability.
 
 Two independent experts each induce a distribution over the corpus, and the
 posterior is their geometric mixture:
@@ -7,13 +7,11 @@ posterior is their geometric mixture:
     P_lsa(r|q)   = softmax(s_lsa   / T_l)
     P(r|q)      ∝ P_dense(r|q)^α · P_lsa(r|q)^(1-α)
 
-This is a product of experts, not a weighted sum of scores. The distinction
-matters in practice: a sum lets one confident expert drag a candidate up on its
-own, whereas a product requires *both* experts to find the candidate plausible --
-either one can veto by assigning low probability. The output is a normalized
-posterior over all reports, so the top-1 probability is directly interpretable as
-confidence, and the shape of the distribution (margin, entropy) tells us whether
-the query was answerable at all.
+Algebraically, the legacy geometric mixture is a weighted sum of temperature-
+scaled logits followed by softmax; the expert normalizers cancel. It remains as
+``legacy_weighted_logit`` for reproducibility. The default hybrid path uses
+BM25F, dense, LSA, exact-field and character retrieval, RRF candidate fusion,
+structured ranking, and a separate answerability decision.
 """
 
 from __future__ import annotations
@@ -24,16 +22,31 @@ from dataclasses import dataclass, field
 import numpy as np
 from scipy.special import logsumexp
 
+from .confidence.answerability import (
+    AnswerabilityDecision,
+    AnswerabilityOutcome,
+    decide_answerability,
+    intent_ambiguity,
+)
+from .confidence.support import compute_support
 from .config import Config
+from .explain import ResultExplanation, build_result_explanation
+from .query.intent import IntentParser, QueryIntent
+from .ranking.features import RankingFeatures, extract_features, linear_score
+from .ranking.ltr import Ranker
 from .represent import Representation, encode_query_text
+from .retrieval import (
+    BM25FIndex,
+    CharNgramIndex,
+    FieldIndex,
+    aggregate_top_two,
+    reciprocal_rank_fusion,
+    score_forms,
+)
 
 # Tokens too generic to be evidence of anything in a report corpus.
 _STOPWORDS = frozenset(
-    """
-    a an the of for by with to in on and or is are was were be been show me
-    list all get find give please report reports i want need which what who
-    how many that this these those from at as it its any some
-    """.split()
+    ["a", "an", "the", "of", "for", "by", "with", "to", "in", "on", "and", "or", "is", "are", "was", "were", "be", "been", "show", "me", "list", "all", "get", "find", "give", "please", "report", "reports", "i", "want", "need", "which", "what", "who", "how", "many", "that", "this", "these", "those", "from", "at", "as", "it", "its", "any", "some"]
 )
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
@@ -95,6 +108,26 @@ class Candidate:
     field_coverage: float | None = None  # share of query concepts covered by fields
     concepts_total: int = 0
     concepts_covered: int = 0
+    ranking_score: float = 0.0
+    features: RankingFeatures | None = None
+    retriever_ranks: dict[str, int] = field(default_factory=dict)
+
+    # -- generator architecture (appended; all default so existing positional
+    # construction and every current caller keep working unchanged).
+    instance_id: str = ""
+    family_id: str = ""
+    generator_ranks: dict[str, int] = field(default_factory=dict)
+    # None means the generator ran and did not retrieve this candidate -- a mask,
+    # not a zero score.
+    generator_scores: dict[str, float | None] = field(default_factory=dict)
+    masked_sources: tuple[str, ...] = ()
+    admitted_via: str = ""
+    cross_encoder_score: float | None = None
+
+    @property
+    def retrieval_share(self) -> float:
+        """Normalized share of displayed ranking mass; not confidence."""
+        return self.probability
 
     @property
     def confidence_pct(self) -> float:
@@ -128,12 +161,30 @@ class Result:
     n_reports: int
     field_expert_used: bool
     detected_fields: list[str] = field(default_factory=list)
+    answerability: AnswerabilityDecision | None = None
+    intent: QueryIntent | None = None
+    explanation: ResultExplanation | None = None
+
+    # -- generator architecture (appended, defaulted) --------------------
+    outcome: object | None = None
+    fallbacks: tuple[str, ...] = ()
+
+    @property
+    def decision(self) -> str:
+        """The three-way decision, when the generator pipeline produced this."""
+        if self.outcome is not None:
+            return self.outcome.decision.value
+        return self.status
+
+    @property
+    def clarification(self):
+        return getattr(self.outcome, "clarification", None)
 
     @property
     def status(self) -> str:
-        if self.confident:
-            return "confident"
-        return "ambiguous"
+        if self.answerability is not None:
+            return self.answerability.outcome.value
+        return "confident" if self.confident else "ambiguous"
 
 
 def _log_softmax(scores: np.ndarray, temperature: float) -> np.ndarray:
@@ -151,6 +202,35 @@ def _entropy_bits(log_probs: np.ndarray) -> float:
     return float(-np.sum(probs[nonzero] * log_probs[nonzero]) / np.log(2.0))
 
 
+# The generator pipeline's three-way decision, expressed in the vocabulary the
+# legacy `Result` uses. The two enums mean the same three things, so an older
+# caller reading `result.answerability.outcome` gets the real decision rather than
+# a None it will crash on.
+_DECISION_TO_ANSWERABILITY = {
+    "RETURN_RESULTS": AnswerabilityOutcome.ANSWERABLE,
+    "ASK_CLARIFICATION": AnswerabilityOutcome.NEEDS_CLARIFICATION,
+    "NO_CONFIDENT_MATCH": AnswerabilityOutcome.NO_SATISFACTORY_REPORT,
+}
+
+
+def _answerability_from(outcome) -> AnswerabilityDecision:
+    """Adapt a `SearchOutcome` to the legacy answerability shape.
+
+    `score` is deliberately 0.0 and `calibrated` deliberately False: the generator
+    path ships no calibration artifact, and the decision head's fallback is a
+    deterministic policy, not a probability. Synthesising a plausible-looking score
+    here would present an uncalibrated judgement as a calibrated one, which is the
+    single thing this field must never do.
+    """
+    detail = outcome.decision_detail
+    return AnswerabilityDecision(
+        outcome=_DECISION_TO_ANSWERABILITY[outcome.decision.value],
+        score=0.0,
+        reasons=tuple(detail.reasons) if detail is not None else (),
+        calibrated=False,
+    )
+
+
 class ReportFinder:
     """Query interface over a built Representation."""
 
@@ -158,6 +238,61 @@ class ReportFinder:
         self.rep = rep
         self.cfg = cfg
         self._n = len(rep)
+        self._intent_parser = None
+        self._bm25 = None
+        self._char = None
+        self._field_index = None
+        self._ranker = None
+        self._search_pipeline = None
+
+    # -- generator architecture -------------------------------------------
+
+    @property
+    def pipeline(self):
+        """The generator pipeline, built once on first use.
+
+        Constructed lazily so importing `ReportFinder` never loads a model, but
+        eagerly enough that a missing or stale index fails on the first search
+        rather than silently degrading.
+        """
+        if self._search_pipeline is None:
+            from .pipeline.factory import build_pipeline
+
+            self._search_pipeline = build_pipeline(self.cfg, self.rep.frame)
+        return self._search_pipeline
+
+    def search(self, request):
+        """Run an authorized search and return the full outcome.
+
+        This is the API the generator architecture is designed around: it carries
+        the principal, the three-way decision, family and instance identity,
+        grounded evidence and telemetry. `query()` remains as a compatibility
+        adapter for the CLI, the Streamlit app and the benchmark harness.
+        """
+        return self.pipeline.run(request)
+
+    def _ensure_hybrid_indexes(self) -> None:
+        if self._intent_parser is not None:
+            return
+        frame = self.rep.frame
+        self._intent_parser = IntentParser(frame, self.cfg)
+        weights = {
+            "title": self.cfg.bm25_title, "description": self.cfg.bm25_description,
+            "fields": self.cfg.bm25_fields, "prompts": self.cfg.bm25_prompts,
+            "category": self.cfg.bm25_category, "tags": self.cfg.bm25_tags,
+            "data_source": self.cfg.bm25_data_source,
+            "area_where_used": self.cfg.bm25_area_where_used,
+        }
+        # Flatten field metadata into two additional searchable zones without
+        # mutating the canonical frame.
+        indexed = frame.copy()
+        indexed["field_descriptions"] = [" ".join(getattr(m, "description", "") for m in metas) for metas in frame.get("field_meta", [[]]*self._n)]
+        indexed["business_objects"] = [" ".join(getattr(m, "business_object", "") for m in metas) for metas in frame.get("field_meta", [[]]*self._n)]
+        weights.update({"field_descriptions": self.cfg.bm25_field_descriptions,
+                        "business_objects": self.cfg.bm25_business_objects})
+        self._bm25 = BM25FIndex(indexed, weights)
+        self._char = CharNgramIndex(self.rep.docs, (self.cfg.char_ngram_min, self.cfg.char_ngram_max))
+        self._field_index = FieldIndex(frame)
 
     # -- experts -----------------------------------------------------------
 
@@ -275,15 +410,20 @@ class ReportFinder:
 
     # -- main --------------------------------------------------------------
 
-    def query(self, text: str, top_k: int | None = None) -> Result:
-        """Compute the posterior over all reports and apply the decision rule."""
+    def _query_legacy(self, text: str, top_k: int | None = None) -> Result:
+        """Reproduce the historical weighted-logit posterior and thresholds."""
         if not text or not text.strip():
             raise ValueError("Query is empty.")
 
         top_k = top_k or self.cfg.top_k
         cfg = self.cfg
 
-        s_dense = self._dense_similarities(text)
+        if self.cfg.use_dense and getattr(self.rep, "dense_mode", "disabled") == "native":
+            s_dense = self._dense_similarities(text)
+        else:
+            # Legacy mode remains usable on machines without sentence-transformers.
+            # A neutral expert is a no-op in the geometric mixture.
+            s_dense = np.zeros(self._n, dtype=np.float64)
         s_lsa = self._lsa_similarities(text)
 
         log_p_dense = _log_softmax(s_dense, cfg.t_dense)
@@ -363,12 +503,338 @@ class ReportFinder:
             detected_fields=detected_fields,
         )
 
+    @staticmethod
+    def _top_results(scores: np.ndarray, k: int) -> list[tuple[int, float]]:
+        order = np.argsort(-scores, kind="stable")[:k]
+        return [(int(i), float(scores[i])) for i in order]
+
+    def _query_hybrid(self, text: str, top_k: int | None = None) -> Result:
+        if not text or not text.strip():
+            raise ValueError("Query is empty.")
+        self._ensure_hybrid_indexes()
+        cfg = self.cfg
+        k = min(cfg.candidate_k, self._n)
+        intent = self._intent_parser.parse(text)
+        vectors: dict[str, np.ndarray] = {}
+        rankings: dict[str, list[tuple[int, float]]] = {}
+        channel_results = {}
+        forms = intent.expansion.query_forms
+
+        def add_channel(name, scorer):
+            form_scores = score_forms(scorer, forms)
+            result = aggregate_top_two(
+                form_scores, [form.weight for form in forms],
+                cfg.expansion_aggregate_lambda,
+            )
+            channel_results[name] = result
+            vectors[name] = result.combined
+            rankings[name] = [
+                (i, score) for i, score in self._top_results(result.combined, k)
+                if score > 0
+            ]
+
+        if cfg.use_bm25f: add_channel("bm25", self._bm25.scores)
+        dense_state = getattr(self.rep, "dense_mode", "native")
+        if cfg.use_dense and cfg.dense_mode != "off" and dense_state == "native":
+            add_channel("dense", self._dense_similarities)
+        if cfg.use_lsa: add_channel("lsa", self._lsa_similarities)
+        if cfg.use_char_ngrams: add_channel("char", self._char.scores)
+        detected_fields: list[str] = []
+        field_scores = None
+        if cfg.use_exact_field:
+            required = intent.required_fields()
+            optional = intent.optional_fields()
+            field_scores = self._field_index.scores_for_fields(required, optional)
+            vectors["exact_field"] = field_scores.scores
+            rankings["exact_field"] = [
+                item for item in self._top_results(field_scores.scores, k)
+                if item[1] > 0
+            ]
+            resolved = set(field_scores.resolved)
+            detected_fields = [
+                field for field in required + optional
+                if " ".join(_TOKEN_RE.findall(field.casefold())) in resolved
+            ]
+            if cfg.use_field_expert:
+                # Preserve the historical lowercase diagnostics contract. The
+                # active exact-field retriever above remains structured.
+                detected_fields = self._field_index.detected(text)
+
+        fused = reciprocal_rank_fusion(rankings, cfg.rrf_k)
+        rank_maps = {name: {doc: rank for rank, (doc, _) in enumerate(items, 1)} for name, items in rankings.items()}
+        candidate_ids = sorted(fused, key=lambda i: (-fused[i], i))[:k]
+        if not candidate_ids:
+            # Keep the result contract intact for wholly out-of-domain requests;
+            # groundedness will correctly abstain after ranking these neutral rows.
+            candidate_ids = list(range(k))
+            fused = {idx: 0.0 for idx in candidate_ids}
+        relative = {}
+        for name, values in vectors.items():
+            finite = values[np.isfinite(values)]; mean = float(finite.mean()) if finite.size else 0.0
+            std = float(finite.std()) if finite.size else 0.0
+            ranks = rank_maps.get(name, {})
+            relative[name] = {idx: {"zscore": (float(values[idx])-mean)/std if std else 0.0,
+                "percentile": min(1.0, max(0.0, 1.0-(ranks.get(idx, k+1)-1)/max(1, len(ranks)))),
+                "reciprocal_rank": 1.0/ranks[idx] if idx in ranks else 0.0,
+                "present": float(idx in ranks)} for idx in candidate_ids}
+        scored: list[tuple[float, int, RankingFeatures]] = []
+        if cfg.use_ltr and self._ranker is None:
+            self._ranker = Ranker.load_or_fallback(cfg.ltr_model_path) if cfg.ltr_model_path else Ranker(fallback_reason="no artifact configured")
+        active_retrievers = len([name for name, items in rankings.items() if items])
+        subquery_positions = [
+            position for position, form in enumerate(forms) if form.kind == "subquery"
+        ]
+        for candidate_position, idx in enumerate(candidate_ids):
+            raw = {name: float(values[idx]) for name, values in vectors.items()}
+            raw["rrf"] = fused[idx]
+            raw["rrf_k"] = cfg.rrf_k
+            raw["n_active_retrievers"] = active_retrievers
+            raw["candidate_rank_before_ltr"] = 1.0 / (1.0 + candidate_position)
+            if subquery_positions:
+                satisfied = 0
+                for form_position in subquery_positions:
+                    if any(
+                        result.per_form[form_position, idx] > 0
+                        for result in channel_results.values()
+                    ):
+                        satisfied += 1
+                raw["subquery_coverage"] = satisfied / len(subquery_positions)
+                raw["subquery_count_satisfied"] = min(satisfied, 4) / 4
+            features = extract_features(self.rep.frame.iloc[idx], intent, raw,
+                {name: by_doc[idx] for name, by_doc in relative.items()})
+            score = self._ranker.score(features) if cfg.use_ltr else linear_score(features, cfg)
+            scored.append((score, idx, features))
+        scored.sort(key=lambda x: (-x[0], x[1]))
+
+        # Optional cross-encoder is deliberately applied only after candidate
+        # generation. Its score is a reranking signal, not confidence.
+        if cfg.use_cross_encoder and scored:
+            from .ranking.cross_encoder import apply_rerank, get_reranker
+            ce = get_reranker(cfg.cross_encoder_model)
+            ce_n = min(cfg.cross_encoder_top_k, len(scored))
+            ce_scores = ce.scores(text, [self.rep.frame.iloc[i] for _, i, _ in scored[:ce_n]])
+            scored = apply_rerank(
+                scored, ce_scores, cfg.cross_encoder_weight, ce_n,
+            )
+
+        raw_scores = np.asarray([s for s, _, _ in scored], dtype=np.float64)
+        # retrieval_share is a display normalization over the candidate set. It
+        # is explicitly not used as the answerability estimate.
+        scaled_scores = raw_scores / cfg.share_temperature
+        shares = np.exp(scaled_scores - logsumexp(scaled_scores)) if raw_scores.size else np.array([])
+        p1 = float(shares[0]) if shares.size else 0.0
+        p2 = float(shares[1]) if shares.size > 1 else 0.0
+        margin = p1 - p2
+        if scored:
+            top_values = scored[0][2].values
+            mandatory_count = len(intent.required_fields())
+            optional_count = len(intent.optional_fields())
+            if mandatory_count:
+                field_coverage = (
+                    mandatory_count * top_values["mandatory_coverage"]
+                    + optional_count * top_values["optional_concept_coverage"]
+                ) / max(1, mandatory_count + optional_count)
+            else:
+                field_coverage = max(
+                    top_values["optional_concept_coverage"],
+                    top_values["exact_field_match_strength"],
+                )
+        else:
+            field_coverage = 0.0
+        active_rank_maps = {
+            name: ranks for name, ranks in rank_maps.items()
+            if rankings.get(name)
+        }
+        top_ranks = [
+            ranks.get(scored[0][1], k + 1) for ranks in active_rank_maps.values()
+        ] if scored else []
+        agreement = sum(r <= 10 for r in top_ranks) / len(top_ranks) if top_ranks else 0.0
+        if not raw_scores.size or not np.all(np.isfinite(raw_scores)):
+            top_norm = 0.0
+        elif len(raw_scores) == 1:
+            surviving = scored[0][1]
+            evidence = max((float(v[surviving]) for v in vectors.values()), default=0.0)
+            top_norm = min(1.0, max(0.0, evidence)) if evidence > .1 else 0.0
+        else:
+            rest = raw_scores[1:]; std = float(rest.std())
+            top_norm = float(1/(1+np.exp(-((raw_scores[0]-float(rest.mean()))/(std if std > 1e-9 else 1.0)))))
+        top_fields = self.rep.frame.iloc[scored[0][1]]["fields"] if scored else ()
+        support = compute_support(
+            intent.expansion, set(self._bm25.idf), top_fields=top_fields,
+            unknown_fields=field_scores.unknown if field_scores is not None else (),
+            required_combination_exists=(
+                field_scores.required_combination_exists
+                if field_scores is not None else True
+            ),
+        )
+        categories = [
+            self.rep.frame.iloc[idx].get("category", "") for _, idx, _ in scored[:5]
+        ]
+        breadth, ambiguity_reasons = intent_ambiguity(
+            intent, categories, raw_scores[:2],
+        )
+        if len(raw_scores) > 1:
+            raw_margin = max(0.0, float(raw_scores[0] - raw_scores[1]))
+        else:
+            raw_margin = 1.0 if raw_scores.size else 0.0
+        answerability = decide_answerability(
+            top_score=top_norm, margin=raw_margin, field_coverage=field_coverage,
+            retriever_agreement=agreement, parser_confidence=intent.parser_confidence,
+            support=support, breadth=breadth,
+            high_threshold=cfg.answerability_high_threshold,
+            insufficient_threshold=cfg.answerability_insufficient_threshold,
+            min_support_ratio=cfg.min_support_ratio,
+            hard_support_floor=cfg.hard_support_floor,
+            breadth_threshold=cfg.breadth_threshold,
+            min_margin=cfg.answerability_min_margin,
+            min_high_support=cfg.answerability_min_high_support,
+            min_field_coverage=cfg.answerability_min_field_coverage,
+            intercept=cfg.answerability_intercept,
+            top_score_weight=cfg.answerability_top_score_weight,
+            margin_weight=cfg.answerability_margin_weight,
+            margin_scale=cfg.answerability_margin_scale,
+            field_coverage_weight=cfg.answerability_field_coverage_weight,
+            retriever_agreement_weight=cfg.answerability_retriever_agreement_weight,
+            parser_confidence_weight=cfg.answerability_parser_confidence_weight,
+            support_weight=cfg.answerability_support_weight,
+            ambiguity_weight=cfg.answerability_ambiguity_weight,
+            ambiguity_reasons=ambiguity_reasons,
+        )
+        confident = answerability.outcome is AnswerabilityOutcome.HIGH_CONFIDENCE
+        # Previously this collapsed to a single result whenever the verdict was
+        # ANSWERABLE, discarding ranks 2..k that had already been computed. That
+        # made every offline nDCG/MRR number a measurement of the collapse rather
+        # than of retrieval, and gave the user no alternatives to fall back on.
+        n_show = min(top_k or cfg.top_k, len(scored))
+        candidates = []
+        for pos, (rank_score, idx, features) in enumerate(scored[:n_show]):
+            matched_terms, matched_fields = self._explain_overlap(text, idx)
+            field_matches, concepts_total, concepts_covered = self._explain_fields(text, idx)
+            candidates.append(Candidate(
+                index=idx, probability=float(shares[pos]), row=self.rep.frame.iloc[idx],
+                trace=ExpertTrace(0.0, 0.0, float(vectors.get("dense", np.zeros(self._n))[idx]),
+                                  float(vectors.get("lsa", np.zeros(self._n))[idx]), 0.0, 0.0),
+                matched_terms=matched_terms, matched_fields=matched_fields,
+                field_matches=field_matches,
+                field_coverage=concepts_covered/concepts_total if concepts_total else None,
+                concepts_total=concepts_total, concepts_covered=concepts_covered,
+                ranking_score=rank_score, features=features,
+                retriever_ranks={n: ranks[idx] for n, ranks in rank_maps.items() if idx in ranks},
+            ))
+        log_shares = np.log(shares, where=shares > 0, out=np.full_like(shares, -np.inf))
+        entropy = _entropy_bits(log_shares) if shares.size else 0.0
+        explanation = None
+        if candidates and intent.expansion is not None:
+            explanation = build_result_explanation(
+                intent, candidates[0].row, candidates[0].retriever_ranks,
+                candidates[0].features,
+            )
+        return Result(text, candidates, confident, p1, p2, margin, entropy,
+                      entropy / np.log2(len(shares)) if len(shares) > 1 else 0.0,
+                      self._n, bool(cfg.use_field_expert and detected_fields),
+                      detected_fields if cfg.use_field_expert else [],
+                      answerability=answerability, intent=intent,
+                      explanation=explanation)
+
+    def candidate_for(self, family) -> Candidate:
+        """Render one `FamilyResult` as a display `Candidate`.
+
+        The bridge between the two-level answer and the row-shaped card every
+        renderer already knows how to draw. Public because the Streamlit app and
+        the API both need it and neither should reimplement the position mapping.
+        """
+        selected = family.selected
+        # Corpus position is the frame row position: `build_corpus_model` builds
+        # instances in frame order and `position_of` is its inverse.
+        position = self.pipeline.corpus.position_of(selected.instance_id)
+        record = selected.record
+        return Candidate(
+            index=position,
+            # A display share over the returned set, never a confidence.
+            probability=0.0,
+            row=self.rep.frame.iloc[position],
+            trace=ExpertTrace(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+            ranking_score=selected.score,
+            retriever_ranks=dict(record.ranks),
+            instance_id=selected.instance_id,
+            family_id=family.family_id,
+            generator_ranks=dict(record.ranks),
+            generator_scores=dict(record.scores),
+            masked_sources=tuple(sorted(record.masked)),
+            admitted_via=selected.admitted_via,
+            cross_encoder_score=selected.cross_encoder_score,
+        )
+
+    def _query_generators(self, text: str, top_k: int | None, principal) -> Result:
+        """Run the generator pipeline and adapt it to the legacy `Result` shape.
+
+        **Deprecated.** `Result` predates the family/instance separation, so it
+        carries only the selected instance of each family and cannot express the
+        two-level answer. `search()` is the real contract; this exists so callers
+        that have not migrated keep working.
+
+        What it must never do is *silently* discard the decision, the family
+        identity, the warnings or the versions -- a caller reading a truncated
+        answer with no sign that it was truncated is worse than one that breaks.
+        So the full `SearchOutcome` is attached, and the fields `Result` can
+        express are filled rather than nulled.
+        """
+        from .auth import DEVELOPMENT_PRINCIPAL, SearchRequest
+
+        outcome = self.search(
+            SearchRequest(
+                raw_query=text,
+                principal=principal or DEVELOPMENT_PRINCIPAL,
+                top_k=top_k,
+            )
+        )
+
+        candidates = [self.candidate_for(family) for family in outcome.families]
+        decision = outcome.decision
+        return Result(
+            text, candidates,
+            # `confident` is retained for older callers and means exactly
+            # "the pipeline chose to return results".
+            decision.value == "RETURN_RESULTS",
+            0.0, 0.0, 0.0, 0.0, 0.0,
+            self._n, False, [],
+            answerability=_answerability_from(outcome),
+            intent=self.pipeline.intent_parser.parse(text),
+            explanation=None,
+            outcome=outcome,
+            fallbacks=tuple(outcome.active_fallbacks),
+        )
+
+    def query(self, text: str, top_k: int | None = None, principal=None) -> Result:
+        """Search using the configured architecture."""
+        # Alpha is a legacy weighted-logit knob. Preserve its documented pure-
+        # expert behavior for callers sweeping the endpoints.
+        if self.cfg.retrieval_mode == "legacy_weighted_logit":
+            return self._query_legacy(text, top_k)
+        if self.cfg.retrieval_mode == "generators":
+            return self._query_generators(text, top_k, principal)
+        if self.cfg.retrieval_mode != "hybrid":
+            raise ValueError(f"Unknown retrieval_mode: {self.cfg.retrieval_mode}")
+        return self._query_hybrid(text, top_k)
+
 
 def why_matched(candidate: Candidate) -> str:
     """One-line explanation of why a candidate surfaced."""
+    if candidate.retriever_ranks:
+        retrievers = ", ".join(
+            f"{name} #{rank}" for name, rank in sorted(candidate.retriever_ranks.items())
+        )
+        parts: list[str] = []
+        if candidate.matched_terms:
+            parts.append("terms: " + ", ".join(candidate.matched_terms[:6]))
+        if candidate.matched_fields:
+            parts.append("fields: " + "; ".join(candidate.matched_fields[:3]))
+        if not parts:
+            parts.append("semantic or expanded-query match")
+        return " | ".join(parts) + f" | retriever support {retrievers}"
+
     trace = candidate.trace
     share = trace.dense_share
-
     if share is None:
         balance = (
             f"dense lift {trace.lift_dense:+.1f} / LSA lift {trace.lift_lsa:+.1f} nats"

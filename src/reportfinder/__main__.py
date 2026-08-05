@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -64,11 +65,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     knobs = parser.add_argument_group("model knobs")
+    knobs.add_argument("--retrieval-mode",
+                       choices=["generators", "hybrid", "legacy_weighted_logit"], default=None,
+                       help="Search architecture. 'generators' is the source-preserving "
+                            "pipeline and needs a built bundle (reportfinder-bundle build); "
+                            "'hybrid' is the previous path, retained for comparison.")
+    knobs.add_argument("--dense-mode", choices=["auto", "local", "off"], default=None,
+                       help="Dense model policy. 'off' leaves BM25F/LSA/char retrieval active.")
+    knobs.add_argument("--no-query-expansion", action="store_true", default=None,
+                       help="Use literal corpus vocabulary only (diagnostic A/B mode).")
     knobs.add_argument("--t-dense", type=float, default=None, help="Dense softmax temperature T_d.")
     knobs.add_argument("--t-lsa", type=float, default=None, help="LSA softmax temperature T_l.")
-    knobs.add_argument("--alpha", type=float, default=None, help="PoE mixture weight (1=dense only).")
-    knobs.add_argument("--tau", type=float, default=None, help="Min top-1 probability for a confident answer.")
-    knobs.add_argument("--delta", type=float, default=None, help="Min margin p1-p2 for a confident answer.")
+    knobs.add_argument("--alpha", type=float, default=None, help="Legacy weighted-logit mixture weight.")
+    knobs.add_argument("--tau", type=float, default=None, help="Legacy top retrieval-share threshold.")
+    knobs.add_argument("--delta", type=float, default=None, help="Legacy retrieval-share margin threshold.")
     knobs.add_argument(
         "--field-expert",
         action="store_true",
@@ -77,7 +87,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Show posterior diagnostics."
+        "-v", "--verbose", action="store_true", help="Show ranking diagnostics."
+    )
+    parser.add_argument(
+        "--explain-features", action="store_true",
+        help="Print every ranking feature for the returned candidates.",
     )
     return parser
 
@@ -93,6 +107,11 @@ def main(argv: list[str] | None = None) -> int:
         delta=args.delta,
         top_k=args.top_k,
         use_field_expert=args.field_expert,
+        # `generators` is the default; the flag exists to select the deprecated
+        # hybrid/legacy runtimes for ablation.
+        retrieval_mode=args.retrieval_mode,
+        dense_mode=args.dense_mode,
+        use_query_expansion=(False if args.no_query_expansion else None),
         data_path=args.data,
         ingest_mode=args.mode,
         catalog_path=args.catalog,
@@ -133,6 +152,10 @@ def main(argv: list[str] | None = None) -> int:
 
     print()
     print(format_result(result, show_diagnostics=args.verbose))
+    if args.explain_features:
+        for rank, candidate in enumerate(result.candidates, 1):
+            print(f"\nFeatures for candidate {rank} ({candidate.row['title']}):")
+            print(json.dumps(candidate.features.values if candidate.features else {}, indent=2, sort_keys=True))
     if args.verbose:
         print(f"   query answered in {elapsed * 1000:.0f} ms")
     return 0

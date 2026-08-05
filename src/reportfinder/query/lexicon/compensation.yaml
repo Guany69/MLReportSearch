@@ -1,0 +1,11 @@
+domain: compensation
+schema: 1
+rules:
+  - id: comp.salary
+    phrases: ["salary", "annual salary", "base salary", "fixed pay"]
+    emits:
+      - {canonical: "Base Pay", kind: field, confidence: 0.88}
+  - id: comp.gross
+    phrases: ["gross earnings", "pay before taxes"]
+    emits:
+      - {canonical: "Gross Pay", kind: field, confidence: 0.88}

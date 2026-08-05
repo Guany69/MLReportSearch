@@ -1,0 +1,31 @@
+domain: worker
+schema: 1
+rules:
+  - id: worker.people
+    phrases: ["employees", "employee", "people", "staff", "workers"]
+    emits:
+      - {canonical: "Worker", kind: field, confidence: 0.82}
+  - id: worker.new_hire
+    phrases: ["new hire", "new hires", "joiner", "joiners", "onboarded", "recent starters", "recent joiners"]
+    emits:
+      - {canonical: "Hire Date", kind: field, confidence: 0.90}
+      - {canonical: "Hire Count", kind: field, confidence: 0.84}
+      - {canonical: "Hire Type", kind: field, confidence: 0.82}
+  - id: worker.hire_start_date
+    phrases: ["start date"]
+    priority: 25
+    context:
+      requires_any: ["hire", "hired", "joined", "joiner", "joiners", "starter", "starters", "onboard", "new"]
+      window: 6
+    suppresses: ["Start Date"]
+    emits:
+      - {canonical: "Hire Date", kind: field, confidence: 0.96}
+  - id: worker.transfer
+    phrases: ["moved departments", "changed departments", "internal moves"]
+    emits:
+      - {canonical: "Transfer Count", kind: field, confidence: 0.82}
+      - {canonical: "Previous Organization", kind: field, confidence: 0.84}
+  - id: worker.annualized_pay
+    phrases: ["yearly compensation", "annual earnings amount", "annualized pay"]
+    emits:
+      - {canonical: "Annualized Amount", kind: field, confidence: 0.88}

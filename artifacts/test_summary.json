@@ -1,0 +1,13 @@
+{
+  "command": ".venv/bin/python -m pytest tests/ -q",
+  "passed": 116,
+  "failed": 0,
+  "warnings": 7,
+  "duration_seconds": 186.51,
+  "completed_at": "2026-07-28",
+  "notes": [
+    "Two openpyxl warnings concern unsupported workbook extensions.",
+    "Five joblib warnings concern a NumPy shape-assignment deprecation.",
+    "Neither warning represents a test failure."
+  ]
+}

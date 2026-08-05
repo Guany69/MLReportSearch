@@ -137,7 +137,7 @@ def collapse_families(frame: pd.DataFrame) -> pd.DataFrame:
     )
     work["_family_key"] = [
         _family_key(str(t), f)
-        for t, f in zip(work[COL_TITLE], work["_fields_list"])
+        for t, f in zip(work[COL_TITLE], work["_fields_list"], strict=True)
     ]
 
     runs = (

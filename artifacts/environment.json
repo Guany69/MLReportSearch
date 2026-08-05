@@ -1,0 +1,14 @@
+{
+  "captured_at": "2026-07-28T18:19:57.158392+00:00",
+  "label_limitation": "No human relevance or answerability judgments; benchmark labels are synthetic/weak.",
+  "packages": {
+    "numpy": "2.5.1",
+    "openpyxl": "3.1.5",
+    "pandas": "3.0.3",
+    "scikit-learn": "1.9.0",
+    "sentence-transformers": "5.6.0",
+    "torch": "2.11.0"
+  },
+  "platform": "macOS-13.5-arm64-arm-64bit-Mach-O",
+  "python": "3.13.3"
+}

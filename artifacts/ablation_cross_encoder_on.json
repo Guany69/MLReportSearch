@@ -1,0 +1,2211 @@
+{
+  "ambiguity_accuracy": 1.0,
+  "answerability_calibrated": false,
+  "brier": 0.0023840860036106167,
+  "config_overrides": {
+    "candidate_k": 100,
+    "corpus_granularity": "report_row",
+    "dense_mode": "off",
+    "fusion_method": "rrf",
+    "ingest_mode": "phase2_dual_file",
+    "retrieval_mode": "hybrid",
+    "top_k": 50,
+    "use_cross_encoder": true,
+    "use_ltr": false
+  },
+  "dataset_versions": {
+    "v1": {
+      "hit@1": 0.9444444444444444,
+      "hit@10": 0.9444444444444444,
+      "hit@5": 0.9444444444444444,
+      "map": 0.3381560073482653,
+      "mrr@10": 0.9444444444444444,
+      "ndcg@10": 0.611567899171689,
+      "ndcg@5": 0.6874511909397396,
+      "p@5": 0.6333333333333333,
+      "queries": 18,
+      "recall@10": 0.14970383514936342,
+      "recall@20": 0.20243984760955092,
+      "recall@50": 0.35477993877129
+    },
+    "v2": {
+      "hit@1": 0.8636363636363636,
+      "hit@10": 0.8636363636363636,
+      "hit@5": 0.8636363636363636,
+      "map": 0.2966511444743777,
+      "mrr@10": 0.8636363636363636,
+      "ndcg@10": 0.5529405983267968,
+      "ndcg@5": 0.6233309837358605,
+      "p@5": 0.5727272727272728,
+      "queries": 22,
+      "recall@10": 0.13910982541478742,
+      "recall@20": 0.18225747197312261,
+      "recall@50": 0.3523539101963637
+    }
+  },
+  "ece": 0.037416587179274506,
+  "hit@1": 0.8636363636363636,
+  "hit@10": 0.8636363636363636,
+  "hit@5": 0.8636363636363636,
+  "label_basis": "weak/synthetic; not production accuracy",
+  "latency_p50_ms": 249.83533350041398,
+  "latency_p95_ms": 321.08852114979527,
+  "map": 0.2966511444743777,
+  "mrr@10": 0.8636363636363636,
+  "ndcg@10": 0.5529405983267968,
+  "ndcg@5": 0.6233309837358605,
+  "nll": 0.038678315005884,
+  "no_answer_precision": 1.0,
+  "no_answer_recall": 1.0,
+  "p@5": 0.5727272727272728,
+  "per_query": [
+    {
+      "answerability_score": 0.9213285094495327,
+      "expansion_concepts": [
+        {
+          "canonical": "Termination Date",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Termination Reason",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Worker",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": "NEEDS_CLARIFICATION",
+      "label_source": "author_synthetic",
+      "latency_ms": 280.0664169990341,
+      "parsed_fields": [
+        "Termination Date",
+        "Termination Reason",
+        "Worker"
+      ],
+      "query": "Why did people leave?",
+      "query_id": "dev-termination-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The two strongest candidates are close on the raw ranking scale.",
+        "The leading candidates are too close to choose one reliably."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Termination Reason"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "243",
+        "520",
+        "907",
+        "2274",
+        "758",
+        "1831",
+        "3028",
+        "2947",
+        "634",
+        "1461",
+        "2120",
+        "2448",
+        "2578",
+        "2877",
+        "2600",
+        "3404",
+        "3667",
+        "3917",
+        "1752",
+        "658",
+        "3364",
+        "1290",
+        "127",
+        "2330",
+        "2166",
+        "914",
+        "948",
+        "1192",
+        "682",
+        "2955",
+        "1615",
+        "2536",
+        "3541",
+        "2140",
+        "2860",
+        "31",
+        "281",
+        "2386",
+        "3264",
+        "105",
+        "1404",
+        "632",
+        "2559",
+        "3410",
+        "3514",
+        "335",
+        "3216",
+        "1852",
+        "1353",
+        "3440"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9835809763228958,
+      "expansion_concepts": [
+        {
+          "canonical": "Manager",
+          "confidence": 0.9,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Turnover Rate",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Termination Reason",
+          "confidence": 0.85,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Average Headcount",
+          "confidence": 0.84,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Termination Count",
+          "confidence": 0.84,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Termination Type",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 322.11054199979117,
+      "parsed_fields": [
+        "Manager",
+        "Turnover Rate",
+        "Termination Reason",
+        "Average Headcount",
+        "Termination Count",
+        "Termination Type"
+      ],
+      "query": "Show voluntary turnover by boss.",
+      "query_id": "dev-turnover-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report does not cover enough of the requested field evidence."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Manager"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": [
+          "turnover",
+          "attrition"
+        ]
+      },
+      "returned": [
+        "2909",
+        "1512",
+        "821",
+        "2850",
+        "1446",
+        "2741",
+        "355",
+        "1623",
+        "1353",
+        "2801",
+        "320",
+        "3604",
+        "1217",
+        "505",
+        "2777",
+        "2419",
+        "1240",
+        "3591",
+        "1674",
+        "615",
+        "3448",
+        "2368",
+        "2703",
+        "2303",
+        "1431",
+        "333",
+        "1326",
+        "1304",
+        "3515",
+        "343",
+        "300",
+        "1474",
+        "1425",
+        "3698",
+        "459",
+        "3447",
+        "2913",
+        "4",
+        "3097",
+        "2662",
+        "1854",
+        "3680",
+        "3624",
+        "1334",
+        "2051",
+        "818",
+        "1062",
+        "1270",
+        "2156",
+        "1785"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.977245623294515,
+      "expansion_concepts": [
+        {
+          "canonical": "Headcount",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 248.9935420016991,
+      "parsed_fields": [
+        "Headcount"
+      ],
+      "query": "How big is each team?",
+      "query_id": "dev-headcount-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Headcount"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "1804"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.9714547497329779,
+      "expansion_concepts": [
+        {
+          "canonical": "Deductions",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Net Pay",
+          "confidence": 0.92,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Pay Period",
+          "confidence": 0.9,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 232.96441700040305,
+      "parsed_fields": [
+        "Deductions",
+        "Net Pay",
+        "Pay Period"
+      ],
+      "query": "Show take-home pay and deductions by paycheck period.",
+      "query_id": "dev-payroll-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Net Pay",
+          "Deductions",
+          "Pay Period"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "1173"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.9766170893090094,
+      "expansion_concepts": [
+        {
+          "canonical": "Succession Candidate",
+          "confidence": 0.79,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Succession Plan",
+          "confidence": 0.78,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Succession Readiness",
+          "confidence": 0.78,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": "NEEDS_CLARIFICATION",
+      "label_source": "author_synthetic",
+      "latency_ms": 245.5577920009091,
+      "parsed_fields": [
+        "Succession Candidate",
+        "Succession Plan",
+        "Succession Readiness"
+      ],
+      "query": "Who could replace each leader?",
+      "query_id": "dev-succession-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The request names only a broad topic, not a specific report field or measure.",
+        "The request is broad enough to support several plausible interpretations."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [],
+        "title_terms_all": [],
+        "title_terms_any": [
+          "succession",
+          "readiness",
+          "talent pool"
+        ]
+      },
+      "returned": [
+        "3000",
+        "3807",
+        "2272",
+        "3168",
+        "3822",
+        "102",
+        "1645",
+        "566",
+        "447",
+        "1590",
+        "104",
+        "1836",
+        "2355",
+        "1834",
+        "3274",
+        "3034",
+        "532",
+        "1845",
+        "2887",
+        "2185",
+        "3583",
+        "435",
+        "1301",
+        "655",
+        "2516",
+        "3405",
+        "3987",
+        "1708",
+        "1317",
+        "3692",
+        "3686",
+        "3272",
+        "346",
+        "2314",
+        "1867",
+        "3412",
+        "3478",
+        "2382",
+        "54",
+        "85",
+        "3580",
+        "1151",
+        "1770",
+        "1485",
+        "3586",
+        "405",
+        "2848",
+        "3401",
+        "2201",
+        "602"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9830305820981593,
+      "expansion_concepts": [
+        {
+          "canonical": "Location",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Worker",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 207.4813750004978,
+      "parsed_fields": [
+        "Location",
+        "Worker"
+      ],
+      "query": "Where does each employee work?",
+      "query_id": "dev-location-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Location"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "319"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.9850512222218805,
+      "expansion_concepts": [
+        {
+          "canonical": "Recruiting",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Candidate",
+          "confidence": 0.9,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Application Stage",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 235.4367909993016,
+      "parsed_fields": [
+        "Candidate",
+        "Application Stage"
+      ],
+      "query": "Show applicants by recruiting stage.",
+      "query_id": "dev-recruiting-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Candidate",
+          "Application Stage"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "3273"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.9850208141290314,
+      "expansion_concepts": [
+        {
+          "canonical": "Learning Assignment",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Learner",
+          "confidence": 0.86,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Completion Status",
+          "confidence": 0.84,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Due Date",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 278.9835830008087,
+      "parsed_fields": [
+        "Learning Assignment",
+        "Learner",
+        "Completion Status",
+        "Due Date"
+      ],
+      "query": "Which training assignments are overdue?",
+      "query_id": "dev-learning-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "Evidence is not strong enough to select one report without clarification."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Learning Assignment",
+          "Due Date"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "177",
+        "1923",
+        "2837",
+        "2437",
+        "1539",
+        "1638",
+        "289",
+        "2915",
+        "3064",
+        "3868",
+        "2408",
+        "1289",
+        "3549",
+        "1490",
+        "3446",
+        "1244",
+        "2453",
+        "3627",
+        "635",
+        "3081",
+        "133",
+        "728",
+        "1084",
+        "1682",
+        "3722",
+        "2784",
+        "1221",
+        "3709",
+        "3878",
+        "3914",
+        "2930",
+        "701",
+        "3879",
+        "352",
+        "3516",
+        "666",
+        "1205",
+        "345",
+        "3642",
+        "2774",
+        "595",
+        "3111",
+        "269",
+        "3437",
+        "393",
+        "2570",
+        "834",
+        "3027",
+        "1191",
+        "1740"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.8859041432662543,
+      "expansion_concepts": [
+        {
+          "canonical": "Manager",
+          "confidence": 0.8,
+          "origin": "typo"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 298.2529170003545,
+      "parsed_fields": [
+        "Manager"
+      ],
+      "query": "show me attriton by manger",
+      "query_id": "dev-typo-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The request names only a broad topic, not a specific report field or measure.",
+        "The two strongest candidates are close on the raw ranking scale.",
+        "The leading candidates are too close to choose one reliably.",
+        "The request is broad enough to support several plausible interpretations."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Manager"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": [
+          "attrition"
+        ]
+      },
+      "returned": [
+        "2562",
+        "1652",
+        "82",
+        "3407",
+        "2012",
+        "3778",
+        "1935",
+        "1998",
+        "4",
+        "512",
+        "2878",
+        "711",
+        "1270",
+        "2414",
+        "2099",
+        "2108",
+        "667",
+        "218",
+        "888",
+        "2853",
+        "247",
+        "3746",
+        "2129",
+        "1709",
+        "802",
+        "188",
+        "68",
+        "2524",
+        "1600",
+        "3659",
+        "136",
+        "74",
+        "264",
+        "2",
+        "1854",
+        "3680",
+        "1",
+        "3",
+        "7",
+        "11",
+        "8",
+        "312",
+        "0",
+        "1162",
+        "1019",
+        "2406",
+        "2195",
+        "1758",
+        "3915",
+        "3550"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9223505843105562,
+      "expansion_concepts": [
+        {
+          "canonical": "Net Pay",
+          "confidence": 1.0,
+          "origin": "literal"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 242.1912500012695,
+      "parsed_fields": [
+        "Net Pay"
+      ],
+      "query": "reports with net pay",
+      "query_id": "dev-netpay-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The two strongest candidates are close on the raw ranking scale.",
+        "The leading candidates are too close to choose one reliably."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Net Pay"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "396",
+        "14",
+        "2193",
+        "3705",
+        "1735",
+        "1780",
+        "3252",
+        "976",
+        "3238",
+        "3176",
+        "3861",
+        "2198",
+        "113",
+        "1459",
+        "1522",
+        "3635",
+        "1762",
+        "262",
+        "3671",
+        "2323",
+        "2965",
+        "1881",
+        "1549",
+        "356",
+        "3172",
+        "1769",
+        "3157",
+        "1173",
+        "2871",
+        "3287",
+        "773",
+        "2732",
+        "2787",
+        "3292",
+        "2226",
+        "3961",
+        "2499",
+        "2566",
+        "1033",
+        "3165",
+        "2628",
+        "1716",
+        "252",
+        "1730",
+        "1154",
+        "912",
+        "1469",
+        "2454",
+        "1232",
+        "579"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9185640260273458,
+      "expansion_concepts": [
+        {
+          "canonical": "Terminations",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Terminations",
+          "confidence": 1.0,
+          "origin": "literal"
+        }
+      ],
+      "expected_status": "NEEDS_CLARIFICATION",
+      "label_source": "author_synthetic",
+      "latency_ms": 248.26849999953993,
+      "parsed_fields": [],
+      "query": "terminations",
+      "query_id": "dev-broad-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The request names only a broad topic, not a specific report field or measure.",
+        "The leading report does not cover enough of the requested field evidence."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [],
+        "title_terms_all": [],
+        "title_terms_any": [
+          "termination"
+        ]
+      },
+      "returned": [
+        "2581",
+        "1831",
+        "3364",
+        "3514",
+        "3410",
+        "658",
+        "948",
+        "127",
+        "1233",
+        "1404",
+        "1913",
+        "3541",
+        "1752",
+        "2330",
+        "2632",
+        "1873",
+        "3917",
+        "243",
+        "758",
+        "1461",
+        "520",
+        "2274",
+        "2120",
+        "2834",
+        "2264",
+        "2140",
+        "3826",
+        "913",
+        "3647",
+        "3993",
+        "2860",
+        "1852",
+        "682",
+        "3216",
+        "632",
+        "634",
+        "3667",
+        "1290",
+        "2559",
+        "3404",
+        "914",
+        "3440",
+        "907",
+        "2600",
+        "1353",
+        "2851",
+        "1886",
+        "105",
+        "1027",
+        "741"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.0,
+      "expansion_concepts": [],
+      "expected_status": "NO_SATISFACTORY_REPORT",
+      "label_source": "author_synthetic",
+      "latency_ms": 250.67712499912886,
+      "parsed_fields": [],
+      "query": "quantum submarine telemetry",
+      "query_id": "dev-noanswer-1",
+      "rank_of_first_relevant": null,
+      "reasons": [
+        "No corpus support for: quantum, submarine, telemetry"
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "2869",
+        "544",
+        "3152",
+        "3641",
+        "1111",
+        "2042",
+        "216",
+        "2161",
+        "1127",
+        "954",
+        "386",
+        "2085",
+        "2606",
+        "335",
+        "1250",
+        "3716",
+        "1994",
+        "3192",
+        "3541",
+        "2443",
+        "191",
+        "3216",
+        "946",
+        "2578",
+        "462",
+        "2079",
+        "2571",
+        "3385",
+        "1171",
+        "2321",
+        "3509",
+        "3227",
+        "3631",
+        "1919",
+        "3440",
+        "3970",
+        "1770",
+        "2964",
+        "2728",
+        "2183",
+        "2249",
+        "3397",
+        "3857",
+        "91",
+        "2092",
+        "1382",
+        "3553",
+        "2388",
+        "3404",
+        "1303"
+      ],
+      "status": "NO_SATISFACTORY_REPORT"
+    },
+    {
+      "answerability_score": 0.954597385544065,
+      "expansion_concepts": [
+        {
+          "canonical": "Company",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Base Pay",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 273.36691599884944,
+      "parsed_fields": [
+        "Company",
+        "Base Pay"
+      ],
+      "query": "base salary by company",
+      "query_id": "dev-comp-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Base Pay",
+          "Company"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "878"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.954109063260084,
+      "expansion_concepts": [
+        {
+          "canonical": "Benefits",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Benefit Plan",
+          "confidence": 0.86,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Election Status",
+          "confidence": 0.84,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 301.6701249998732,
+      "parsed_fields": [
+        "Benefit Plan",
+        "Election Status"
+      ],
+      "query": "benefits coverage by plan",
+      "query_id": "dev-benefits-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The two strongest candidates are close on the raw ranking scale.",
+        "The leading candidates are too close to choose one reliably."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Benefit Plan"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "1579",
+        "1427",
+        "1190",
+        "189",
+        "1601",
+        "1866",
+        "328",
+        "2735",
+        "2325",
+        "1026",
+        "1581",
+        "1275",
+        "55",
+        "316",
+        "1685",
+        "3942",
+        "2014",
+        "911",
+        "2864",
+        "2513",
+        "3253",
+        "443",
+        "3603",
+        "3611",
+        "1880",
+        "88",
+        "1359",
+        "2389",
+        "782",
+        "2668",
+        "2192",
+        "1108",
+        "381",
+        "3581",
+        "3593",
+        "619",
+        "1711",
+        "3759",
+        "79",
+        "1471",
+        "709",
+        "896",
+        "1976",
+        "2541",
+        "2793",
+        "3008",
+        "1422",
+        "684",
+        "1938",
+        "457"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9027377828383002,
+      "expansion_concepts": [
+        {
+          "canonical": "Manager",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Score",
+          "confidence": 0.95,
+          "origin": "morphological"
+        },
+        {
+          "canonical": "Performance Rating",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Worker",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 262.5699579984939,
+      "parsed_fields": [
+        "Manager",
+        "Score",
+        "Performance Rating",
+        "Worker"
+      ],
+      "query": "employee performance scores by manager",
+      "query_id": "dev-performance-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The two strongest candidates are close on the raw ranking scale.",
+        "The leading candidates are too close to choose one reliably.",
+        "The leading report does not cover enough of the requested field evidence."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Performance Rating",
+          "Manager"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "1188",
+        "143",
+        "3568",
+        "2544",
+        "1884",
+        "3114",
+        "3182",
+        "250",
+        "1974",
+        "1082",
+        "3558",
+        "2521",
+        "743",
+        "3598",
+        "2334",
+        "3314",
+        "2941",
+        "3675",
+        "1150",
+        "3400",
+        "3247",
+        "781",
+        "708",
+        "2948",
+        "1073",
+        "3251",
+        "648",
+        "518",
+        "1125",
+        "3880",
+        "1776",
+        "1786",
+        "1527",
+        "1967",
+        "3337",
+        "655",
+        "3985",
+        "3947",
+        "933",
+        "2421",
+        "1259",
+        "3194",
+        "3299",
+        "3398",
+        "3693",
+        "1017",
+        "398",
+        "2215",
+        "1516",
+        "3007"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9611526525762661,
+      "expansion_concepts": [
+        {
+          "canonical": "Worker",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Time Off",
+          "confidence": 0.9,
+          "origin": "acronym"
+        },
+        {
+          "canonical": "Time Off Plan",
+          "confidence": 0.88,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 261.1615420009912,
+      "parsed_fields": [
+        "Worker",
+        "Time Off Plan"
+      ],
+      "query": "PTO plans by worker",
+      "query_id": "dev-absence-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Time Off Plan",
+          "Worker"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "378"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.9718159588499323,
+      "expansion_concepts": [
+        {
+          "canonical": "Previous Organization",
+          "confidence": 0.84,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Transfer Count",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Worker",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 247.13437500031432,
+      "parsed_fields": [
+        "Previous Organization",
+        "Transfer Count",
+        "Worker"
+      ],
+      "query": "employees who moved departments",
+      "query_id": "dev-transfer-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report does not cover enough of the requested field evidence."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Transfer Count"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "1743",
+        "2278",
+        "1062",
+        "2156",
+        "2962",
+        "2295",
+        "1536",
+        "987",
+        "3343",
+        "1381",
+        "3326",
+        "2386",
+        "3364",
+        "2569",
+        "1784",
+        "23",
+        "91",
+        "1382",
+        "3350",
+        "3371",
+        "553",
+        "3857",
+        "2615",
+        "3223",
+        "19",
+        "139",
+        "2183",
+        "2589",
+        "590",
+        "2802",
+        "3269",
+        "3397",
+        "2909",
+        "3368",
+        "3846",
+        "1694",
+        "785",
+        "206",
+        "1902",
+        "818",
+        "2778",
+        "2414",
+        "3994",
+        "1704",
+        "718",
+        "3294",
+        "612",
+        "97",
+        "2026",
+        "1854"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9764058085515169,
+      "expansion_concepts": [
+        {
+          "canonical": "Recruiting",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Recruiter",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Time to Fill",
+          "confidence": 1.0,
+          "origin": "literal"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 282.26070800155867,
+      "parsed_fields": [
+        "Recruiter",
+        "Time to Fill"
+      ],
+      "query": "recruiting time to fill by recruiter",
+      "query_id": "dev-timetofill-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Time to Fill",
+          "Recruiter"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "3479"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.9912979473661799,
+      "expansion_concepts": [
+        {
+          "canonical": "Compensation",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Range Minimum",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Range Maximum",
+          "confidence": 0.9,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Range Midpoint",
+          "confidence": 0.9,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 398.21445800043875,
+      "parsed_fields": [
+        "Range Minimum",
+        "Range Maximum",
+        "Range Midpoint"
+      ],
+      "query": "compensation range minimum midpoint and maximum",
+      "query_id": "dev-salary-range-1",
+      "rank_of_first_relevant": 36,
+      "reasons": [
+        "The leading report does not cover enough of the requested field evidence."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Range Midpoint"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": [
+          "salary range",
+          "comp grade",
+          "pay range"
+        ]
+      },
+      "returned": [
+        "1165",
+        "1228",
+        "2764",
+        "2706",
+        "2535",
+        "2260",
+        "765",
+        "2532",
+        "2371",
+        "3643",
+        "3464",
+        "3547",
+        "2160",
+        "3348",
+        "1726",
+        "498",
+        "1616",
+        "2754",
+        "3921",
+        "408",
+        "2482",
+        "1121",
+        "2442",
+        "3572",
+        "2455",
+        "986",
+        "956",
+        "671",
+        "1754",
+        "3909",
+        "1251",
+        "1037",
+        "800",
+        "3504",
+        "367",
+        "1308",
+        "2881",
+        "2269",
+        "180",
+        "2267",
+        "3529",
+        "2332",
+        "2733",
+        "2983",
+        "18",
+        "261",
+        "3544",
+        "2737",
+        "3415",
+        "37"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.9701536017716383,
+      "expansion_concepts": [
+        {
+          "canonical": "Job Requisition",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Recruiter",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Position Status",
+          "confidence": 0.86,
+          "origin": "phrase_rule"
+        },
+        {
+          "canonical": "Filled Indicator",
+          "confidence": 0.84,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 194.14750000032654,
+      "parsed_fields": [
+        "Job Requisition",
+        "Recruiter",
+        "Position Status",
+        "Filled Indicator"
+      ],
+      "query": "open roles by job requisition and recruiter",
+      "query_id": "dev-requisition-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report has specific, well-supported evidence and separates from alternatives."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Job Requisition",
+          "Recruiter"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "3276"
+      ],
+      "status": "ANSWERABLE"
+    },
+    {
+      "answerability_score": 0.984416561135821,
+      "expansion_concepts": [
+        {
+          "canonical": "Hire Count",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Hire Date",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Hire Type",
+          "confidence": 0.82,
+          "origin": "phrase_rule"
+        }
+      ],
+      "expected_status": null,
+      "label_source": "author_synthetic",
+      "latency_ms": 196.92554200082668,
+      "parsed_fields": [
+        "Hire Count",
+        "Hire Date",
+        "Hire Type"
+      ],
+      "query": "new hires with hire date and hire count",
+      "query_id": "dev-new-hires-1",
+      "rank_of_first_relevant": 1,
+      "reasons": [
+        "The leading report does not cover enough of the requested field evidence."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Hire Date",
+          "Hire Count"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "403",
+        "331",
+        "2852",
+        "2512",
+        "2720",
+        "3906",
+        "3368",
+        "383",
+        "539",
+        "2348",
+        "78",
+        "1940",
+        "2680",
+        "1634",
+        "2569",
+        "1004",
+        "2281",
+        "1451",
+        "1357",
+        "179",
+        "176",
+        "3588",
+        "285",
+        "716",
+        "2030",
+        "783",
+        "1014",
+        "1367",
+        "3343",
+        "3294",
+        "336",
+        "2674",
+        "2846",
+        "479",
+        "961",
+        "2060",
+        "2202",
+        "3887",
+        "3215",
+        "1261",
+        "1759",
+        "1569",
+        "947",
+        "3073",
+        "10",
+        "877",
+        "1138",
+        "1939",
+        "646",
+        "1704"
+      ],
+      "status": "NEEDS_CLARIFICATION"
+    },
+    {
+      "answerability_score": 0.0,
+      "expansion_concepts": [
+        {
+          "canonical": "Net Pay",
+          "confidence": 1.0,
+          "origin": "literal"
+        },
+        {
+          "canonical": "Succession Candidate",
+          "confidence": 1.0,
+          "origin": "literal"
+        }
+      ],
+      "expected_status": "NO_SATISFACTORY_REPORT",
+      "label_source": "author_synthetic",
+      "latency_ms": 208.45133399961924,
+      "parsed_fields": [
+        "Net Pay",
+        "Succession Candidate"
+      ],
+      "query": "Succession Candidate and Net Pay in one report",
+      "query_id": "dev-unsatisfiable-1",
+      "rank_of_first_relevant": null,
+      "reasons": [
+        "No single report in the catalog carries all requested fields."
+      ],
+      "relevance_definition": {
+        "categories": [],
+        "excluded_fields": [],
+        "explicit": {},
+        "required_fields": [
+          "Succession Candidate",
+          "Net Pay"
+        ],
+        "title_terms_all": [],
+        "title_terms_any": []
+      },
+      "returned": [
+        "3000",
+        "1735",
+        "14",
+        "396",
+        "3176",
+        "2193",
+        "1780",
+        "976",
+        "3238",
+        "2198",
+        "262",
+        "1459",
+        "3252",
+        "2871",
+        "113",
+        "1549",
+        "2323",
+        "356",
+        "3671",
+        "1769",
+        "1762",
+        "1173",
+        "3705",
+        "2226",
+        "2965",
+        "1881",
+        "3172",
+        "1522",
+        "3287",
+        "3157",
+        "773",
+        "2787",
+        "2732",
+        "3822",
+        "447",
+        "1645",
+        "102",
+        "566",
+        "655",
+        "2405",
+        "2185",
+        "2499",
+        "3165",
+        "2566",
+        "2628",
+        "1469",
+        "1033",
+        "1232",
+        "1716",
+        "851"
+      ],
+      "status": "NO_SATISFACTORY_REPORT"
+    }
+  ],
+  "queries": 22,
+  "recall@10": 0.13910982541478742,
+  "recall@20": 0.18225747197312261,
+  "recall@50": 0.3523539101963637,
+  "risk_coverage": [
+    {
+      "coverage": 0.045454545454545456,
+      "risk": 1.0
+    },
+    {
+      "coverage": 0.09090909090909091,
+      "risk": 0.5
+    },
+    {
+      "coverage": 0.13636363636363635,
+      "risk": 0.33333333333333337
+    },
+    {
+      "coverage": 0.18181818181818182,
+      "risk": 0.25
+    },
+    {
+      "coverage": 0.22727272727272727,
+      "risk": 0.19999999999999996
+    },
+    {
+      "coverage": 0.2727272727272727,
+      "risk": 0.16666666666666663
+    },
+    {
+      "coverage": 0.3181818181818182,
+      "risk": 0.1428571428571429
+    },
+    {
+      "coverage": 0.36363636363636365,
+      "risk": 0.125
+    },
+    {
+      "coverage": 0.4090909090909091,
+      "risk": 0.11111111111111116
+    },
+    {
+      "coverage": 0.45454545454545453,
+      "risk": 0.09999999999999998
+    },
+    {
+      "coverage": 0.5,
+      "risk": 0.09090909090909094
+    },
+    {
+      "coverage": 0.5454545454545454,
+      "risk": 0.08333333333333337
+    },
+    {
+      "coverage": 0.5909090909090909,
+      "risk": 0.07692307692307687
+    },
+    {
+      "coverage": 0.6363636363636364,
+      "risk": 0.0714285714285714
+    },
+    {
+      "coverage": 0.6818181818181818,
+      "risk": 0.06666666666666665
+    },
+    {
+      "coverage": 0.7272727272727273,
+      "risk": 0.0625
+    },
+    {
+      "coverage": 0.7727272727272727,
+      "risk": 0.05882352941176472
+    },
+    {
+      "coverage": 0.8181818181818182,
+      "risk": 0.05555555555555558
+    },
+    {
+      "coverage": 0.8636363636363636,
+      "risk": 0.052631578947368474
+    },
+    {
+      "coverage": 0.9090909090909091,
+      "risk": 0.050000000000000044
+    },
+    {
+      "coverage": 0.9545454545454546,
+      "risk": 0.04761904761904767
+    },
+    {
+      "coverage": 1.0,
+      "risk": 0.045454545454545414
+    }
+  ],
+  "slices": {
+    "absence": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.011111111111111112,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.011111111111111112,
+      "recall@20": 0.011111111111111112,
+      "recall@50": 0.011111111111111112
+    },
+    "ambiguity": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.5319148936170213,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.10638297872340426,
+      "recall@20": 0.2127659574468085,
+      "recall@50": 0.5319148936170213
+    },
+    "benefits": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.847457627118644,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.1694915254237288,
+      "recall@20": 0.3389830508474576,
+      "recall@50": 0.847457627118644
+    },
+    "compensation": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.0049261083743842365,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.0049261083743842365,
+      "recall@20": 0.0049261083743842365,
+      "recall@50": 0.0049261083743842365
+    },
+    "field_only": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.5263157894736842,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.10526315789473684,
+      "recall@20": 0.21052631578947367,
+      "recall@50": 0.5263157894736842
+    },
+    "headcount": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.015151515151515152,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.015151515151515152,
+      "recall@20": 0.015151515151515152,
+      "recall@50": 0.015151515151515152
+    },
+    "in_domain_unsatisfiable": {
+      "hit@1": 0.0,
+      "hit@10": 0.0,
+      "hit@5": 0.0,
+      "map": 0.0,
+      "mrr@10": 0.0,
+      "ndcg@10": 0.0,
+      "ndcg@5": 0.0,
+      "p@5": 0.0,
+      "queries": 1,
+      "recall@10": 0.0,
+      "recall@20": 0.0,
+      "recall@50": 0.0
+    },
+    "learning": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.814947534667142,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.17543859649122806,
+      "recall@20": 0.3508771929824561,
+      "recall@50": 0.8245614035087719
+    },
+    "location": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.0006872852233676976,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.0006872852233676976,
+      "recall@20": 0.0006872852233676976,
+      "recall@50": 0.0006872852233676976
+    },
+    "new_hires": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.36,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.9363792118010482,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.36,
+      "recall@20": 0.36,
+      "recall@50": 0.36
+    },
+    "out_of_domain": {
+      "hit@1": 0.0,
+      "hit@10": 0.0,
+      "hit@5": 0.0,
+      "map": 0.0,
+      "mrr@10": 0.0,
+      "ndcg@10": 0.0,
+      "ndcg@5": 0.0,
+      "p@5": 0.0,
+      "queries": 1,
+      "recall@10": 0.0,
+      "recall@20": 0.0,
+      "recall@50": 0.0
+    },
+    "payroll": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.013888888888888888,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.013888888888888888,
+      "recall@20": 0.013888888888888888,
+      "recall@50": 0.013888888888888888
+    },
+    "performance": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.5882352941176471,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.11764705882352941,
+      "recall@20": 0.23529411764705882,
+      "recall@50": 0.5882352941176471
+    },
+    "recruiting": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.006493506493506494,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.006493506493506494,
+      "recall@20": 0.006493506493506494,
+      "recall@50": 0.006493506493506494
+    },
+    "requisitions": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.005747126436781609,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.005747126436781609,
+      "recall@20": 0.005747126436781609,
+      "recall@50": 0.005747126436781609
+    },
+    "salary_ranges": {
+      "hit@1": 0.0,
+      "hit@10": 0.0,
+      "hit@5": 0.0,
+      "map": 0.07376991973075205,
+      "mrr@10": 0.0,
+      "ndcg@10": 0.0,
+      "ndcg@5": 0.0,
+      "p@5": 0.0,
+      "queries": 1,
+      "recall@10": 0.0,
+      "recall@20": 0.0,
+      "recall@50": 1.0
+    },
+    "succession": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.2726816842141919,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.7967610662472991,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.1794871794871795,
+      "recall@20": 0.28205128205128205,
+      "recall@50": 0.358974358974359
+    },
+    "termination": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.3067484662576687,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.06134969325153374,
+      "recall@20": 0.12269938650306748,
+      "recall@50": 0.3067484662576687
+    },
+    "time_to_fill": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.038461538461538464,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.22009176629808017,
+      "ndcg@5": 0.3391602052736162,
+      "p@5": 0.2,
+      "queries": 1,
+      "recall@10": 0.038461538461538464,
+      "recall@20": 0.038461538461538464,
+      "recall@50": 0.038461538461538464
+    },
+    "transfers": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.5744535557651308,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.8006937664098819,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.15555555555555556,
+      "recall@20": 0.26666666666666666,
+      "recall@50": 0.7777777777777778
+    },
+    "turnover": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 0.5333333333333333,
+      "mrr@10": 1.0,
+      "ndcg@10": 0.8701249883466592,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 0.5333333333333333,
+      "recall@20": 0.5333333333333333,
+      "recall@50": 0.5333333333333333
+    },
+    "typo": {
+      "hit@1": 1.0,
+      "hit@10": 1.0,
+      "hit@5": 1.0,
+      "map": 1.0,
+      "mrr@10": 1.0,
+      "ndcg@10": 1.0,
+      "ndcg@5": 1.0,
+      "p@5": 1.0,
+      "queries": 1,
+      "recall@10": 1.0,
+      "recall@20": 1.0,
+      "recall@50": 1.0
+    }
+  },
+  "status_accuracy": 1.0,
+  "status_confusion_matrix": {
+    "ANSWERABLE": {
+      "ANSWERABLE": 0,
+      "NEEDS_CLARIFICATION": 0,
+      "NO_SATISFACTORY_REPORT": 0
+    },
+    "NEEDS_CLARIFICATION": {
+      "ANSWERABLE": 0,
+      "NEEDS_CLARIFICATION": 3,
+      "NO_SATISFACTORY_REPORT": 0
+    },
+    "NO_SATISFACTORY_REPORT": {
+      "ANSWERABLE": 0,
+      "NEEDS_CLARIFICATION": 0,
+      "NO_SATISFACTORY_REPORT": 2
+    }
+  }
+}

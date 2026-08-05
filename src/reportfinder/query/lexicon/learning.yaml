@@ -1,0 +1,19 @@
+domain: learning
+schema: 1
+rules:
+  - id: learning.training
+    phrases: ["training assignment", "training assignments", "courses assigned"]
+    emits:
+      - {canonical: "Learning Assignment", kind: field, confidence: 0.88}
+      - {canonical: "Learner", kind: field, confidence: 0.86}
+  - id: learning.overdue
+    phrases: ["overdue training", "training overdue", "overdue", "past due"]
+    emits:
+      - {canonical: "Due Date", kind: field, confidence: 0.82}
+      - {canonical: "Completion Status", kind: field, confidence: 0.84}
+  - id: learning.completion
+    phrases: ["course completion", "training results", "learning outcomes"]
+    emits:
+      - {canonical: "Completion Status", kind: field, confidence: 0.88}
+      - {canonical: "Completion Score", kind: field, confidence: 0.84}
+      - {canonical: "Completion Date", kind: field, confidence: 0.86}

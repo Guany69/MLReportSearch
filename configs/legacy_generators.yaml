@@ -1,0 +1,96 @@
+# The source-preserving generator architecture, on the legacy single-file estate.
+#
+# This is the config the new retrieval path is developed and evaluated against.
+# The Phase 2 configs in this directory point at workbooks that are absent from
+# data/, so they cannot currently run; this one uses data/Reports.xlsx, which is
+# present.
+#
+# Every value here is a starting point, not a measured winner.
+
+ingest_mode: legacy_single_file
+corpus_granularity: report_row      # required: family aggregation needs instances
+retrieval_mode: generators
+top_k: 10
+
+retrieval:
+  rrf_constant: 60
+  bm25f:
+    enabled: true
+    k: 100
+  splade:
+    enabled: true
+    checkpoint: naver/splade-cocondenser-ensembledistil
+    revision: "49cf4c7b0db5b870a401ddf5e2669993ef3699c7"
+    k: 100
+  dense:
+    checkpoint: BAAI/bge-small-en-v1.5
+    revision: "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+    challenger_checkpoint: intfloat/e5-small-v2
+    challenger_revision: "ffb93f3bd4047442299a41ebb6fa998a38507c52"
+    views: [identity, purpose, schema, interface]
+    k_per_view: 50
+  prototypes:
+    enabled: true
+    k: 50
+  late_interaction:
+    # Implemented and tested, but no approved artifact has been built or measured
+    # on this estate. Enabling it also requires adding "late_interaction" to
+    # bundle.required, so it cannot be switched on without a built index.
+    enabled: false
+    trigger_on_high_risk: true
+
+shortlist:
+  standard_rerank_depth: 120
+  high_risk_rerank_depth: 200
+  preserve_source_exclusive_candidates: true
+  quotas:
+    fused: 50
+    bm25_exclusive: 15
+    splade_exclusive: 15
+    schema_exclusive: 10
+    purpose_exclusive: 10
+    prototype_exclusive: 10
+    alternate_query_exclusive: 10
+
+rerank:
+  enabled: true
+  checkpoint: cross-encoder/ms-marco-MiniLM-L-6-v2
+  revision: "c5ee24cb16019beea0893ab7796b1df96625c6b8"
+  max_length: 256
+  # ONNX Runtime rather than torch, because the parity gate passed on this host:
+  # max |logit delta| 7e-06 against float64 torch over 200 real (query, report)
+  # pairs, zero ordering mismatches, zero non-finite scores.
+  #
+  # That last number is the point. torch 2.11 on arm64 macOS 13 returns NaN in
+  # float32 for any realistic cross-encoder input, so the torch path escalates to
+  # float64 -- correct, and the dominant term in query latency. ONNX Runtime does
+  # not reproduce the NaN, so it is both exact and ~1.65x faster here.
+  #
+  # Re-verify before trusting this on another host:
+  #   uv run python scripts/export_cross_encoder_onnx.py --verify
+  # If it fails, set backend: torch. A backend that ranks differently is not a
+  # faster backend, it is a different system.
+  backend: onnx
+  onnx_path: artifacts/onnx/cross_encoder.onnx
+
+fusion:
+  # No trained artifact exists. Serving uses RRF and discloses it.
+  artifact_path: null
+  fallback: rrf
+
+decision:
+  # No trained or calibrated artifact exists. Serving uses the deterministic
+  # three-way policy and discloses it.
+  artifact_path: null
+  calibration_path: null
+  fallback: deterministic_three_way_policy
+
+auth:
+  # This estate exports no entitlement data. The permissive resolver is a
+  # development default and is reported in every response and trace.
+  resolver: allow_all
+  allow_dev_default: true
+  fail_closed_on_acl_error: true
+
+security:
+  trust_remote_code: false

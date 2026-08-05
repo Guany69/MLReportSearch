@@ -1,0 +1,117 @@
+{
+  "data/relevance/annotation/adjudicated_judgments.csv": {
+    "columns": [
+      "scenario_id",
+      "candidate_report_key",
+      "query_text",
+      "candidate_report_title",
+      "adjudicated_relevance_grade",
+      "adjudicated_answerability_label",
+      "adjudicator_id",
+      "adjudication_notes",
+      "adjudication_status"
+    ],
+    "nonempty_label_cells": {
+      "adjudicated_relevance_grade": 0
+    },
+    "rows": 290876
+  },
+  "data/relevance/annotation/candidate_pool.csv": {
+    "columns": [
+      "scenario_id",
+      "split",
+      "query_text",
+      "scenario_family",
+      "answerability_seed",
+      "required_fields",
+      "optional_fields",
+      "time_requirement",
+      "granularity_requirement",
+      "filter_requirement",
+      "candidate_report_key",
+      "candidate_report_title",
+      "candidate_category",
+      "candidate_data_source",
+      "candidate_report_type",
+      "candidate_description",
+      "candidate_prompts",
+      "candidate_pool_rank",
+      "candidate_sources",
+      "candidate_source_count",
+      "title_bm25_score",
+      "title_bm25_rank",
+      "field_bm25_score",
+      "field_bm25_rank",
+      "char_tfidf_score",
+      "char_tfidf_rank",
+      "exact_field_score",
+      "exact_field_rank",
+      "is_seed_positive",
+      "is_seed_hard_negative",
+      "is_duplicate_variant",
+      "synthetic_relevance_grade",
+      "synthetic_judgment_role",
+      "source_catalog_file"
+    ],
+    "nonempty_label_cells": {
+      "synthetic_relevance_grade": 10874
+    },
+    "rows": 290876
+  },
+  "data/relevance/annotation/human_judgments.csv": {
+    "columns": [
+      "scenario_id",
+      "candidate_report_key",
+      "query_text",
+      "candidate_report_title",
+      "candidate_description",
+      "candidate_category",
+      "candidate_data_source",
+      "candidate_report_type",
+      "candidate_prompts",
+      "required_fields",
+      "answerability_seed",
+      "reviewer_id",
+      "human_relevance_grade",
+      "human_answerability_label",
+      "human_notes",
+      "review_status"
+    ],
+    "nonempty_label_cells": {
+      "human_relevance_grade": 0
+    },
+    "rows": 290876
+  },
+  "data/relevance/raw/axis_report_search_seed_judgments.jsonl": {
+    "grade_distribution": {
+      "Synthetic Relevance Grade:0": 1100,
+      "Synthetic Relevance Grade:1": 1324,
+      "Synthetic Relevance Grade:2": 8450
+    },
+    "label_sources": {
+      "Partial bundle member": 1324,
+      "Synthetic hard negative": 1100,
+      "Synthetic primary positive": 8450
+    },
+    "rows": 10874,
+    "unique_queries": 9050
+  },
+  "evaluation/qrels.jsonl": {
+    "grade_distribution": {
+      "1": 2,
+      "2": 3
+    },
+    "label_sources": {
+      "synthetic_negative": 1,
+      "weak_field": 2,
+      "weak_title": 3
+    },
+    "rows": 6,
+    "unique_queries": 6
+  },
+  "integrity_statement": {
+    "human_validated": false,
+    "note": "Human and adjudication files are templates unless non-empty grades are reported above.",
+    "production_accuracy_claimed": false
+  }
+}

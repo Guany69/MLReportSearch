@@ -1,0 +1,2642 @@
+{
+  "cross_encoder_dtype": "float32",
+  "decisions": {
+    "ASK_CLARIFICATION": 41,
+    "NO_CONFIDENT_MATCH": 32,
+    "RETURN_RESULTS": 47
+  },
+  "family_expansion_enabled": true,
+  "family_mrr": 0.0856,
+  "family_ndcg@5": 0.0855,
+  "instance_recall@1_within_correct_family": 0.075,
+  "label_basis": "synthetic weak supervision; not production accuracy",
+  "latency_ms": {
+    "measured_on": "single CPU host; not a production latency claim",
+    "p50": 1905.6,
+    "p95": 4134.5
+  },
+  "loss_by_boundary": {
+    "final": 117,
+    "never_generated": 95,
+    "shortlist": 18,
+    "survived": 13
+  },
+  "per_query": [
+    {
+      "ce_second": 5.648122310638428,
+      "ce_top": 8.388595581054688,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20003",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R1651",
+        "R1957"
+      ],
+      "returned_instances": [
+        "R1957",
+        "R1139",
+        "R2776",
+        "R0033",
+        "R2523",
+        "R2830",
+        "R3520",
+        "R3170",
+        "R1456",
+        "R3010"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 2.8383185863494873,
+      "ce_top": 3.5345749855041504,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20020",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0873",
+        "R3142",
+        "R3617"
+      ],
+      "returned_instances": [
+        "R1907",
+        "R1012",
+        "R3783",
+        "R3914",
+        "R1909",
+        "R2051",
+        "R0351",
+        "R3021",
+        "R2833",
+        "R3959"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 5.7920989990234375,
+      "ce_top": 6.467310428619385,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20022",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R1058",
+        "R2269"
+      ],
+      "returned_instances": [
+        "R2070",
+        "R1058",
+        "R1709",
+        "R1448",
+        "R2977",
+        "R2532",
+        "R2715",
+        "R3995",
+        "R2884",
+        "R0826"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -4.924246788024902,
+      "ce_top": -4.712839603424072,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20023",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1228",
+        "R2858"
+      ],
+      "returned_instances": [
+        "R0125",
+        "R2847",
+        "R1977",
+        "R3819",
+        "R2148",
+        "R0857",
+        "R2680",
+        "R1623",
+        "R1099",
+        "R1063"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 7.526071548461914,
+      "ce_top": 7.724087238311768,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20025",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R0020",
+        "R0033"
+      ],
+      "returned_instances": [
+        "R0020",
+        "R2801",
+        "R3493",
+        "R1699",
+        "R1276",
+        "R2994",
+        "R1007",
+        "R1325",
+        "R1326",
+        "R2309"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 6.111812591552734,
+      "ce_top": 6.553524017333984,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20028",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2835",
+        "R3286"
+      ],
+      "returned_instances": [
+        "R0996",
+        "R0839",
+        "R0392",
+        "R0336",
+        "R1350",
+        "R2172",
+        "R3433",
+        "R1690",
+        "R1220",
+        "R1044"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 4.497238636016846,
+      "ce_top": 5.288118362426758,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20031",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1004",
+        "R1338"
+      ],
+      "returned_instances": [
+        "R0676",
+        "R0486",
+        "R0765",
+        "R0136",
+        "R3914",
+        "R3173",
+        "R2444",
+        "R3496",
+        "R3599",
+        "R0283"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -7.171953201293945,
+      "ce_top": -6.782439708709717,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20034",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0810",
+        "R2515"
+      ],
+      "returned_instances": [
+        "R3600",
+        "R0685",
+        "R2080",
+        "R1748",
+        "R0779",
+        "R2718",
+        "R0929",
+        "R3824",
+        "R2600",
+        "R0201"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 5.450538158416748,
+      "ce_top": 6.663229465484619,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20041",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R2224",
+        "R3025"
+      ],
+      "returned_instances": [
+        "R3025",
+        "R0298",
+        "R3895",
+        "R1779",
+        "R3335",
+        "R2983",
+        "R1568",
+        "R2654",
+        "R0548",
+        "R2780"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 4.76319694519043,
+      "ce_top": 4.882941246032715,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20046",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1193",
+        "R2983"
+      ],
+      "returned_instances": [
+        "R1566",
+        "R3618",
+        "R1383",
+        "R2179",
+        "R0928",
+        "R2682",
+        "R1595",
+        "R3486",
+        "R2765",
+        "R2731"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 4.447677135467529,
+      "ce_top": 4.9959940910339355,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20048",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R2018",
+        "R2416"
+      ],
+      "returned_instances": [
+        "R0320",
+        "R2416",
+        "R1475",
+        "R3609",
+        "R1942",
+        "R0385",
+        "R3607",
+        "R1200",
+        "R1715",
+        "R1431"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 0.5482886433601379,
+      "ce_top": 1.1171919107437134,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20063",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3455",
+        "R3942"
+      ],
+      "returned_instances": [
+        "R0202",
+        "R2005",
+        "R3823",
+        "R3073",
+        "R2834",
+        "R3483",
+        "R3418",
+        "R3000",
+        "R1320",
+        "R0056"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 5.019040107727051,
+      "ce_top": 5.300904750823975,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20080",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0067",
+        "R0098"
+      ],
+      "returned_instances": [
+        "R1965",
+        "R0613",
+        "R3235",
+        "R0191",
+        "R2936",
+        "R3216",
+        "R0013",
+        "R1821",
+        "R0751",
+        "R0538"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20087",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2903",
+        "R3338"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -5.421168804168701,
+      "ce_top": -5.199085235595703,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20096",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1277",
+        "R2421",
+        "R2618"
+      ],
+      "returned_instances": [
+        "R0245",
+        "R1975",
+        "R1733",
+        "R2926",
+        "R2117",
+        "R0982",
+        "R3917",
+        "R2810",
+        "R0833",
+        "R2626"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 3.268340587615967,
+      "ce_top": 3.270965099334717,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20103",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2844",
+        "R3742"
+      ],
+      "returned_instances": [
+        "R3309",
+        "R3836",
+        "R2964",
+        "R3834",
+        "R2693",
+        "R0664",
+        "R1934",
+        "R3558",
+        "R1584",
+        "R1996"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 2.9975600242614746,
+      "ce_top": 3.2893171310424805,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20105",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1104",
+        "R1458"
+      ],
+      "returned_instances": [
+        "R2712",
+        "R2653",
+        "R2637",
+        "R3933",
+        "R1652",
+        "R0200",
+        "R3525",
+        "R0373",
+        "R2633",
+        "R1230"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 5.6955718994140625,
+      "ce_top": 7.725812911987305,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20106",
+      "recall_final": 0.25,
+      "relevant_instances": [
+        "R0169",
+        "R2148",
+        "R3192",
+        "R3793"
+      ],
+      "returned_instances": [
+        "R2148",
+        "R1470",
+        "R1418",
+        "R2844",
+        "R2377",
+        "R1952",
+        "R3557",
+        "R0574",
+        "R1483",
+        "R3114"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -5.262298107147217,
+      "ce_top": -4.520254611968994,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20125",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1751",
+        "R2912",
+        "R3358"
+      ],
+      "returned_instances": [
+        "R2038",
+        "R2147",
+        "R0673",
+        "R3994",
+        "R3928",
+        "R1957",
+        "R3927",
+        "R2451",
+        "R2848",
+        "R3770"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 1.8577709197998047,
+      "ce_top": 2.471531867980957,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20139",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2558",
+        "R3771"
+      ],
+      "returned_instances": [
+        "R0702",
+        "R2637",
+        "R1659",
+        "R2444",
+        "R1819",
+        "R1652",
+        "R2963",
+        "R2688",
+        "R0545",
+        "R0353"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -1.7089954614639282,
+      "ce_top": -1.57231867313385,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20152",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0246",
+        "R1893"
+      ],
+      "returned_instances": [
+        "R2029",
+        "R1104",
+        "R2256",
+        "R3423",
+        "R0199",
+        "R1260",
+        "R0782",
+        "R2558",
+        "R2942",
+        "R0863"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -7.902809143066406,
+      "ce_top": -7.6794514656066895,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20159",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2415",
+        "R3374"
+      ],
+      "returned_instances": [
+        "R3770",
+        "R3147",
+        "R3171",
+        "R0065",
+        "R1623",
+        "R3790",
+        "R0664",
+        "R3146",
+        "R0707",
+        "R1441"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -7.171953201293945,
+      "ce_top": -6.782439708709717,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20166",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0367",
+        "R0548",
+        "R2067"
+      ],
+      "returned_instances": [
+        "R3600",
+        "R0685",
+        "R2080",
+        "R1748",
+        "R0779",
+        "R2718",
+        "R0929",
+        "R3824",
+        "R2600",
+        "R0201"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 3.716416358947754,
+      "ce_top": 3.8455851078033447,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20178",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1342",
+        "R2403",
+        "R3563"
+      ],
+      "returned_instances": [
+        "R2444",
+        "R0832",
+        "R1414",
+        "R0803",
+        "R0284",
+        "R0353",
+        "R2909",
+        "R3995",
+        "R1212",
+        "R2715"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 4.461109161376953,
+      "ce_top": 5.0174994468688965,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20180",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0021",
+        "R2420"
+      ],
+      "returned_instances": [
+        "R0729",
+        "R0580",
+        "R1224",
+        "R1467",
+        "R0055",
+        "R2005",
+        "R3201",
+        "R2814",
+        "R0751",
+        "R2863"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 2.0941383838653564,
+      "ce_top": 2.256885051727295,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20182",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0639",
+        "R3377"
+      ],
+      "returned_instances": [
+        "R0702",
+        "R0847",
+        "R2444",
+        "R1491",
+        "R2688",
+        "R0676",
+        "R3311",
+        "R2389",
+        "R3466",
+        "R1141"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 5.68676233291626,
+      "ce_top": 5.751187324523926,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20186",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1932",
+        "R3345"
+      ],
+      "returned_instances": [
+        "R3445",
+        "R1556",
+        "R2889",
+        "R1123",
+        "R3104",
+        "R2311",
+        "R3899",
+        "R2728",
+        "R2014",
+        "R2337"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -1.9435276985168457,
+      "ce_top": -1.2831976413726807,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20192",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2947",
+        "R3729"
+      ],
+      "returned_instances": [
+        "R3285",
+        "R2106",
+        "R3380",
+        "R2872",
+        "R3193",
+        "R2585",
+        "R2342",
+        "R0467",
+        "R2845",
+        "R0596"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 6.506481170654297,
+      "ce_top": 6.771346092224121,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20215",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3189",
+        "R3756",
+        "R3842"
+      ],
+      "returned_instances": [
+        "R2755",
+        "R3902",
+        "R1679",
+        "R1027",
+        "R2365",
+        "R2005",
+        "R3981",
+        "R1490",
+        "R1768",
+        "R0355"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -5.919065475463867,
+      "ce_top": -5.503067970275879,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20229",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0255",
+        "R2708"
+      ],
+      "returned_instances": [
+        "R2191",
+        "R3808",
+        "R0695",
+        "R2042",
+        "R3908",
+        "R0627",
+        "R3285",
+        "R0858",
+        "R2920",
+        "R3503"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 5.629760265350342,
+      "ce_top": 6.724641799926758,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20235",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R0519",
+        "R2666"
+      ],
+      "returned_instances": [
+        "R0519",
+        "R1232",
+        "R1016",
+        "R2734",
+        "R2375",
+        "R0225",
+        "R2652",
+        "R3568",
+        "R3437",
+        "R3399"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -3.7199411392211914,
+      "ce_top": -3.3777849674224854,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20236",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0882",
+        "R1117",
+        "R2734"
+      ],
+      "returned_instances": [
+        "R1957",
+        "R1063",
+        "R2821",
+        "R3306",
+        "R3994",
+        "R0707",
+        "R0125",
+        "R1416",
+        "R0857",
+        "R1977"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 2.076171398162842,
+      "ce_top": 2.471497058868408,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20239",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3163",
+        "R3575"
+      ],
+      "returned_instances": [
+        "R3352",
+        "R2885",
+        "R0961",
+        "R3504",
+        "R0692",
+        "R2222",
+        "R0990",
+        "R1016",
+        "R3271",
+        "R0364"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20241",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2300",
+        "R2748",
+        "R3258",
+        "R3586"
+      ],
+      "returned_instances": [],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 3.443878173828125,
+      "ce_top": 3.572272539138794,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20249",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0254",
+        "R0325"
+      ],
+      "returned_instances": [
+        "R1230",
+        "R0100",
+        "R1742",
+        "R1554",
+        "R2696",
+        "R1423",
+        "R0541",
+        "R3525",
+        "R3328",
+        "R3402"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -1.6017324924468994,
+      "ce_top": -1.5719621181488037,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20250",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0652",
+        "R3318"
+      ],
+      "returned_instances": [
+        "R3088",
+        "R2026",
+        "R2133",
+        "R3643",
+        "R3505",
+        "R2715",
+        "R0417",
+        "R0666",
+        "R1716",
+        "R3653"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 1.803945779800415,
+      "ce_top": 2.691937208175659,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20256",
+      "recall_final": 0.2,
+      "relevant_instances": [
+        "R0526",
+        "R1430",
+        "R1793",
+        "R2479",
+        "R3648"
+      ],
+      "returned_instances": [
+        "R2201",
+        "R3218",
+        "R3955",
+        "R1159",
+        "R3133",
+        "R1793",
+        "R2263",
+        "R3023",
+        "R2337",
+        "R0944"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 2.835681915283203,
+      "ce_top": 3.172762393951416,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20257",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1548",
+        "R3086"
+      ],
+      "returned_instances": [
+        "R1617",
+        "R3280",
+        "R1660",
+        "R1147",
+        "R2099",
+        "R3443",
+        "R0433",
+        "R2610",
+        "R2991",
+        "R3133"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -8.001604080200195,
+      "ce_top": -7.523690700531006,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20261",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1655",
+        "R3224"
+      ],
+      "returned_instances": [
+        "R2688",
+        "R2167",
+        "R2090",
+        "R2821",
+        "R0125",
+        "R3306",
+        "R2637",
+        "R3927",
+        "R3311",
+        "R2712"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -5.398357391357422,
+      "ce_top": -5.096102237701416,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20277",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0144",
+        "R1667"
+      ],
+      "returned_instances": [
+        "R0725",
+        "R2122",
+        "R3832",
+        "R1538",
+        "R2256",
+        "R0353",
+        "R2800",
+        "R3809",
+        "R0539",
+        "R3363"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 5.332681655883789,
+      "ce_top": 5.5005598068237305,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20278",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0046",
+        "R0168",
+        "R1569",
+        "R3780"
+      ],
+      "returned_instances": [
+        "R0260",
+        "R3910",
+        "R1427",
+        "R2559",
+        "R0172",
+        "R3334",
+        "R1270",
+        "R2752",
+        "R2472",
+        "R3109"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 6.77898645401001,
+      "ce_top": 8.023740768432617,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20279",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R1362",
+        "R2803"
+      ],
+      "returned_instances": [
+        "R2803",
+        "R3387",
+        "R3168",
+        "R3036",
+        "R1231",
+        "R2708",
+        "R3517",
+        "R1845",
+        "R0148",
+        "R0742"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 2.3517980575561523,
+      "ce_top": 2.6138436794281006,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20293",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2319",
+        "R2331"
+      ],
+      "returned_instances": [
+        "R2507",
+        "R2858",
+        "R3297",
+        "R0837",
+        "R0307",
+        "R0345",
+        "R1300",
+        "R0114",
+        "R3869",
+        "R1415"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 3.3807926177978516,
+      "ce_top": 3.5663537979125977,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20297",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0252",
+        "R1168"
+      ],
+      "returned_instances": [
+        "R0471",
+        "R3173",
+        "R0866",
+        "R0969",
+        "R0707",
+        "R3914",
+        "R1472",
+        "R1711",
+        "R2551",
+        "R1518"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 1.8755342960357666,
+      "ce_top": 2.0336990356445312,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20305",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R0838",
+        "R3882"
+      ],
+      "returned_instances": [
+        "R3068",
+        "R0293",
+        "R0181",
+        "R3713",
+        "R1225",
+        "R2919",
+        "R2457",
+        "R2788",
+        "R3882",
+        "R1635"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 2.396637439727783,
+      "ce_top": 2.411113977432251,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20309",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0194",
+        "R0578",
+        "R1057",
+        "R2013"
+      ],
+      "returned_instances": [
+        "R3502",
+        "R3932",
+        "R2697",
+        "R2757",
+        "R0308",
+        "R1853",
+        "R2333",
+        "R3207",
+        "R3822",
+        "R1598"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 2.7874135971069336,
+      "ce_top": 2.789196252822876,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20312",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1612",
+        "R2955"
+      ],
+      "returned_instances": [
+        "R1550",
+        "R2245",
+        "R2194",
+        "R1867",
+        "R0352",
+        "R2640",
+        "R1184",
+        "R0141",
+        "R1976",
+        "R0065"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 4.041713714599609,
+      "ce_top": 4.06089448928833,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20317",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0427",
+        "R0478",
+        "R0831",
+        "R0971"
+      ],
+      "returned_instances": [
+        "R0686",
+        "R3545",
+        "R1917",
+        "R1237",
+        "R0524",
+        "R0662",
+        "R0550",
+        "R3840",
+        "R2636",
+        "R1762"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 6.177545547485352,
+      "ce_top": 6.698481559753418,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20320",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2430",
+        "R3556"
+      ],
+      "returned_instances": [
+        "R0891",
+        "R1613",
+        "R1672",
+        "R2532",
+        "R2715",
+        "R3917",
+        "R2070",
+        "R3459",
+        "R0966",
+        "R3458"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 1.3345105648040771,
+      "ce_top": 1.444148302078247,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20333",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0068",
+        "R0680",
+        "R1600",
+        "R3834"
+      ],
+      "returned_instances": [
+        "R0708",
+        "R2964",
+        "R1853",
+        "R2260",
+        "R2146",
+        "R0837",
+        "R3491",
+        "R0481",
+        "R0978",
+        "R3917"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 5.441580772399902,
+      "ce_top": 5.490659236907959,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20336",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0846",
+        "R3171",
+        "R3934"
+      ],
+      "returned_instances": [
+        "R1184",
+        "R3836",
+        "R0708",
+        "R1269",
+        "R0107",
+        "R1441",
+        "R2194",
+        "R3469",
+        "R1988",
+        "R3892"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 6.686044692993164,
+      "ce_top": 6.844334602355957,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20342",
+      "recall_final": 0.2,
+      "relevant_instances": [
+        "R0104",
+        "R0997",
+        "R1101",
+        "R3494",
+        "R3649"
+      ],
+      "returned_instances": [
+        "R3649",
+        "R1433",
+        "R0161",
+        "R2235",
+        "R2181",
+        "R3786",
+        "R2544",
+        "R1398",
+        "R2565",
+        "R3211"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -4.041049003601074,
+      "ce_top": -3.9926111698150635,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20343",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0130",
+        "R0366",
+        "R3786"
+      ],
+      "returned_instances": [
+        "R0199",
+        "R1014",
+        "R2511",
+        "R0249",
+        "R2127",
+        "R1873",
+        "R1844",
+        "R1118",
+        "R3235",
+        "R3137"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 2.676050901412964,
+      "ce_top": 3.006702423095703,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20346",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0175",
+        "R1846"
+      ],
+      "returned_instances": [
+        "R2194",
+        "R0708",
+        "R1184",
+        "R1726",
+        "R0107",
+        "R1487",
+        "R1269",
+        "R1441",
+        "R2876",
+        "R3064"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 5.427221298217773,
+      "ce_top": 5.609245300292969,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20348",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0523",
+        "R1344",
+        "R2958",
+        "R3030"
+      ],
+      "returned_instances": [
+        "R3309",
+        "R2964",
+        "R1677",
+        "R3779",
+        "R2876",
+        "R1441",
+        "R2921",
+        "R3836",
+        "R1934",
+        "R0492"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -6.600588321685791,
+      "ce_top": -5.709752559661865,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20355",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0004",
+        "R0177",
+        "R2246",
+        "R2289",
+        "R2529",
+        "R3337",
+        "R3566"
+      ],
+      "returned_instances": [
+        "R0673",
+        "R0872",
+        "R3760",
+        "R2147",
+        "R1678",
+        "R1478",
+        "R2400",
+        "R1982",
+        "R2103",
+        "R3969"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 5.926511764526367,
+      "ce_top": 5.989077568054199,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20358",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2377",
+        "R2865"
+      ],
+      "returned_instances": [
+        "R0740",
+        "R0572",
+        "R3774",
+        "R0236",
+        "R3790",
+        "R0133",
+        "R1570",
+        "R0292",
+        "R2813",
+        "R0217"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 6.414825439453125,
+      "ce_top": 7.315633773803711,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20367",
+      "recall_final": 0.5,
+      "relevant_instances": [
+        "R2820",
+        "R2986"
+      ],
+      "returned_instances": [
+        "R2820",
+        "R3464",
+        "R0151",
+        "R3684",
+        "R2326",
+        "R1124",
+        "R3080",
+        "R0721",
+        "R0246",
+        "R2855"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -1.499111533164978,
+      "ce_top": -1.3546282052993774,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20371",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2030",
+        "R3829"
+      ],
+      "returned_instances": [
+        "R3661",
+        "R3682",
+        "R2125",
+        "R3986",
+        "R2528",
+        "R2238",
+        "R2258",
+        "R1791",
+        "R3409",
+        "R2421"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 3.4814140796661377,
+      "ce_top": 3.8007328510284424,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20375",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2236",
+        "R2524",
+        "R3913"
+      ],
+      "returned_instances": [
+        "R0694",
+        "R0402",
+        "R3364",
+        "R0166",
+        "R1199",
+        "R3556",
+        "R0737",
+        "R0521",
+        "R1560",
+        "R0902"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 2.894193649291992,
+      "ce_top": 2.9680938720703125,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20394",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0874",
+        "R1953"
+      ],
+      "returned_instances": [
+        "R3988",
+        "R0436",
+        "R1848",
+        "R1513",
+        "R1185",
+        "R1828",
+        "R2568",
+        "R0070",
+        "R3292",
+        "R1051"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -3.6740665435791016,
+      "ce_top": -3.665297508239746,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20397",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0752",
+        "R2946"
+      ],
+      "returned_instances": [
+        "R1857",
+        "R3088",
+        "R3095",
+        "R3247",
+        "R3558",
+        "R1791",
+        "R3243",
+        "R1058",
+        "R1009",
+        "R1356"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -3.9999470710754395,
+      "ce_top": -3.869607448577881,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20403",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2063",
+        "R3847"
+      ],
+      "returned_instances": [
+        "R0458",
+        "R2153",
+        "R2716",
+        "R2942",
+        "R3210",
+        "R2301",
+        "R3421",
+        "R2550",
+        "R1014",
+        "R2298"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 1.791640043258667,
+      "ce_top": 1.8177592754364014,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20408",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0110",
+        "R0196"
+      ],
+      "returned_instances": [
+        "R2625",
+        "R1511",
+        "R2489",
+        "R0593",
+        "R0129",
+        "R2952",
+        "R1742",
+        "R0067",
+        "R3944",
+        "R2210"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 0.6581588387489319,
+      "ce_top": 1.0515408515930176,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20410",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1810",
+        "R1935"
+      ],
+      "returned_instances": [
+        "R2084",
+        "R0839",
+        "R0249",
+        "R3433",
+        "R1684",
+        "R1110",
+        "R2600",
+        "R1772",
+        "R3137",
+        "R0967"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 3.17042875289917,
+      "ce_top": 3.208162784576416,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20427",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0563",
+        "R1587"
+      ],
+      "returned_instances": [
+        "R2194",
+        "R0708",
+        "R2581",
+        "R0291",
+        "R1184",
+        "R0107",
+        "R1726",
+        "R1441",
+        "R3790",
+        "R0492"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 0.767430305480957,
+      "ce_top": 1.4024560451507568,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20442",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0518",
+        "R1068"
+      ],
+      "returned_instances": [
+        "R2833",
+        "R3059",
+        "R1482",
+        "R1691",
+        "R0596",
+        "R2549",
+        "R1373",
+        "R2460",
+        "R2490",
+        "R0074"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": 5.798534393310547,
+      "ce_top": 8.136924743652344,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20443",
+      "recall_final": 0.3333,
+      "relevant_instances": [
+        "R0976",
+        "R2619",
+        "R3787"
+      ],
+      "returned_instances": [
+        "R0976",
+        "R1925",
+        "R0310",
+        "R2146",
+        "R0305",
+        "R0685",
+        "R0105",
+        "R3283",
+        "R2892",
+        "R3260"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -8.680384635925293,
+      "ce_top": -8.543057441711426,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20453",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2300",
+        "R2748",
+        "R3258",
+        "R3586"
+      ],
+      "returned_instances": [
+        "R1787",
+        "R2233",
+        "R2937",
+        "R0916",
+        "R3291",
+        "R2120",
+        "R2230",
+        "R3023",
+        "R3773",
+        "R0610"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -6.128186225891113,
+      "ce_top": -5.483958721160889,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20455",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2100",
+        "R2607"
+      ],
+      "returned_instances": [
+        "R0582",
+        "R1235",
+        "R0028",
+        "R0122",
+        "R0813",
+        "R0329",
+        "R0186",
+        "R1050",
+        "R2301",
+        "R2867"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20460",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -7.861850738525391,
+      "ce_top": -7.702978134155273,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20462",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2548"
+      ],
+      "returned_instances": [
+        "R2070",
+        "R1672",
+        "R3458",
+        "R0699",
+        "R2096",
+        "R1670",
+        "R1530",
+        "R3406",
+        "R3054",
+        "R0152"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -8.01845645904541,
+      "ce_top": -7.630009174346924,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20466",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3023"
+      ],
+      "returned_instances": [
+        "R1787",
+        "R2233",
+        "R2120",
+        "R3773",
+        "R2937",
+        "R3291",
+        "R1582",
+        "R2230",
+        "R0610",
+        "R0916"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -7.415158271789551,
+      "ce_top": -7.248566150665283,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20473",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1381"
+      ],
+      "returned_instances": [
+        "R1582",
+        "R3291",
+        "R2937",
+        "R1787",
+        "R1214",
+        "R2120",
+        "R3773",
+        "R2230",
+        "R2302",
+        "R0165"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -1.9386296272277832,
+      "ce_top": -1.590590000152588,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20478",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [
+        "R2540",
+        "R2759",
+        "R0285",
+        "R1196",
+        "R1148",
+        "R1856",
+        "R2452",
+        "R2893",
+        "R2959",
+        "R0722"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -8.964414596557617,
+      "ce_top": -8.958419799804688,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20480",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3664"
+      ],
+      "returned_instances": [
+        "R1470",
+        "R3158",
+        "R1940",
+        "R2041",
+        "R0926",
+        "R0706",
+        "R3313",
+        "R1262",
+        "R0584",
+        "R3435"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -6.708663463592529,
+      "ce_top": -6.248364448547363,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20488",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0838",
+        "R3882"
+      ],
+      "returned_instances": [
+        "R1744",
+        "R1248",
+        "R3441",
+        "R0137",
+        "R0349",
+        "R0331",
+        "R3631",
+        "R0116",
+        "R3031",
+        "R3450"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20496",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1180"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -8.850809097290039,
+      "ce_top": -8.233983039855957,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20498",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2969"
+      ],
+      "returned_instances": [
+        "R2937",
+        "R3291",
+        "R1787",
+        "R1582",
+        "R2230",
+        "R1214",
+        "R1734",
+        "R3773",
+        "R2120",
+        "R3023"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -4.664496421813965,
+      "ce_top": -4.174001693725586,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20499",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [
+        "R2540",
+        "R2759",
+        "R1196",
+        "R1856",
+        "R0285",
+        "R2278",
+        "R2452",
+        "R2893",
+        "R1148",
+        "R2170"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20504",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0068",
+        "R0680",
+        "R1600",
+        "R3834"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20506",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1225"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20507",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0246",
+        "R1893"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20509",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -2.4016528129577637,
+      "ce_top": -2.279139757156372,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20518",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1741"
+      ],
+      "returned_instances": [
+        "R3902",
+        "R3295",
+        "R3000",
+        "R1005",
+        "R1979",
+        "R1679",
+        "R2755",
+        "R1700",
+        "R1643",
+        "R0153"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20521",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3731"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20522",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0326"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20534",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0732"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -5.878763198852539,
+      "ce_top": -4.952733039855957,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20539",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3923"
+      ],
+      "returned_instances": [
+        "R0582",
+        "R0813",
+        "R1235",
+        "R0122",
+        "R0028",
+        "R1050",
+        "R0047",
+        "R0186",
+        "R0199",
+        "R2301"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20567",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2818"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20572",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1381"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20573",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2300",
+        "R2748",
+        "R3258",
+        "R3586"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -3.785454273223877,
+      "ce_top": -3.37416410446167,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20592",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3435"
+      ],
+      "returned_instances": [
+        "R0436",
+        "R1828",
+        "R3988",
+        "R1848",
+        "R1513",
+        "R2568",
+        "R3292",
+        "R1185",
+        "R0070",
+        "R0096"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20597",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0838",
+        "R3882"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20599",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -8.125861167907715,
+      "ce_top": -8.081636428833008,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20608",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [
+        "R1556",
+        "R3640",
+        "R0706",
+        "R0158",
+        "R2509",
+        "R3580",
+        "R2041",
+        "R2534",
+        "R3445",
+        "R0999"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20609",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1496"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20616",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3298"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": 0.32996344566345215,
+      "ce_top": 0.7583107948303223,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20626",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [
+        "R2759",
+        "R2540",
+        "R1148",
+        "R0300",
+        "R1856",
+        "R2452",
+        "R2170",
+        "R0285",
+        "R3268",
+        "R2959"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20628",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3551"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20633",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3293"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20646",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -8.097491264343262,
+      "ce_top": -6.9026994705200195,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20651",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0397"
+      ],
+      "returned_instances": [
+        "R1744",
+        "R1248",
+        "R0331",
+        "R0349",
+        "R0137",
+        "R3631",
+        "R3031",
+        "R3441",
+        "R3450",
+        "R0116"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20655",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1992"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20663",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1342",
+        "R2403",
+        "R3563"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20673",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1340"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -7.1034393310546875,
+      "ce_top": -6.955235481262207,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20675",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1906"
+      ],
+      "returned_instances": [
+        "R1672",
+        "R2223",
+        "R2070",
+        "R1407",
+        "R2810",
+        "R0395",
+        "R0152",
+        "R2221",
+        "R1623",
+        "R3072"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -4.383461952209473,
+      "ce_top": -4.282751083374023,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20676",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0436"
+      ],
+      "returned_instances": [
+        "R3158",
+        "R2014",
+        "R1722",
+        "R0584",
+        "R1937",
+        "R2923",
+        "R2041",
+        "R2058",
+        "R0926",
+        "R3445"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20682",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3298"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20686",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2377",
+        "R2865"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20688",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3298"
+      ],
+      "returned_instances": [],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20697",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0999"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -9.249944686889648,
+      "ce_top": -8.919248580932617,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20708",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0524"
+      ],
+      "returned_instances": [
+        "R3640",
+        "R1556",
+        "R3580",
+        "R0706",
+        "R0158",
+        "R2041",
+        "R1963",
+        "R2534",
+        "R0999",
+        "R2509"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20711",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1670"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20712",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R1225"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -4.223267555236816,
+      "ce_top": -4.221858024597168,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20713",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3585"
+      ],
+      "returned_instances": [
+        "R0193",
+        "R3012",
+        "R3609",
+        "R1030",
+        "R2797",
+        "R0915",
+        "R2018",
+        "R1112",
+        "R3607",
+        "R2739"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": -7.752655982971191,
+      "ce_top": -7.377388954162598,
+      "decision": "ASK_CLARIFICATION",
+      "query_id": "Q20726",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R0189"
+      ],
+      "returned_instances": [
+        "R1394",
+        "R3418",
+        "R0202",
+        "R2005",
+        "R2776",
+        "R3058",
+        "R3483",
+        "R1334",
+        "R3851",
+        "R0056"
+      ],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20730",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2273"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    },
+    {
+      "ce_second": -0.45798924565315247,
+      "ce_top": -0.42053067684173584,
+      "decision": "RETURN_RESULTS",
+      "query_id": "Q20741",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R3023"
+      ],
+      "returned_instances": [
+        "R0452",
+        "R3242",
+        "R2875",
+        "R1553",
+        "R3176",
+        "R3865",
+        "R1463",
+        "R3258",
+        "R1526",
+        "R2327"
+      ],
+      "risk_band": "MEDIUM"
+    },
+    {
+      "ce_second": null,
+      "ce_top": null,
+      "decision": "NO_CONFIDENT_MATCH",
+      "query_id": "Q20750",
+      "recall_final": 0.0,
+      "relevant_instances": [
+        "R2300",
+        "R2748",
+        "R3258",
+        "R3586"
+      ],
+      "returned_instances": [],
+      "risk_band": "HIGH"
+    }
+  ],
+  "positive_loss_rate_by_boundary": {
+    "final": 0.4815,
+    "never_generated": 0.3909,
+    "shortlist": 0.0741,
+    "survived": 0.0535
+  },
+  "query_count": 120,
+  "recall_by_generator": {
+    "bm25f": 0.5401,
+    "dense_identity": 0.2021,
+    "dense_purpose": 0.0312,
+    "dense_schema": 0.3024,
+    "prototype": 0.1833,
+    "splade": 0.3503
+  },
+  "recall_by_stage": {
+    "expansion": 0.5755,
+    "final": 0.0457,
+    "fusion": 0.5417,
+    "generated": 0.6235,
+    "rerank": 0.5417,
+    "shortlist": 0.5417,
+    "union": 0.6235
+  },
+  "relevant_instances_total": 243,
+  "retrieval_mode": "generators",
+  "slices": {
+    "answered_queries": {
+      "decisions": {
+        "ASK_CLARIFICATION": 41,
+        "RETURN_RESULTS": 47
+      },
+      "family_mrr": 0.1168,
+      "family_ndcg@5": 0.1166,
+      "instance_recall@1_within_correct_family": 0.1023,
+      "label_basis": "synthetic weak supervision; not production accuracy",
+      "loss_by_boundary": {
+        "final": 77,
+        "never_generated": 85,
+        "shortlist": 18,
+        "survived": 13
+      },
+      "positive_loss_rate_by_boundary": {
+        "final": 0.399,
+        "never_generated": 0.4404,
+        "shortlist": 0.0933,
+        "survived": 0.0674
+      },
+      "query_count": 88,
+      "recall_by_generator": {
+        "bm25f": 0.4666,
+        "dense_identity": 0.2159,
+        "dense_purpose": 0.0227,
+        "dense_schema": 0.2817,
+        "prototype": 0.1932,
+        "splade": 0.3214
+      },
+      "recall_by_stage": {
+        "expansion": 0.5007,
+        "final": 0.0623,
+        "fusion": 0.4632,
+        "generated": 0.5746,
+        "rerank": 0.4632,
+        "shortlist": 0.4632,
+        "union": 0.5746
+      },
+      "relevant_instances_total": 193,
+      "unique_relevant_contributed_by_generator": {
+        "bm25f": 9,
+        "dense_identity": 1,
+        "dense_purpose": 2,
+        "dense_schema": 3,
+        "prototype": 2,
+        "splade": 10
+      }
+    }
+  },
+  "unique_relevant_contributed_by_generator": {
+    "bm25f": 11,
+    "dense_identity": 1,
+    "dense_purpose": 4,
+    "dense_schema": 3,
+    "prototype": 2,
+    "splade": 10
+  }
+}

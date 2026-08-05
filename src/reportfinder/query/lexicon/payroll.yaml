@@ -1,0 +1,21 @@
+domain: payroll
+schema: 1
+rules:
+  - id: payroll.take_home
+    phrases: ["net paycheck", "after tax pay"]
+    emits:
+      - {canonical: "Net Pay", kind: field, confidence: 0.90}
+  - id: payroll.period
+    phrases: ["paycheck cycle", "pay run period"]
+    emits:
+      - {canonical: "Pay Period", kind: field, confidence: 0.88}
+  - id: payroll.topic
+    phrases: ["payroll report", "payroll results", "pay run"]
+    emits:
+      - {canonical: "Payroll", kind: category, confidence: 0.88}
+  - id: payroll.amounts
+    phrases: ["pay statement", "paycheck details", "payroll amounts"]
+    emits:
+      - {canonical: "Gross Pay", kind: field, confidence: 0.86}
+      - {canonical: "Net Pay", kind: field, confidence: 0.88}
+      - {canonical: "Deductions", kind: field, confidence: 0.86}

@@ -1,0 +1,35 @@
+domain: termination
+schema: 1
+rules:
+  - id: term.people_left
+    phrases: ["people who left", "who left", "employees who left", "people leaving", "people leave", "departed", "departures", "separations", "offboarding", "exited", "exits"]
+    emits:
+      - {canonical: "Termination Date", kind: field, confidence: 0.82}
+      - {canonical: "Termination Reason", kind: field, confidence: 0.82}
+  - id: term.voluntary_exit
+    phrases: ["voluntary exit", "voluntary exits", "voluntary termination", "voluntary separation", "resigned", "resignation", "quit"]
+    context: {requires_none: ["involuntary"]}
+    emits:
+      - {canonical: "Termination Reason", kind: field, confidence: 0.85}
+      - {canonical: "Termination Type", kind: field, confidence: 0.82}
+  - id: term.turnover_rate
+    phrases: ["turnover rate", "attrition rate", "churn rate", "employee turnover", "workforce attrition", "employee churn"]
+    emits:
+      - {canonical: "Termination Count", kind: field, confidence: 0.85}
+      - {canonical: "Average Headcount", kind: field, confidence: 0.85}
+      - {canonical: "Turnover Rate", kind: field, confidence: 0.90}
+  - id: term.voluntary_turnover
+    phrases: ["voluntary turnover", "voluntary attrition"]
+    emits:
+      - {canonical: "Termination Reason", kind: field, confidence: 0.85}
+      - {canonical: "Termination Type", kind: field, confidence: 0.82}
+      - {canonical: "Termination Count", kind: field, confidence: 0.84}
+      - {canonical: "Average Headcount", kind: field, confidence: 0.84}
+      - {canonical: "Turnover Rate", kind: field, confidence: 0.88}
+  - id: term.termination_detail
+    phrases: ["termination details", "separation details", "exit details"]
+    emits:
+      - {canonical: "Termination Date", kind: field, confidence: 0.88}
+      - {canonical: "Termination Reason", kind: field, confidence: 0.88}
+      - {canonical: "Termination Type", kind: field, confidence: 0.86}
+      - {canonical: "Termination Count", kind: field, confidence: 0.82}

@@ -155,11 +155,29 @@ def test_entropy_bounds():
 
 @pytest.fixture(scope="session")
 def finder(fixture_path):
+    """The hybrid runtime, pinned.
+
+    This file tests the mixture-of-experts posterior -- `alpha`, `t_dense`,
+    `t_lsa`, the field expert -- which are hybrid-path concepts with no counterpart
+    in the generator architecture. Since `generators` became the default the mode
+    has to be stated rather than inherited; the assertions are unchanged.
+    """
     from reportfinder.represent import load_or_build
 
-    cfg = DEFAULT.with_overrides(data_path=fixture_path, cache_dir=Path("/tmp/rf_test_cache"))
+    cfg = DEFAULT.with_overrides(
+        data_path=fixture_path,
+        cache_dir=Path("/tmp/rf_test_cache"),
+        retrieval_mode="hybrid",
+    )
     rep = load_or_build(cfg, rebuild=False, verbose=False)
     return ReportFinder(rep, cfg), cfg
+
+
+@pytest.fixture(scope="session")
+def legacy_finder(finder):
+    rf, cfg = finder
+    legacy = cfg.with_overrides(retrieval_mode="legacy_weighted_logit")
+    return ReportFinder(rf.rep, legacy), legacy
 
 
 def test_posterior_is_a_valid_distribution(finder):
@@ -181,39 +199,49 @@ def test_candidates_are_ranked_by_probability(finder):
     assert probs == sorted(probs, reverse=True)
 
 
-def test_decision_rule_matches_thresholds(finder):
-    rf, cfg = finder
+def test_decision_rule_matches_thresholds(legacy_finder):
+    rf, cfg = legacy_finder
     result = rf.query("new hires with start dates")
     expected = (result.p1 >= cfg.tau) and (result.margin >= cfg.delta)
     assert result.confident == expected
     assert len(result.candidates) == (1 if result.confident else min(cfg.top_k, result.n_reports))
 
 
-def test_alpha_extremes_select_single_experts(finder):
+def test_alpha_extremes_select_single_experts(legacy_finder):
     """α=1 must be dense-only and α=0 LSA-only -- proving it's a real mixture."""
-    rf, cfg = finder
+    rf, cfg = legacy_finder
     query = "employees who transferred between departments"
 
     dense_only = ReportFinder(rf.rep, cfg.with_overrides(alpha=1.0)).query(query)
     lsa_only = ReportFinder(rf.rep, cfg.with_overrides(alpha=0.0)).query(query)
 
     # Each pure expert should rank by its own similarity.
-    top_dense = dense_only.candidates[0].index
-    s_dense = rf._dense_similarities(query)
-    assert top_dense == int(np.argmax(s_dense))
+    #
+    # Asserted as "the returned report has the maximal similarity", not as
+    # "its index equals argmax". Exact ties are real on this estate -- duplicate
+    # report definitions produce byte-identical text and therefore identical
+    # vectors -- and `np.argmax` breaks such a tie by lowest index while the
+    # ranker breaks it its own way. Comparing indices tests the tie-break
+    # convention, not the claim in the docstring, and flips whenever a cache
+    # rebuild changes which pairs happen to tie.
+    for candidates, sims in (
+        (dense_only.candidates, rf._dense_similarities(query)),
+        (lsa_only.candidates, rf._lsa_similarities(query)),
+    ):
+        top = candidates[0].index
+        assert float(sims[top]) == pytest.approx(float(np.max(sims))), (
+            f"pure expert returned {top} (sim {sims[top]:.6f}) but the best "
+            f"available similarity is {np.max(sims):.6f}"
+        )
 
-    top_lsa = lsa_only.candidates[0].index
-    s_lsa = rf._lsa_similarities(query)
-    assert top_lsa == int(np.argmax(s_lsa))
 
-
-def test_product_of_experts_can_veto(finder):
+def test_product_of_experts_can_veto(legacy_finder):
     """A product lets either expert veto -- the key difference from a weighted sum.
 
     The fused top-1 must not be a candidate that one expert considers hopeless,
     even if the other loves it.
     """
-    rf, cfg = finder
+    rf, cfg = legacy_finder
     query = "monthly turnover by organization"
     result = rf.query(query)
     top = result.candidates[0]

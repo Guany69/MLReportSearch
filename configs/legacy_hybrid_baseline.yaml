@@ -1,0 +1,20 @@
+# The pre-migration hybrid path on the legacy estate, for honest A/B comparison.
+#
+# The committed artifacts in artifacts/ were captured against the Phase 2 estate,
+# which is no longer present, so they cannot be compared against a legacy run.
+# This config recaptures the baseline on the same data the generator architecture
+# is evaluated on -- otherwise any measured improvement is confounded by the
+# change of corpus.
+#
+# Note `corpus_granularity: report_row`: the baseline must see the same 4000
+# instances the new path sees. A family-collapsed baseline would be a different
+# retrieval problem.
+
+ingest_mode: legacy_single_file
+corpus_granularity: report_row
+retrieval_mode: hybrid
+candidate_k: 100
+rrf_k: 60
+top_k: 10
+use_cross_encoder: false
+use_ltr: false

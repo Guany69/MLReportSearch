@@ -1,0 +1,26 @@
+{
+  "checks": {
+    "ambiguity": "139 scenarios; each pair differs on a real facet the query deliberately omits",
+    "grades": "grades in [0, 1, 2]; answerability distribution {0: 250, 1: 199, 2: 1322}",
+    "identity": "1771 scenarios, all report keys resolve",
+    "misspelling": "150 scenarios, no vocabulary collisions",
+    "no_answer": "150 reserved-vocabulary and 100 impossible-combination scenarios; no positives, all combinations verified co-absent",
+    "siblings": "450 sibling-discriminating scenarios; 670 scenarios grade >=2 siblings of one family (v1: 0; floor 600)",
+    "splits": "calibration=293; test=255; train=958; validation=265 (disjoint partition, no group straddles, minimums met)",
+    "vague": "400 vague scenarios, all token-disjoint from their target title and grounded in a live lexicon rule"
+  },
+  "counts": {
+    "acronym": 150,
+    "ambiguous_clarification": 139,
+    "misspelling": 150,
+    "multi_intent_single": 60,
+    "multi_intent_split": 60,
+    "negation": 100,
+    "no_answer_impossible_combo": 100,
+    "no_answer_reserved": 150,
+    "short_query": 12,
+    "sibling_discriminating": 450,
+    "total": 1771,
+    "vague_outcome": 400
+  }
+}

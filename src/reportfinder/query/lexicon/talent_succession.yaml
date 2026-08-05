@@ -1,0 +1,17 @@
+domain: talent_succession
+schema: 1
+rules:
+  - id: succession.replacement
+    phrases: ["who could replace", "potential replacement", "successor", "successors"]
+    priority: 20
+    suppresses: ["Leader"]
+    emits:
+      - {canonical: "Succession Candidate", kind: field, confidence: 0.79}
+      - {canonical: "Succession Readiness", kind: field, confidence: 0.78}
+      - {canonical: "Succession Plan", kind: field, confidence: 0.78}
+  - id: succession.readiness
+    phrases: ["ready now successor", "replacement readiness", "bench strength"]
+    emits:
+      - {canonical: "Succession Candidate", kind: field, confidence: 0.86}
+      - {canonical: "Succession Readiness", kind: field, confidence: 0.90}
+      - {canonical: "Succession Plan", kind: field, confidence: 0.86}

@@ -73,7 +73,7 @@ class ReportFieldLinker:
         by_normalized: dict[str, list[int]] = collections.defaultdict(list)
         for record in reports:
             by_exact[record.report_name].append(record.row_index)
-            by_normalized[record.report_key].append(record.row_index)
+            by_normalized[record.title_key].append(record.row_index)
         return by_exact, by_normalized
 
     # -- matching ---------------------------------------------------------

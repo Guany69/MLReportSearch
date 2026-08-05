@@ -172,6 +172,10 @@ class ExpansionResult:
     reranked: int = 0
     ran: bool = True
     skipped_reason: str | None = None
+    pairs_submitted: int = 0
+    model_pair_count: int = 0
+    deduplicated_pairs: int = 0
+    non_finite_scores: int = 0
 
     def telemetry(self) -> dict[str, object]:
         return {
@@ -185,6 +189,12 @@ class ExpansionResult:
             "instances_dropped_by_cap": self.dropped_by_cap,
             "unauthorized_skipped": self.unauthorized_skipped,
             "expanded_cross_encoded": self.reranked,
+            "expansion_pairs_submitted": self.pairs_submitted,
+            "expansion_model_pairs": self.model_pair_count,
+            "expansion_deduplicated_pairs": self.deduplicated_pairs,
+            # Previously filtered without being counted, so a batch that scored
+            # nothing was indistinguishable from one that never ran.
+            "expansion_non_finite_scores": self.non_finite_scores,
         }
 
 
@@ -322,17 +332,27 @@ def expand_families(
     if scorer is not None:
         import numpy as np
 
+        from .rerank import score_pairs_deduplicated
+
         texts = [
             authoritative_text(
                 corpus.instance(instance_id), max_chars=cfg.rerank.max_report_chars
             )
             for instance_id, _ in pending
         ]
-        raw = scorer.score_pairs(plan.raw_query, texts)
-        for (instance_id, _), value, ok in zip(pending, raw, np.isfinite(raw), strict=True):
+        # Expansion is where duplicate text is most likely: these are siblings of
+        # one family by construction, and siblings are the instances most likely
+        # to share an authoritative text.
+        raw, model_pairs = score_pairs_deduplicated(scorer, plan.raw_query, texts)
+        finite = np.isfinite(raw)
+        for (instance_id, _), value, ok in zip(pending, raw, finite, strict=True):
             if ok:
                 ce_scores[instance_id] = float(value)
         result.reranked = len(ce_scores)
+        result.pairs_submitted = len(texts)
+        result.model_pair_count = model_pairs
+        result.deduplicated_pairs = len(texts) - model_pairs
+        result.non_finite_scores = int((~finite).sum())
 
     for instance_id, family_id in pending:
         instance = corpus.instance(instance_id)

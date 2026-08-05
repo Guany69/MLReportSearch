@@ -1,9 +1,9 @@
 # The source-preserving generator architecture, on the legacy single-file estate.
 #
-# This is the config the new retrieval path is developed and evaluated against.
-# The Phase 2 configs in this directory point at workbooks that are absent from
-# data/, so they cannot currently run; this one uses data/Reports.xlsx, which is
-# present.
+# This is the config the new retrieval path is developed and evaluated against,
+# and the one every measured number in docs/ was produced with. It reads
+# data/Reports.xlsx. Its dual-file counterpart is configs/phase2_generators.yaml,
+# which reads the two Phase 2 workbooks -- both are present and tracked in data/.
 #
 # Every value here is a starting point, not a measured winner.
 

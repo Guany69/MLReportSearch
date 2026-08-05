@@ -220,3 +220,125 @@ def test_calibration_without_a_decision_artifact_is_rejected():
 def test_legacy_retrieval_modes_are_still_accepted():
     for mode in ("hybrid", "legacy_weighted_logit"):
         assert from_mapping({"retrieval_mode": mode}).retrieval_mode == mode
+
+
+# --- the search CLI's --config -----------------------------------------------
+#
+# `reportfinder-bundle` has always taken --config; `python -m reportfinder` did
+# not, so a search always ran the in-code DEFAULT no matter which configuration
+# its bundle was built from. These pin the loader and the override precedence.
+
+
+def test_the_cli_loads_a_yaml_config_as_its_base(tmp_path):
+    from reportfinder.__main__ import base_config
+
+    path = tmp_path / "c.yaml"
+    path.write_text("top_k: 3\nshortlist:\n  standard_rerank_depth: 77\n")
+    cfg = base_config(path)
+
+    assert cfg.top_k == 3
+    assert cfg.shortlist.standard_rerank_depth == 77
+    # A nested override must not reset its siblings.
+    assert cfg.shortlist.high_risk_rerank_depth == DEFAULT.shortlist.high_risk_rerank_depth
+
+
+def test_nested_ingestion_settings_survive_cli_loading(tmp_path):
+    from reportfinder.__main__ import base_config
+
+    path = tmp_path / "c.yaml"
+    path.write_text(
+        "ingest_mode: phase2_dual_file\n"
+        "corpus_granularity: report_row\n"
+        "shortlist:\n  diversify_families: false\n"
+    )
+    cfg = base_config(path)
+
+    assert cfg.ingest_mode == "phase2_dual_file"
+    assert cfg.shortlist.diversify_families is False
+
+
+def test_no_config_still_starts_from_the_in_code_default():
+    from reportfinder.__main__ import base_config
+
+    assert base_config(None) is DEFAULT
+
+
+def test_an_explicit_flag_beats_the_config_file(tmp_path):
+    """`with_overrides` drops Nones, so an unpassed flag cannot reset a value the
+    file set -- and a passed one must still win."""
+    from reportfinder.__main__ import base_config
+
+    path = tmp_path / "c.yaml"
+    path.write_text("top_k: 3\n")
+    base = base_config(path)
+
+    assert base.with_overrides(top_k=7).top_k == 7
+    assert base.with_overrides(top_k=None).top_k == 3
+
+
+def test_malformed_yaml_is_reported_before_anything_loads(tmp_path, capsys):
+    from reportfinder.__main__ import main
+
+    path = tmp_path / "bad.yaml"
+    path.write_text("top_k: [unclosed\n")
+    assert main(["--config", str(path), "anything"]) == 2
+    assert "not valid YAML" in capsys.readouterr().err
+
+
+def test_a_non_mapping_config_document_is_refused(tmp_path, capsys):
+    from reportfinder.__main__ import main
+
+    path = tmp_path / "list.yaml"
+    path.write_text("- a\n- b\n")
+    assert main(["--config", str(path), "anything"]) == 2
+    assert "must be a YAML mapping" in capsys.readouterr().err
+
+
+def test_an_unknown_config_key_names_itself(tmp_path, capsys):
+    from reportfinder.__main__ import main
+
+    path = tmp_path / "typo.yaml"
+    path.write_text("top_kk: 3\n")
+    assert main(["--config", str(path), "anything"]) == 2
+    assert "top_kk" in capsys.readouterr().err
+
+
+def test_a_missing_config_file_is_reported_not_traced(tmp_path, capsys):
+    from reportfinder.__main__ import main
+
+    assert main(["--config", str(tmp_path / "absent.yaml"), "anything"]) == 2
+    assert "cannot read --config" in capsys.readouterr().err
+
+
+def test_the_phase2_config_selects_the_dual_file_estate():
+    """The config exists to be runnable; these are the settings that make it so."""
+    from reportfinder.config import from_mapping
+
+    cfg = from_mapping(
+        yaml.safe_load((CONFIG_DIR / "phase2_generators.yaml").read_text())
+    )
+    assert cfg.ingest_mode == "phase2_dual_file"
+    assert cfg.corpus_granularity == "report_row"
+    assert cfg.catalog_path.name == "Phase2_Report_Catalog_No_Fields.xlsx"
+    assert cfg.field_dictionary_path.name == "Phase2_Field_Dictionary.xlsx"
+    # No artifact fitted on the legacy estate may be pointed at this one.
+    assert cfg.fusion.artifact_path is None
+    assert cfg.decision.artifact_path is None
+
+
+def test_the_phase2_workbooks_the_config_names_are_present():
+    """Separate from the config contract above, which holds regardless.
+
+    Both workbooks are tracked in git, so this should pass in a fresh clone --
+    but it asserts a fact about the tree, not about the config, and a tree
+    without them should say so rather than fail the config test."""
+    from reportfinder.config import from_mapping
+
+    cfg = from_mapping(
+        yaml.safe_load((CONFIG_DIR / "phase2_generators.yaml").read_text())
+    )
+    for path in (cfg.catalog_path, cfg.field_dictionary_path):
+        if not path.exists():
+            pytest.skip(f"{path.name} absent from data/ -- blocked, not regressed")
+    assert cfg.catalog_path.stat().st_size > 0
+    assert cfg.field_dictionary_path.stat().st_size > 0

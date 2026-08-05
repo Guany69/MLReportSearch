@@ -207,16 +207,28 @@ def run_feature_pass(
 # --- caching -----------------------------------------------------------------
 
 
-def cache_key(*, bundle_version: str, dataset_version: str, split: str) -> str:
+def cache_key(
+    *, bundle_version: str, dataset_version: str, split: str,
+    serving_config_hash: str,
+) -> str:
     """Everything that changes what a pass produces.
 
     Both feature hashes are in the key: a feature-schema change makes every
     cached row wrong in a way that no shape check would catch, because the width
     is unchanged when a name is merely redefined.
+
+    So is the serving-config hash. `bundle_version` deliberately excludes
+    serving-only settings -- changing a shortlist depth must not force 4,000
+    documents to be re-encoded -- but those same settings decide which candidates
+    a pass records and in what order. Without this component, a pass generated
+    under one shortlist policy is indistinguishable from one generated under
+    another, and a model would be trained on features its pipeline no longer
+    produces.
     """
     return "-".join([
         CACHE_SCHEMA_VERSION, bundle_version or "nobundle", dataset_version,
-        split, FUSION_FEATURE_HASH, DECISION_FEATURE_HASH,
+        split, serving_config_hash or "nocfg",
+        FUSION_FEATURE_HASH, DECISION_FEATURE_HASH,
     ])
 
 

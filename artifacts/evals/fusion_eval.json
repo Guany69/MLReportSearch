@@ -2,7 +2,7 @@
   "artifact": {
     "feature_hash": "43c526560d24a3a3",
     "path": "artifacts/models/fusion.pt",
-    "weights_sha256": "b6b0ab90cf5f0a3f33c1a02fe8b0d6d7"
+    "weights_sha256": "6ca92f36c1538781848afa5386074345"
   },
   "config": {
     "bundle_version": "b-d196fdc6dba2f2ba-021cf6db",
@@ -14,15 +14,24 @@
     "label_source": "synthetic_v2_generative",
     "root": "data/relevance_v2"
   },
-  "generated_at": "2026-08-05T16:42:50+00:00",
+  "generated_at": "2026-08-05T21:50:20+00:00",
   "kind": "fusion",
   "label_basis": "synthetic_v2_generative; measures agreement with the label generator, not production relevance",
+  "metric_directions": {
+    "accuracy": "higher",
+    "ece": "lower",
+    "family_mrr": "higher",
+    "family_ndcg@5": "higher",
+    "family_recall@10": "higher",
+    "instance_recall@1_within_family": "higher",
+    "macro_per_class_recall": "higher"
+  },
   "metrics": {
     "candidate": {
-      "family_mrr": 0.1256,
-      "family_ndcg@5": 0.1095,
-      "family_recall@10": 0.1868,
-      "instance_recall@1_within_family": 0.8684,
+      "family_mrr": 0.1075,
+      "family_ndcg@5": 0.0931,
+      "family_recall@10": 0.1811,
+      "instance_recall@1_within_family": 0.8158,
       "queries": 265,
       "sibling_queries_measured": 38
     },
@@ -31,14 +40,14 @@
       "family_mrr": 0.1194,
       "family_ndcg@5": 0.1064,
       "family_recall@10": 0.1755,
-      "instance_recall@1_within_family": 0.8947,
+      "instance_recall@1_within_family": 0.8684,
       "queries": 265,
       "sibling_queries_measured": 38
     }
   },
   "primary_metric": {
-    "candidate": 0.1095,
-    "delta": 0.0031,
+    "candidate": 0.0931,
+    "delta": -0.0133,
     "fallback": 0.1064,
     "name": "family_ndcg@5"
   },
@@ -47,7 +56,7 @@
   "slices": {
     "acronym": {
       "candidate": {
-        "family_mrr": 0.0102,
+        "family_mrr": 0.0056,
         "family_ndcg@5": 0.0,
         "family_recall@10": 0.0,
         "instance_recall@1_within_family": null,
@@ -66,8 +75,8 @@
     },
     "ambiguous_clarification": {
       "candidate": {
-        "family_mrr": 0.3904,
-        "family_ndcg@5": 0.3507,
+        "family_mrr": 0.3881,
+        "family_ndcg@5": 0.3055,
         "family_recall@10": 0.6905,
         "instance_recall@1_within_family": null,
         "queries": 21,
@@ -85,8 +94,8 @@
     },
     "misspelling": {
       "candidate": {
-        "family_mrr": 0.0949,
-        "family_ndcg@5": 0.1009,
+        "family_mrr": 0.0884,
+        "family_ndcg@5": 0.0815,
         "family_recall@10": 0.15,
         "instance_recall@1_within_family": null,
         "queries": 20,
@@ -104,9 +113,9 @@
     },
     "multi_intent_single": {
       "candidate": {
-        "family_mrr": 0.0624,
-        "family_ndcg@5": 0.0774,
-        "family_recall@10": 0.3,
+        "family_mrr": 0.0342,
+        "family_ndcg@5": 0.0,
+        "family_recall@10": 0.1,
         "instance_recall@1_within_family": null,
         "queries": 10,
         "sibling_queries_measured": 0
@@ -123,16 +132,16 @@
     },
     "multi_intent_split": {
       "candidate": {
-        "family_mrr": 0.1474,
-        "family_ndcg@5": 0.0716,
-        "family_recall@10": 0.0833,
+        "family_mrr": 0.0989,
+        "family_ndcg@5": 0.0746,
+        "family_recall@10": 0.125,
         "instance_recall@1_within_family": null,
         "queries": 12,
         "sibling_queries_measured": 0
       },
       "fallback": {
         "fallback_name": "rrf_with_cross_encoder_priority",
-        "family_mrr": 0.088,
+        "family_mrr": 0.0881,
         "family_ndcg@5": 0.0568,
         "family_recall@10": 0.125,
         "instance_recall@1_within_family": null,
@@ -142,8 +151,8 @@
     },
     "negation": {
       "candidate": {
-        "family_mrr": 0.0748,
-        "family_ndcg@5": 0.0667,
+        "family_mrr": 0.0842,
+        "family_ndcg@5": 0.0954,
         "family_recall@10": 0.1333,
         "instance_recall@1_within_family": null,
         "queries": 15,
@@ -199,10 +208,10 @@
     },
     "sibling_discriminating": {
       "candidate": {
-        "family_mrr": 0.1781,
-        "family_ndcg@5": 0.169,
-        "family_recall@10": 0.2353,
-        "instance_recall@1_within_family": 0.8684,
+        "family_mrr": 0.1588,
+        "family_ndcg@5": 0.1623,
+        "family_recall@10": 0.2206,
+        "instance_recall@1_within_family": 0.8158,
         "queries": 68,
         "sibling_queries_measured": 38
       },
@@ -211,16 +220,16 @@
         "family_mrr": 0.1918,
         "family_ndcg@5": 0.1803,
         "family_recall@10": 0.2206,
-        "instance_recall@1_within_family": 0.8947,
+        "instance_recall@1_within_family": 0.8684,
         "queries": 68,
         "sibling_queries_measured": 38
       }
     },
     "vague_outcome": {
       "candidate": {
-        "family_mrr": 0.0684,
-        "family_ndcg@5": 0.0403,
-        "family_recall@10": 0.1129,
+        "family_mrr": 0.0448,
+        "family_ndcg@5": 0.0204,
+        "family_recall@10": 0.1452,
         "instance_recall@1_within_family": null,
         "queries": 62,
         "sibling_queries_measured": 0

@@ -154,12 +154,18 @@ class SentenceTransformerEncoder:
 
         if missing:
             encoded = self._encode(missing, QUERY_PREFIXES.get(self.name, ""))
+            # Taken from the encode result, not read back out of the cache. A
+            # batch larger than `_query_cache_size` evicts its own earliest
+            # entries on the way in, so reading them back raised KeyError -- which
+            # is what a 4,299-prototype index build does against a 256-entry
+            # cache. The cache is an optimization; what this returns must not
+            # depend on which entries survived eviction.
+            cached.update(zip(missing, encoded, strict=True))
             with self._cache_lock:
                 for text, vector in zip(missing, encoded, strict=True):
                     self._query_cache[text] = vector
                     self._query_cache.move_to_end(text)
                 while len(self._query_cache) > self._query_cache_size:
                     self._query_cache.popitem(last=False)
-                cached.update({t: self._query_cache[t] for t in missing})
 
         return np.vstack([cached[t] for t in texts]).astype(np.float32)

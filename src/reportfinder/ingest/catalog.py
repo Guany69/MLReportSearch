@@ -26,7 +26,13 @@ COLUMN_ALIASES: dict[str, tuple[str, ...]] = {
     "description": ("Description",),
     "created_date": ("Created Date",),
     "available_usage": ("Available Usage",),
-    "number_of_times": ("Number of Times", "Number of Times Run", "Run Count"),
+    # "Number of Times Executed" is what the real Phase 2 catalog header says.
+    # Without it the column resolved to nothing, so every downstream run count --
+    # and the family-rank ordering that uses it -- was NaN on the real estate.
+    "number_of_times": (
+        "Number of Times", "Number of Times Executed", "Number of Times Run",
+        "Run Count",
+    ),
     "last_updated_date": ("Last Updated Date",),
     "last_run_date": ("Last Run Date",),
     "last_run_by": ("Last Run By",),

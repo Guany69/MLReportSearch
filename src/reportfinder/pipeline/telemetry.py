@@ -35,6 +35,12 @@ class SearchTelemetry:
     catalog_version: str = ""
     model_bundle_version: str = ""
     code_version: str = ""
+    # The bundle id keys on corpus content plus *index* config, so the same
+    # bundle can be served under materially different retrieval settings. These
+    # two make that visible instead of leaving it inferable.
+    build_config_hash: str = ""
+    runtime_config_hash: str = ""
+    runtime_config_differs: bool = False
 
     authorization: dict[str, object] = field(default_factory=dict)
     query: dict[str, object] = field(default_factory=dict)
@@ -88,6 +94,9 @@ class SearchTelemetry:
             "catalog_version": self.catalog_version,
             "model_bundle_version": self.model_bundle_version,
             "code_version": self.code_version,
+            "build_config_hash": self.build_config_hash,
+            "runtime_config_hash": self.runtime_config_hash,
+            "runtime_config_differs": self.runtime_config_differs,
             "authorization": self.authorization,
             "query": self.query,
             "retrieval": self.retrieval,

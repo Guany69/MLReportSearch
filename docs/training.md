@@ -33,9 +33,18 @@ and evaluating either against its fallback needs the fallback's actual output �
 all three come out of that one search.
 
 Passes are cached under `artifacts/feature_cache/<key>/`, keyed on the bundle
-version, the dataset version, and **both** feature-schema hashes. A feature
-*rename* leaves the array width unchanged, so only the hash catches it; without
-that key a stale cache would be the right shape and the wrong numbers.
+version, the dataset version, **both** feature-schema hashes, and the
+**serving-config hash**. A feature *rename* leaves the array width unchanged, so
+only the hash catches it; without that key a stale cache would be the right shape
+and the wrong numbers.
+
+The serving-config component is there because the bundle version deliberately is
+not enough. It keys on corpus content plus *index* configuration, so a shortlist
+change does not re-encode 4,000 documents — but shortlist policy, rerank, fusion,
+decision and risk settings all decide which candidates a pass records and in what
+order. Without it, a pass generated under one shortlist policy is
+indistinguishable from one generated under another, and a model would be trained
+on features its own pipeline no longer produces.
 
 The pass refuses to run on a pipeline that already has a trained fuser or decision
 head. Features describing a trained fuser would teach the next fuser to agree with
@@ -63,25 +72,61 @@ on `calibration` and every reported metric computed on `validation`.
 `test` is sealed. v2 emits all four; the v1 bundle had no calibration split, which
 is why the head used to carve a random one out of everything.
 
-`SplitGuard` raises on any overlap at construction, and `assert_allowed` blocks the
-sealed split for the operations named in `DEVELOPMENT_OPERATIONS`. Note that a call
-with an *unknown* operation name can never fire — the previous load-time call used
-`"final_evaluation"`, which is not in that set, and was a guard in appearance only.
+`SplitGuard` raises on any overlap at construction — across all four splits,
+pairwise. `calibration` used to be excluded from that check, which is the one
+place it matters most: a temperature fitted on rows the model trained on is not a
+calibration.
+
+`assert_allowed` blocks the sealed split for the operations named in
+`DEVELOPMENT_OPERATIONS`, and now **refuses an operation name it does not
+recognise**. A misspelled name previously disabled the guard silently, which is
+the same class of defect as the load-time call that passed `"final_evaluation"` —
+a name outside the development set, and so a guard in appearance only.
+`"final_evaluation"` is now declared in `NON_DEVELOPMENT_OPERATIONS` and still
+passes, deliberately: the sealed split exists for it.
 
 ## Approval
 
-`reportfinder-train approve` refuses unless all three hold:
+`reportfinder-train approve` refuses unless all of these hold:
 
 1. **The report describes this model.** Matched on a digest of the weights, not the
    file, because approval rewrites metadata and a file digest would change with it.
+   The artifact's kind is resolved from the architecture constants exactly —
+   `pytorch_mlp_64_32_1` and `pytorch_mlp_32_16_3` contain neither the word
+   "fusion" nor "decision", so a substring test classified every artifact as
+   fusion and refused every real decision approval.
 2. **It was earned on `validation`.** Never the split the model was fitted on;
    never the sealed test split.
 3. **The model beat the fallback it would replace.** A tie is refused: the fallback
    is simpler, already serving, and has no artifact to keep in sync.
+4. **Nothing measured went backwards** — aggregate *or* per-slice. An aggregate
+   averages a slice regression away, which is not hypothetical: the shipped fusion
+   model gains +0.0031 nDCG overall while losing on `sibling_discriminating`, the
+   one archetype the v2 labels were built to measure. `--allow-regressions` permits
+   the trade explicitly and records that it was permitted.
+
+### Metric directions
+
+A regression check needs to know which way is better, and every metric used to be
+compared as if larger were. That silently inverts the judgement on every error,
+loss and latency measure — a model with twice the calibration error would have
+read as an improvement.
+
+Direction is resolved per metric: the evaluation report's own `metric_directions`
+block first (values must be exactly `higher` or `lower` after normalisation), then
+name patterns (`*_ms`, `*_loss`, `*_error` and the tokens `latency`, `ece`, `nll`,
+`brier`, `loss`, `risk`, `error` are lower-is-better; `recall`, `precision`, `f1`,
+`accuracy`, `auc`, `mrr`, `map`, `ndcg`, `hit`, `coverage`, `specificity`,
+`agreement`, `throughput` are higher). A comparable numeric metric whose direction
+cannot be resolved **refuses the approval** — including under
+`--allow-regressions`, because that flag permits a known trade-off and a metric
+nobody can state the sign of is not a known anything.
 
 On success it stamps `approved: true`, `approval.basis: "synthetic_v2_evaluation"`,
-and the evaluation's digest. The loader refuses `approved: true` with no basis, so
-hand-editing the flag no longer works.
+the evaluation's digest, and what the gate actually judged: resolved directions,
+the metrics compared, the slices compared, the kind, architecture, split and query
+count. The loader refuses `approved: true` with no basis, so hand-editing the flag
+no longer works. A refused approval leaves the artifact byte-identical.
 
 **`human_validated` stays `false`.** Approval says a model beat its fallback on
 synthetic labels. It licenses serving; it does not license a claim about production

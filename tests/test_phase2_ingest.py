@@ -146,6 +146,21 @@ def test_catalog_header_aliases(tmp_path):
     assert records[0].report_name == "Alpha"
 
 
+def test_catalog_recognizes_the_real_run_count_header(tmp_path):
+    """The real Phase 2 catalog header is "Number of Times Executed", which was
+    not in the alias list -- so the column resolved to nothing and every run count,
+    plus the family-rank ordering built on it, was NaN on the real estate."""
+    frame = pd.DataFrame([catalog_row("Alpha")]).rename(
+        columns={"Number of Times": "Number of Times Executed"}
+    )
+    from .phase2_fixtures import _write_with_banner
+
+    path = tmp_path / "runs.xlsx"
+    _write_with_banner(frame, path, "banner")
+    records = ReportCatalogLoader().load(path)
+    assert records[0].number_of_times == 1
+
+
 def test_catalog_whitespace_normalized_but_display_preserved(tmp_path):
     path = write_catalog([catalog_row("  Alpha  Report ")], tmp_path / "cat.xlsx")
     record = ReportCatalogLoader().load(path)[0]
@@ -338,6 +353,93 @@ def test_link_unmatched_where_used_is_recorded(tmp_path):
     assert len(result.unmatched_where_used) == 1
     assert result.unmatched_where_used[0].report_name == "Does Not Exist"
     assert not result.linked_reports
+
+
+def test_typed_custom_report_prefix_is_stripped_and_resolved(tmp_path):
+    """`Where_Used` holds typed Workday references, not bare titles. Comparing
+    them raw against catalog titles matched zero of 20,951 distinct entries on the
+    real estate, because the catalog stores the title without the type."""
+    reports, result = _link(
+        [catalog_row("Alpha")],
+        [dictionary_row("Worker", "Status", "Custom Report - Alpha")],
+        tmp_path,
+    )
+    assert result.report_field_links[0].match_method is MatchMethod.EXACT_NAME
+    assert [f.field_name for f in result.linked_reports[0]] == ["Status"]
+    assert result.validation_metrics.non_report_where_used_skipped == 0
+    assert result.unmatched_where_used == []
+
+
+def test_recognized_non_report_types_are_skipped_not_unmatched(tmp_path):
+    """A calculated field is not a report that went missing. On the real estate
+    these outnumber real report references roughly ten to one, so counting them as
+    unmatched would bury every entry that genuinely failed to resolve."""
+    reports, result = _link(
+        [catalog_row("Alpha")],
+        [
+            dictionary_row("Worker", "Status", "Calculated Field - CF_TF_CSO"),
+            dictionary_row("Worker", "Grade", "Condition Rule - Location is US"),
+        ],
+        tmp_path,
+    )
+    assert result.unmatched_where_used == []
+    assert result.validation_metrics.non_report_where_used_skipped == 2
+    assert not result.linked_reports
+
+
+def test_a_direct_title_match_beats_typed_parsing(tmp_path):
+    """A report may legitimately be titled with a dash. Stripping a prefix before
+    trying the raw value would destroy such a title; matching first cannot."""
+    reports, result = _link(
+        [catalog_row("Custom Report - Alpha"), catalog_row("Alpha")],
+        [dictionary_row("Worker", "Status", "Custom Report - Alpha")],
+        tmp_path,
+    )
+    assert [f.field_name for f in result.linked_reports[0]] == ["Status"]
+    assert 1 not in result.linked_reports, "the bare title must not receive it"
+
+
+def test_an_unrecognized_prefix_stays_actionable(tmp_path):
+    """An unenumerated type falls through to unmatched rather than being guessed
+    away as a non-report -- otherwise a new Workday type would silently delete
+    links and nothing would say so."""
+    reports, result = _link(
+        [catalog_row("Alpha")],
+        [dictionary_row("Worker", "Status", "Flux Capacitor - Thing")],
+        tmp_path,
+    )
+    assert len(result.unmatched_where_used) == 1
+    assert result.unmatched_where_used[0].report_name == "Flux Capacitor - Thing"
+    assert result.validation_metrics.non_report_where_used_skipped == 0
+
+
+def test_a_typed_report_that_does_not_exist_is_unmatched_under_its_raw_value(tmp_path):
+    reports, result = _link(
+        [catalog_row("Alpha")],
+        [dictionary_row("Worker", "Status", "Custom Report - Nonexistent")],
+        tmp_path,
+    )
+    assert len(result.unmatched_where_used) == 1
+    assert result.unmatched_where_used[0].report_name == "Custom Report - Nonexistent", (
+        "recorded under the original cell value, so the diagnostic is greppable"
+    )
+    assert result.validation_metrics.non_report_where_used_skipped == 0
+
+
+def test_typed_parsing_is_deterministic(tmp_path):
+    rows = [
+        dictionary_row("Worker", "Status", "Custom Report - Alpha"),
+        dictionary_row("Worker", "Grade", "Calculated Field - CF_X"),
+    ]
+    first = _link([catalog_row("Alpha")], rows, tmp_path / "a")[1]
+    second = _link([catalog_row("Alpha")], rows, tmp_path / "b")[1]
+    assert [f.field_name for f in first.linked_reports[0]] == [
+        f.field_name for f in second.linked_reports[0]
+    ]
+    assert (
+        first.validation_metrics.non_report_where_used_skipped
+        == second.validation_metrics.non_report_where_used_skipped
+    )
 
 
 def test_link_composite_resolves_duplicate_names(tmp_path):

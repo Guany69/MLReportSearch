@@ -14,17 +14,33 @@ class SplitGuard:
     """Blocks sealed-test use in every model-development operation."""
     DEVELOPMENT_OPERATIONS = frozenset({"feature_fitting", "ranker_training", "hyperparameter_selection",
         "threshold_tuning", "calibration", "model_comparison", "early_stopping", "alias_mining"})
+    # Operations that are *allowed* to touch the sealed split. Naming them is what
+    # makes the guard falsifiable: an operation outside both sets is a typo, and a
+    # typo'd operation name used to be a silent no-op guard.
+    NON_DEVELOPMENT_OPERATIONS = frozenset({"final_evaluation"})
+    KNOWN_OPERATIONS = DEVELOPMENT_OPERATIONS | NON_DEVELOPMENT_OPERATIONS
+
+    # Every split that must be disjoint from every other. `calibration` is in here
+    # because a temperature fitted on rows the model trained on is not calibration,
+    # and it was previously the one split nothing compared.
+    GUARDED_SPLITS = ("train", "validation", "test", "calibration")
 
     def __init__(self, splits: Mapping[str, Iterable[str]]):
         self.splits = {name: frozenset(ids) for name, ids in splits.items()}
-        overlap = (
-            (self.splits.get("train", frozenset()) & self.splits.get("validation", frozenset()))
-            | (self.splits.get("train", frozenset()) & self.splits.get("test", frozenset()))
-            | (self.splits.get("validation", frozenset()) & self.splits.get("test", frozenset()))
-        )
-        if overlap: raise SplitLeakageError(f"scenario split overlap: {sorted(overlap)[:10]}")
+        for index, left in enumerate(self.GUARDED_SPLITS):
+            for right in self.GUARDED_SPLITS[index + 1:]:
+                overlap = self.splits.get(left, frozenset()) & self.splits.get(right, frozenset())
+                if overlap:
+                    raise SplitLeakageError(
+                        f"scenario split overlap {left}/{right}: {sorted(overlap)[:10]}"
+                    )
 
     def assert_allowed(self, scenario_ids, operation: str) -> None:
+        if operation not in self.KNOWN_OPERATIONS:
+            raise ValueError(
+                f"unknown split-guard operation {operation!r}; a name outside "
+                f"{sorted(self.KNOWN_OPERATIONS)} guards nothing at all"
+            )
         leaked = set(scenario_ids) & self.splits.get("test", frozenset())
         if leaked and operation in self.DEVELOPMENT_OPERATIONS:
             raise SplitLeakageError(f"sealed test scenarios passed to {operation}: {sorted(leaked)[:10]}")

@@ -478,3 +478,108 @@ def test_config_hash_tracks_retrieval_settings_but_not_display_settings():
     assert config_hash(DEFAULT.with_path_overrides({"shortlist.standard_rerank_depth": 99})) != base
     # `top_k` changes how many results are shown, not what was retrieved.
     assert config_hash(DEFAULT.with_overrides(top_k=42)) == base
+
+
+# --- tie determinism ---------------------------------------------------------
+
+
+def test_dense_search_breaks_ties_deterministically():
+    """Exact ties are ordinary here -- an empty view row is stored as a zero
+    vector and scores 0.0 against every query -- and `torch.topk` gives no
+    guarantee about which of several tied rows it returns. That made the identity
+    of a retrieved candidate depend on a kernel."""
+    vectors = np.zeros((6, 3), dtype=np.float32)
+    vectors[:, 0] = 1.0  # every row identical => every score identical
+    index = DenseViewIndex(
+        view_type=ViewType.IDENTITY,
+        instance_ids=tuple(f"R{i:04d}" for i in range(6)),
+        hashes=tuple("h" for _ in range(6)),
+        vectors=vectors,
+        model_id="fake",
+        revision="v1",
+    )
+    query = np.array([1.0, 0.0, 0.0], dtype=np.float32)
+
+    first = index.search(query, k=3)
+    assert [p for p, _ in first] == [0, 1, 2], "ties must resolve to row order"
+    for _ in range(4):
+        assert index.search(query, k=3) == first, "repeated calls must agree"
+
+
+def test_dense_search_still_applies_the_universe_before_the_cut():
+    """Stable sorting must not have reordered the mask-then-rank invariant: an
+    unauthorized row cannot consume one of the k slots."""
+    from reportfinder.auth.universe import AuthorizedUniverse
+
+    vectors = np.zeros((4, 2), dtype=np.float32)
+    vectors[:, 0] = [0.9, 0.8, 0.7, 0.6]
+    index = DenseViewIndex(
+        view_type=ViewType.IDENTITY,
+        instance_ids=("R0", "R1", "R2", "R3"),
+        hashes=("h",) * 4,
+        vectors=vectors,
+        model_id="fake",
+        revision="v1",
+    )
+    universe = AuthorizedUniverse(
+        mask=np.array([True, False, True, True]),
+        resolver="test",
+        acl_source="test",
+    )
+    hits = index.search(np.array([1.0, 0.0], dtype=np.float32), k=2, universe=universe)
+    assert [p for p, _ in hits] == [0, 2], "the masked row must not take a slot"
+
+
+def test_risk_coverage_is_stable_under_ties():
+    from reportfinder.evaluation.metrics import risk_coverage
+
+    scores = [0.5] * 6
+    correct = [1, 0, 1, 0, 1, 0]
+    first = risk_coverage(scores, correct)
+    for _ in range(4):
+        assert risk_coverage(scores, correct) == first
+
+
+def test_discordant_pairs_ignores_ties_but_catches_inversions():
+    """The parity gate used to diff two sorted index lists, so two backends
+    breaking a genuine tie differently counted as an ordering disagreement."""
+    from reportfinder.evaluation.metrics import discordant_pairs
+
+    assert discordant_pairs([1.0, 1.0, 2.0], [1.0, 1.0, 2.0]) == 0
+    # Same values, tie resolved "differently" -- not a disagreement.
+    assert discordant_pairs([5.0, 5.0], [5.0, 5.0]) == 0
+    # One side ties, the other does not: still no contradiction.
+    assert discordant_pairs([1.0, 1.0], [1.0, 2.0]) == 0
+    # A real inversion is caught.
+    assert discordant_pairs([1.0, 2.0], [2.0, 1.0]) == 1
+
+
+def test_query_encoding_survives_a_batch_larger_than_its_cache():
+    """The cache is an optimization, so what `encode_queries` returns must not
+    depend on which entries survived eviction.
+
+    A batch bigger than `query_cache_size` evicted its own earliest entries on
+    the way in, and the result was then reassembled by reading them back out --
+    raising KeyError. A first-time prototype build does exactly this: 4,299
+    prototypes against a 256-entry cache.
+    """
+    from reportfinder.index.encoders import SentenceTransformerEncoder
+
+    class _Fake(SentenceTransformerEncoder):
+        """The real caching encoder with only the model call replaced."""
+
+        def __init__(self):
+            super().__init__("fake", "v1", query_cache_size=4)
+            self._dim = 2
+
+        def _encode(self, texts, prefix=""):
+            return np.array([[float(len(t)), 1.0] for t in texts], dtype=np.float32)
+
+    encoder = _Fake()
+    texts = [f"query number {i}" for i in range(20)]
+    vectors = encoder.encode_queries(texts)
+
+    assert vectors.shape == (20, 2)
+    assert [v[0] for v in vectors] == [float(len(t)) for t in texts]
+    # Repeat calls still agree, now served partly from the (small) cache.
+    assert np.array_equal(encoder.encode_queries(texts), vectors)

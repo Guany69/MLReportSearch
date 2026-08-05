@@ -259,6 +259,22 @@ class SearchPipeline:
         if self.bundle is not None:
             telemetry.active_fallbacks = list(self.bundle.active_fallbacks)
             telemetry.degraded_components = list(self.bundle.manifest.degraded())
+            telemetry.build_config_hash = self.bundle.manifest.config_hash
+            telemetry.runtime_config_hash = getattr(
+                self.bundle, "runtime_config_hash", ""
+            )
+            telemetry.runtime_config_differs = bool(
+                getattr(self.bundle, "config_drift", False)
+            )
+            if telemetry.runtime_config_differs:
+                telemetry.warnings.append(
+                    "Serving configuration differs from the configuration this "
+                    "bundle was built with. The stored indexes may still be "
+                    "compatible, but reproducing a recorded result requires the "
+                    "runtime configuration, not just the bundle id "
+                    f"(build {telemetry.build_config_hash}, "
+                    f"runtime {telemetry.runtime_config_hash})."
+                )
 
         # -- authorize ----------------------------------------------------
         cursor = time.perf_counter()

@@ -25,6 +25,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("query", nargs="*", help="Plain-English request.")
     parser.add_argument(
+        "--config", type=Path, default=None,
+        help=(
+            "YAML config used as the base; individual flags still override it. "
+            "Loaded through the same mapping logic as `reportfinder-bundle`, so a "
+            "search runs the configuration its bundle was built with. The API "
+            "server reads REPORTFINDER_CONFIG instead."
+        ),
+    )
+    parser.add_argument(
         "--rebuild", action="store_true", help="Rebuild representations, ignoring cache."
     )
     parser.add_argument("--top-k", type=int, default=None, help="Candidates when ambiguous.")
@@ -96,10 +105,55 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+class ConfigFileError(ValueError):
+    """The --config file could not be read as a configuration."""
+
+
+def base_config(path: Path | None):
+    """The config a run starts from, before any flag overrides.
+
+    Separate from `main` so the failure modes are unit-testable without loading a
+    corpus: every one of them must be reported before a single model is touched.
+    """
+    if path is None:
+        return DEFAULT
+
+    import yaml
+
+    from .config import from_mapping
+
+    try:
+        text = Path(path).read_text()
+    except OSError as error:
+        raise ConfigFileError(f"cannot read --config {path}: {error}") from error
+    try:
+        raw = yaml.safe_load(text)
+    except yaml.YAMLError as error:
+        raise ConfigFileError(f"--config {path} is not valid YAML: {error}") from error
+    if raw is not None and not isinstance(raw, dict):
+        raise ConfigFileError(
+            f"--config {path} must be a YAML mapping of settings, got "
+            f"{type(raw).__name__}"
+        )
+    try:
+        return from_mapping(raw or {})
+    except ValueError as error:
+        raise ConfigFileError(f"--config {path}: {error}") from error
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    cfg = DEFAULT.with_overrides(
+    try:
+        base = base_config(args.config)
+    except ConfigFileError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+
+    # Flags override the file, and only where actually supplied: every optional
+    # flag defaults to None and `with_overrides` drops Nones, so an unpassed flag
+    # cannot silently reset a value the config file set.
+    cfg = base.with_overrides(
         t_dense=args.t_dense,
         t_lsa=args.t_lsa,
         alpha=args.alpha,

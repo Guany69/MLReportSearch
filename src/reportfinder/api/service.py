@@ -210,6 +210,13 @@ def feedback(body: FeedbackBody, request: Request) -> FeedbackResponse:
         "catalog_version": manifest.catalog_version if manifest else "",
         "model_bundle_version": manifest.bundle_version if manifest else "",
         "policy_version": cfg.retrieval_mode,
+        # Both hashes, so a judgement recorded today can be tied to the exact
+        # configuration that produced the slate. `policy_version` is only the
+        # coarse retrieval mode, which two materially different runs share.
+        "build_config_hash": manifest.config_hash if manifest else "",
+        "runtime_config_hash": getattr(
+            getattr(finder.pipeline, "bundle", None), "runtime_config_hash", ""
+        ),
         # Stated in the record itself so no downstream consumer can mistake this
         # for adjudicated relevance.
         "label_basis": "implicit impression; not a relevance judgement",
@@ -254,6 +261,9 @@ def model_info() -> ModelInfoResponse:
         decision_calibrated=cfg.decision.calibration_path is not None,
         authorization_resolver=cfg.auth.resolver,
         authorization_is_development_default=cfg.auth.resolver == "allow_all",
+        build_config_hash=manifest.config_hash if manifest else "",
+        runtime_config_hash=getattr(bundle, "runtime_config_hash", "") if bundle else "",
+        config_drift=bool(getattr(bundle, "config_drift", False)) if bundle else False,
     )
 
 

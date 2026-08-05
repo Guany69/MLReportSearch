@@ -68,15 +68,19 @@ class OnnxPairScorer:
         if self._session is not None:
             return self._session, self._tokenizer
 
-        import onnxruntime as ort
-        from transformers import AutoTokenizer
-
+        # The artifact check comes first deliberately. A host without onnxruntime
+        # installed and without the exported graph has two problems, and
+        # `ModuleNotFoundError: onnxruntime` is the less actionable of them --
+        # installing the runtime would only surface this same missing file.
         if not self.model_path.exists():
             raise FileNotFoundError(
                 f"ONNX cross-encoder not found at {self.model_path}. Export it with "
                 "`uv run python scripts/export_cross_encoder_onnx.py`, or set "
                 "rerank.backend=torch."
             )
+
+        import onnxruntime as ort
+        from transformers import AutoTokenizer
 
         options = ort.SessionOptions()
         if self.threads:

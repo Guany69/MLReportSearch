@@ -41,8 +41,13 @@ build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Integration tests load real model checkpoints, so a plain `pytest` run excludes
+# them and stays offline. This line is what makes that true; before it, the two
+# ONNX integration tests ran by default whenever the exported graph existed.
+# Run them deliberately: `uv run pytest -m integration`.
+addopts = '-m "not integration"'
 markers = [
-    "integration: loads real model checkpoints; requires RF_INTEGRATION=1",
+    "integration: loads real model checkpoints; run with `pytest -m integration`",
 ]
 
 [tool.ruff]

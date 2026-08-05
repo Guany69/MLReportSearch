@@ -441,7 +441,7 @@ class ReportFinder:
         log_post = log_joint - logsumexp(log_joint)  # renormalize over all reports
         posterior = np.exp(log_post)
 
-        order = np.argsort(-posterior)
+        order = np.argsort(-posterior, kind="stable")
         p1 = float(posterior[order[0]])
         p2 = float(posterior[order[1]]) if self._n > 1 else 0.0
         margin = p1 - p2

@@ -2,7 +2,7 @@
   "artifact": {
     "feature_hash": "f54cf25186585c7d",
     "path": "artifacts/models/decision.pt",
-    "weights_sha256": "e100ccae7c9c386fac7d415b8be782e1"
+    "weights_sha256": "6c26cd99a19e6fb51c70bd044c7d8620"
   },
   "config": {
     "bundle_version": "b-d196fdc6dba2f2ba-021cf6db",
@@ -14,46 +14,55 @@
     "label_source": "synthetic_v2_generative",
     "root": "data/relevance_v2"
   },
-  "generated_at": "2026-08-05T16:44:23+00:00",
+  "generated_at": "2026-08-05T21:56:23+00:00",
   "kind": "decision",
   "label_basis": "synthetic_v2_generative; measures agreement with the label generator, not production relevance",
+  "metric_directions": {
+    "accuracy": "higher",
+    "ece": "lower",
+    "family_mrr": "higher",
+    "family_ndcg@5": "higher",
+    "family_recall@10": "higher",
+    "instance_recall@1_within_family": "higher",
+    "macro_per_class_recall": "higher"
+  },
   "metrics": {
     "candidate": {
-      "abstain_rate": 0.3208,
-      "accuracy": 0.5358,
+      "abstain_rate": 0.3132,
+      "accuracy": 0.5396,
       "confusion_matrix": {
         "ASK_CLARIFICATION": {
           "ASK_CLARIFICATION": 22,
-          "NO_CONFIDENT_MATCH": 6,
-          "RETURN_RESULTS": 5
+          "NO_CONFIDENT_MATCH": 5,
+          "RETURN_RESULTS": 6
         },
         "NO_CONFIDENT_MATCH": {
           "ASK_CLARIFICATION": 3,
-          "NO_CONFIDENT_MATCH": 22,
-          "RETURN_RESULTS": 6
+          "NO_CONFIDENT_MATCH": 21,
+          "RETURN_RESULTS": 7
         },
         "RETURN_RESULTS": {
-          "ASK_CLARIFICATION": 46,
+          "ASK_CLARIFICATION": 44,
           "NO_CONFIDENT_MATCH": 57,
-          "RETURN_RESULTS": 98
+          "RETURN_RESULTS": 100
         }
       },
-      "ece": 0.1068,
-      "macro_per_class_recall": 0.6213,
+      "ece": 0.1013,
+      "macro_per_class_recall": 0.6139,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
-        "NO_CONFIDENT_MATCH": 0.7097,
-        "RETURN_RESULTS": 0.4876
+        "NO_CONFIDENT_MATCH": 0.6774,
+        "RETURN_RESULTS": 0.4975
       },
       "predicted_distribution": {
-        "ASK_CLARIFICATION": 71,
-        "NO_CONFIDENT_MATCH": 85,
-        "RETURN_RESULTS": 109
+        "ASK_CLARIFICATION": 69,
+        "NO_CONFIDENT_MATCH": 83,
+        "RETURN_RESULTS": 113
       }
     },
     "fallback": {
       "abstain_rate": 0.2792,
-      "accuracy": 0.5208,
+      "accuracy": 0.5245,
       "confusion_matrix": {
         "ASK_CLARIFICATION": {
           "ASK_CLARIFICATION": 24,
@@ -66,33 +75,704 @@
           "RETURN_RESULTS": 0
         },
         "RETURN_RESULTS": {
-          "ASK_CLARIFICATION": 78,
+          "ASK_CLARIFICATION": 77,
           "NO_CONFIDENT_MATCH": 40,
-          "RETURN_RESULTS": 83
+          "RETURN_RESULTS": 84
         }
       },
       "fallback_name": "deterministic_three_way_policy",
-      "macro_per_class_recall": 0.7134,
+      "macro_per_class_recall": 0.7151,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7273,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4129
+        "RETURN_RESULTS": 0.4179
       },
       "predicted_distribution": {
-        "ASK_CLARIFICATION": 102,
+        "ASK_CLARIFICATION": 101,
         "NO_CONFIDENT_MATCH": 74,
-        "RETURN_RESULTS": 89
+        "RETURN_RESULTS": 90
       }
     }
   },
   "primary_metric": {
-    "candidate": 0.6213,
-    "delta": -0.0921,
-    "fallback": 0.7134,
+    "candidate": 0.6139,
+    "delta": -0.1012,
+    "fallback": 0.7151,
     "name": "macro_per_class_recall"
   },
   "query_count": 265,
   "schema_version": "1",
-  "slices": {},
+  "slices": {
+    "acronym": {
+      "candidate": {
+        "abstain_rate": 0.1364,
+        "accuracy": 0.5,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 8,
+            "NO_CONFIDENT_MATCH": 3,
+            "RETURN_RESULTS": 11
+          }
+        },
+        "ece": 0.3014,
+        "macro_per_class_recall": 0.5,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.5
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 8,
+          "NO_CONFIDENT_MATCH": 3,
+          "RETURN_RESULTS": 11
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.0,
+        "accuracy": 0.5,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 11,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 11
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.5,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.5
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 11,
+          "RETURN_RESULTS": 11
+        }
+      }
+    },
+    "ambiguous_clarification": {
+      "candidate": {
+        "abstain_rate": 0.0,
+        "accuracy": 0.9048,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 19,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 2
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "ece": 0.203,
+        "macro_per_class_recall": 0.9048,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": 0.9048,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 19,
+          "RETURN_RESULTS": 2
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.0,
+        "accuracy": 0.9048,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 19,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 2
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.9048,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": 0.9048,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 19,
+          "RETURN_RESULTS": 2
+        }
+      }
+    },
+    "misspelling": {
+      "candidate": {
+        "abstain_rate": 0.15,
+        "accuracy": 0.7,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 3,
+            "NO_CONFIDENT_MATCH": 3,
+            "RETURN_RESULTS": 14
+          }
+        },
+        "ece": 0.2139,
+        "macro_per_class_recall": 0.7,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.7
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 3,
+          "NO_CONFIDENT_MATCH": 3,
+          "RETURN_RESULTS": 14
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.0,
+        "accuracy": 0.7,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 6,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 14
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.7,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.7
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 6,
+          "RETURN_RESULTS": 14
+        }
+      }
+    },
+    "multi_intent_single": {
+      "candidate": {
+        "abstain_rate": 0.3,
+        "accuracy": 0.6,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 1,
+            "NO_CONFIDENT_MATCH": 3,
+            "RETURN_RESULTS": 6
+          }
+        },
+        "ece": 0.1567,
+        "macro_per_class_recall": 0.6,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.6
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 1,
+          "NO_CONFIDENT_MATCH": 3,
+          "RETURN_RESULTS": 6
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.1,
+        "accuracy": 0.4,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 5,
+            "NO_CONFIDENT_MATCH": 1,
+            "RETURN_RESULTS": 4
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.4,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.4
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 5,
+          "NO_CONFIDENT_MATCH": 1,
+          "RETURN_RESULTS": 4
+        }
+      }
+    },
+    "multi_intent_split": {
+      "candidate": {
+        "abstain_rate": 0.4167,
+        "accuracy": 0.25,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 3,
+            "NO_CONFIDENT_MATCH": 5,
+            "RETURN_RESULTS": 4
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "ece": 0.4028,
+        "macro_per_class_recall": 0.25,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": 0.25,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 3,
+          "NO_CONFIDENT_MATCH": 5,
+          "RETURN_RESULTS": 4
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.25,
+        "accuracy": 0.4167,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 5,
+            "NO_CONFIDENT_MATCH": 3,
+            "RETURN_RESULTS": 4
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.4167,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": 0.4167,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 5,
+          "NO_CONFIDENT_MATCH": 3,
+          "RETURN_RESULTS": 4
+        }
+      }
+    },
+    "negation": {
+      "candidate": {
+        "abstain_rate": 0.0667,
+        "accuracy": 0.4667,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 7,
+            "NO_CONFIDENT_MATCH": 1,
+            "RETURN_RESULTS": 7
+          }
+        },
+        "ece": 0.2104,
+        "macro_per_class_recall": 0.4667,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.4667
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 7,
+          "NO_CONFIDENT_MATCH": 1,
+          "RETURN_RESULTS": 7
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.0667,
+        "accuracy": 0.4,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 8,
+            "NO_CONFIDENT_MATCH": 1,
+            "RETURN_RESULTS": 6
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.4,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.4
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 8,
+          "NO_CONFIDENT_MATCH": 1,
+          "RETURN_RESULTS": 6
+        }
+      }
+    },
+    "no_answer_impossible_combo": {
+      "candidate": {
+        "abstain_rate": 0.1667,
+        "accuracy": 0.1667,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 3,
+            "NO_CONFIDENT_MATCH": 2,
+            "RETURN_RESULTS": 7
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "ece": 0.395,
+        "macro_per_class_recall": 0.1667,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": 0.1667,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 3,
+          "NO_CONFIDENT_MATCH": 2,
+          "RETURN_RESULTS": 7
+        }
+      },
+      "fallback": {
+        "abstain_rate": 1.0,
+        "accuracy": 1.0,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 12,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 1.0,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": 1.0,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "NO_CONFIDENT_MATCH": 12
+        }
+      }
+    },
+    "no_answer_reserved": {
+      "candidate": {
+        "abstain_rate": 1.0,
+        "accuracy": 1.0,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 19,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "ece": 0.2524,
+        "macro_per_class_recall": 1.0,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": 1.0,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "NO_CONFIDENT_MATCH": 19
+        }
+      },
+      "fallback": {
+        "abstain_rate": 1.0,
+        "accuracy": 1.0,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 19,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 1.0,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": 1.0,
+          "RETURN_RESULTS": null
+        },
+        "predicted_distribution": {
+          "NO_CONFIDENT_MATCH": 19
+        }
+      }
+    },
+    "sibling_discriminating": {
+      "candidate": {
+        "abstain_rate": 0.0735,
+        "accuracy": 0.6618,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 18,
+            "NO_CONFIDENT_MATCH": 5,
+            "RETURN_RESULTS": 45
+          }
+        },
+        "ece": 0.1124,
+        "macro_per_class_recall": 0.6618,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.6618
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 18,
+          "NO_CONFIDENT_MATCH": 5,
+          "RETURN_RESULTS": 45
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.0294,
+        "accuracy": 0.5588,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 28,
+            "NO_CONFIDENT_MATCH": 2,
+            "RETURN_RESULTS": 38
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.5588,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.5588
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 28,
+          "NO_CONFIDENT_MATCH": 2,
+          "RETURN_RESULTS": 38
+        }
+      }
+    },
+    "vague_outcome": {
+      "candidate": {
+        "abstain_rate": 0.6613,
+        "accuracy": 0.2742,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 4,
+            "NO_CONFIDENT_MATCH": 41,
+            "RETURN_RESULTS": 17
+          }
+        },
+        "ece": 0.3437,
+        "macro_per_class_recall": 0.2742,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.2742
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 4,
+          "NO_CONFIDENT_MATCH": 41,
+          "RETURN_RESULTS": 17
+        }
+      },
+      "fallback": {
+        "abstain_rate": 0.5806,
+        "accuracy": 0.1613,
+        "confusion_matrix": {
+          "ASK_CLARIFICATION": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "NO_CONFIDENT_MATCH": {
+            "ASK_CLARIFICATION": 0,
+            "NO_CONFIDENT_MATCH": 0,
+            "RETURN_RESULTS": 0
+          },
+          "RETURN_RESULTS": {
+            "ASK_CLARIFICATION": 16,
+            "NO_CONFIDENT_MATCH": 36,
+            "RETURN_RESULTS": 10
+          }
+        },
+        "fallback_name": "deterministic_three_way_policy",
+        "macro_per_class_recall": 0.1613,
+        "per_class_recall": {
+          "ASK_CLARIFICATION": null,
+          "NO_CONFIDENT_MATCH": null,
+          "RETURN_RESULTS": 0.1613
+        },
+        "predicted_distribution": {
+          "ASK_CLARIFICATION": 16,
+          "NO_CONFIDENT_MATCH": 36,
+          "RETURN_RESULTS": 10
+        }
+      }
+    }
+  },
   "split": "validation"
 }

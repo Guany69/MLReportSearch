@@ -199,6 +199,12 @@ class ImportSummary:
 
     where_used_entries: int = 0
     unmatched_where_used: int = 0
+    # Where_Used entries naming a recognized Workday object that is not a report
+    # (a calculated field, a condition rule). Counted separately because they are
+    # not reports that went missing, and folding them into `unmatched` buries the
+    # entries that genuinely did -- on the supplied estate they outnumber real
+    # report references by roughly an order of magnitude.
+    non_report_where_used_skipped: int = 0
     reports_with_zero_fields: int = 0
     fields_with_no_matched_reports: int = 0
 
@@ -232,6 +238,7 @@ class ImportSummary:
                 f" ambiguous={self.ambiguous_links}",
                 f"           {self.duplicate_links_removed} duplicate links removed",
                 f"  gaps:    {self.unmatched_where_used} unmatched Where_Used"
+                f" | {self.non_report_where_used_skipped} non-report references skipped"
                 f" | {self.reports_with_zero_fields} reports with zero fields"
                 f" | {self.fields_with_no_matched_reports} fields matched to no report"
                 f" | {self.fields_with_no_where_used} fields with empty Where_Used",

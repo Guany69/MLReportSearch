@@ -55,12 +55,12 @@
     "trained_on": "train"
   },
   "training": {
-    "candidate_count": 166815,
-    "epochs": 40,
+    "candidate_count": 165893,
+    "epochs": 20,
     "feature_dim": 40,
-    "final_loss": 5.135448,
+    "final_loss": 5.130442,
     "query_count": 958
   },
   "training_label_source": "synthetic_v2_generative",
-  "weights_sha256": "b6b0ab90cf5f0a3f33c1a02fe8b0d6d7"
+  "weights_sha256": "6ca92f36c1538781848afa5386074345"
 }

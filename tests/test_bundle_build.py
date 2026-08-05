@@ -256,3 +256,40 @@ def test_a_required_component_missing_blocks_readiness(tmp_path):
     with pytest.raises(BundleNotReady) as excinfo:
         manifest.assert_ready()
     assert "late_interaction" in excinfo.value.blocking
+
+
+# --- build-time versus runtime configuration ---------------------------------
+#
+# `bundle_id` keys on corpus content plus *index* config only, deliberately: a
+# shortlist depth change must not re-encode 4,000 documents. The cost is that one
+# bundle id can be served under materially different retrieval behaviour. These
+# pin the disclosure that makes that visible.
+
+
+def test_a_matching_runtime_config_reports_no_drift(tmp_path):
+    cfg = _cfg(tmp_path)
+    _build(tmp_path, corpus=_wide_corpus(), cfg=cfg)
+    bundle = load_bundle(cfg, _wide_corpus())
+
+    assert bundle.runtime_config_hash
+    assert bundle.runtime_config_hash == bundle.manifest.config_hash
+    assert bundle.config_drift is False
+
+
+def test_a_serving_only_change_keeps_the_bundle_but_reports_drift(tmp_path):
+    """The exact case the bundle id cannot see: same vectors, different serving."""
+    cfg = _cfg(tmp_path)
+    _build(tmp_path, corpus=_wide_corpus(), cfg=cfg)
+
+    tweaked = cfg.with_path_overrides({
+        "shortlist.standard_rerank_depth": 121,
+        "shortlist.high_risk_rerank_depth": 201,
+    })
+    assert bundle_id(_wide_corpus(), tweaked) == bundle_id(_wide_corpus(), cfg), (
+        "a shortlist depth must not invalidate encoded documents"
+    )
+
+    bundle = load_bundle(tweaked, _wide_corpus())
+    assert bundle.config_drift is True
+    assert bundle.runtime_config_hash != bundle.manifest.config_hash
+    assert bundle.manifest.config_hash, "the build-time hash is still recorded"

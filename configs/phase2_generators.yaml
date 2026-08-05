@@ -1,0 +1,109 @@
+# The source-preserving generator architecture, on the Phase 2 dual-file estate.
+#
+# This is a *runnable starting configuration*, not a measured optimum. Nothing in
+# docs/ was measured with it: the relevance labels, the survival numbers, the
+# threshold sweep and both learned artifacts all belong to the legacy estate
+# (configs/legacy_generators.yaml, data/Reports.xlsx). Phase 2 is a different
+# corpus with a different field reconstruction, so its numbers are not comparable
+# with those and must not be quoted against them.
+#
+# Both workbooks are present and tracked in data/.
+#
+#   uv run reportfinder-bundle build  --config configs/phase2_generators.yaml -v
+#   uv run reportfinder-bundle verify --config configs/phase2_generators.yaml
+#   uv run python -m reportfinder --config configs/phase2_generators.yaml "<query>"
+#   uv run reportfinder-data phase2-ingest --config configs/phase2_generators.yaml
+
+ingest_mode: phase2_dual_file
+corpus_granularity: report_row      # required: family aggregation needs instances
+retrieval_mode: generators
+top_k: 10
+
+# Stated rather than left to the defaults, so the config names the estate it reads.
+catalog_path: data/Phase2_Report_Catalog_No_Fields.xlsx
+field_dictionary_path: data/Phase2_Field_Dictionary.xlsx
+
+# Report fields are reconstructed from the field dictionary's Where_Used column,
+# which holds typed Workday references. `permissive` attaches a field whose title
+# match could not be narrowed to one catalog row to every candidate, for recall,
+# and flags every such link as AMBIGUOUS; `strict` withholds them. Fuzzy matching
+# stays off: it trades a precision the ambiguity flag cannot express.
+ambiguity_policy: permissive
+enable_composite_match: true
+enable_fuzzy_match: false
+
+retrieval:
+  rrf_constant: 60
+  bm25f:
+    enabled: true
+    k: 100
+  splade:
+    enabled: true
+    checkpoint: naver/splade-cocondenser-ensembledistil
+    revision: "49cf4c7b0db5b870a401ddf5e2669993ef3699c7"
+    k: 100
+  dense:
+    checkpoint: BAAI/bge-small-en-v1.5
+    revision: "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+    challenger_checkpoint: intfloat/e5-small-v2
+    challenger_revision: "ffb93f3bd4047442299a41ebb6fa998a38507c52"
+    # All four are built. A view that turns out degenerate on this estate is
+    # recorded as such at build time and disabled with its reason, rather than
+    # being pre-emptively removed here on a guess about a corpus not yet measured.
+    views: [identity, purpose, schema, interface]
+    k_per_view: 50
+  prototypes:
+    enabled: true
+    k: 50
+  late_interaction:
+    enabled: false
+    trigger_on_high_risk: true
+
+shortlist:
+  standard_rerank_depth: 120
+  high_risk_rerank_depth: 200
+  preserve_source_exclusive_candidates: true
+  # Off, matching the legacy config: an isolated A/B on 265 v2 validation
+  # queries measured it losing on every metric, worst on instance selection
+  # (0.775 vs 0.868). See the comment on ShortlistConfig.diversify_families.
+  diversify_families: false
+  quotas:
+    fused: 50
+    bm25_exclusive: 15
+    splade_exclusive: 15
+    schema_exclusive: 10
+    purpose_exclusive: 10
+    prototype_exclusive: 10
+    alternate_query_exclusive: 10
+
+rerank:
+  enabled: true
+  checkpoint: cross-encoder/ms-marco-MiniLM-L-6-v2
+  revision: "c5ee24cb16019beea0893ab7796b1df96625c6b8"
+  max_length: 256
+  # Host-specific, exactly as in the legacy config. Re-verify before trusting it
+  # elsewhere, and set backend: torch if the gate fails:
+  #   uv run python scripts/export_cross_encoder_onnx.py --verify
+  backend: onnx
+  onnx_path: artifacts/onnx/cross_encoder.onnx
+
+fusion:
+  # No trained artifact exists for this estate, and the legacy one must not be
+  # pointed at it: it was fitted on a different corpus.
+  artifact_path: null
+  fallback: rrf
+
+decision:
+  artifact_path: null
+  calibration_path: null
+  fallback: deterministic_three_way_policy
+
+auth:
+  # This estate exports no entitlement data either. Development default, reported
+  # in every response and trace.
+  resolver: allow_all
+  allow_dev_default: true
+  fail_closed_on_acl_error: true
+
+security:
+  trust_remote_code: false

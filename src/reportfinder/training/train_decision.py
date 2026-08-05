@@ -61,12 +61,94 @@ LABEL_DERIVED_COLUMNS = (
 )
 
 
+# The raw scenario CSVs carry answerability as text rather than as the bundle's
+# integer codes. Verified by joining both raw CSVs against their own parquet on
+# scenario id -- 10,000 v1 rows and 1,771 v2 rows, every string mapping to exactly
+# one code with no exceptions:
+#
+#   Answerable                              -> 2   (8,350 v1 / 1,322 v2)
+#   Needs clarification                     -> 1   (250 v1)
+#   Partial / needs clarification           -> 1   (450 v1 / 199 v2)
+#   Partial / missing conversation context  -> 1   (250 v1)
+#   No answer                               -> 0   (700 v1 / 250 v2)
+#
+# The three "partial" and "clarification" phrasings all mean the same decision:
+# ask. That was measured, not assumed -- a mapping guessed here would train a head
+# to abstain on the wrong third of the corpus.
+CSV_ANSWERABILITY_TO_BUNDLE_LABEL = {
+    "answerable": 2,
+    "needs clarification": 1,
+    "partial / needs clarification": 1,
+    "partial / missing conversation context": 1,
+    "no answer": 0,
+}
+
+# Read in order; the v2 name first because that is the current dataset.
+_RAW_SCENARIO_FILES = (
+    "scenarios_v2.csv",
+    "axis_report_search_scenarios_10000.csv",
+)
+
+
+def _labels_from_raw_csv(root: Path, cause: Exception | None) -> dict[str, str]:
+    """Answerability labels read from the raw scenario CSV.
+
+    A resilience path for **label inspection and join validation only**. pyarrow
+    is a declared dependency, the parquet is authoritative, and feature training
+    needs far more than these two columns -- so this existing does not mean the
+    parquet is optional.
+    """
+    import pandas as pd
+
+    for filename in _RAW_SCENARIO_FILES:
+        path = root / "raw" / filename
+        if not path.exists():
+            continue
+        # utf-8-sig: the v1 export carries a BOM, which otherwise turns the first
+        # header into "﻿Scenario ID" and the lookup into a KeyError.
+        frame = pd.read_csv(
+            path, usecols=["Scenario ID", "Answerability"], encoding="utf-8-sig"
+        )
+        normalized = (
+            frame["Answerability"].astype(str)
+            .map(lambda v: " ".join(v.split()).strip().lower())
+        )
+        unknown = sorted(set(normalized) - set(CSV_ANSWERABILITY_TO_BUNDLE_LABEL))
+        if unknown:
+            raise ValueError(
+                f"unexpected Answerability values {unknown} in {path}; refusing to "
+                "guess how they map to decisions"
+            )
+        return {
+            str(scenario_id):
+                CLASSES[BUNDLE_LABEL_TO_CLASS[CSV_ANSWERABILITY_TO_BUNDLE_LABEL[value]]]
+            for scenario_id, value in zip(
+                frame["Scenario ID"], normalized, strict=True
+            )
+        }
+
+    engine = (
+        f" The parquet engine was unavailable ({cause}); pyarrow is a declared "
+        "dependency, so `uv sync` should restore it." if cause else ""
+    )
+    raise FileNotFoundError(
+        f"no answerability labels under {root}: looked for "
+        f"processed/answerability_labels.parquet, processed/"
+        f"answerability_features.parquet, and raw/{{{', '.join(_RAW_SCENARIO_FILES)}}}."
+        + engine
+    )
+
+
 def load_answerability_labels(relevance_root: Path) -> dict[str, str]:
     """scenario id -> decision class name.
 
     Labels only. The features come from running the pipeline, which is the whole
     correction: a label file cannot ship features for a feature space it has
     never seen, and the previous version's did not.
+
+    The parquet is authoritative. If it is absent, or if reading it fails because
+    no parquet engine is installed, the raw scenario CSV carries the same labels
+    as text -- see `_labels_from_raw_csv` for what that fallback is and is not for.
     """
     import pandas as pd
 
@@ -74,7 +156,14 @@ def load_answerability_labels(relevance_root: Path) -> dict[str, str]:
     path = root / "processed" / "answerability_labels.parquet"
     if not path.exists():  # the v1 bundle's filename
         path = root / "processed" / "answerability_features.parquet"
-    frame = pd.read_parquet(path)
+    if not path.exists():
+        return _labels_from_raw_csv(root, None)
+    try:
+        frame = pd.read_parquet(path)
+    except ImportError as error:
+        # Specifically a missing engine, not a corrupt file: a parquet that exists
+        # but cannot be parsed is a real problem and must not be routed around.
+        return _labels_from_raw_csv(root, error)
 
     if "answerability_label" not in frame.columns:
         raise ValueError(f"no answerability_label column in {path}")

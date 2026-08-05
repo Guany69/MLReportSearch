@@ -68,9 +68,27 @@ class LoadedBundle:
     splade: SpladeIndex | None = None
     prototypes: FamilyPrototypeIndex | None = None
     late_interaction: LateInteractionIndex | None = None
+    # `config_hash` of the configuration this bundle was *loaded* with, against
+    # the manifest's record of the one it was *built* with.
+    runtime_config_hash: str = ""
 
     def assert_ready(self) -> None:
         self.manifest.assert_ready()
+
+    @property
+    def config_drift(self) -> bool:
+        """Whether serving configuration has moved since the bundle was built.
+
+        `bundle_id` intentionally keys on corpus content plus *index* config only,
+        so tuning a shortlist depth or a risk threshold does not invalidate 4,000
+        encoded documents. The cost of that is that the same bundle id can be
+        served under materially different retrieval behaviour, with nothing
+        saying so. This is that something. It is a disclosure, not an error:
+        the stored vectors remain valid, but a result recorded under one runtime
+        hash cannot be assumed reproducible under another.
+        """
+        stored = self.manifest.config_hash
+        return bool(stored and self.runtime_config_hash and stored != self.runtime_config_hash)
 
     @property
     def active_fallbacks(self) -> list[str]:
@@ -444,7 +462,9 @@ def load_bundle(cfg, corpus: CorpusModel) -> LoadedBundle:
     manifest = BundleManifest.load(manifest_path)
     manifest.mark_stale_components(corpus.content_hash)
 
-    loaded = LoadedBundle(manifest=manifest, root=root)
+    loaded = LoadedBundle(
+        manifest=manifest, root=root, runtime_config_hash=config_hash(cfg)
+    )
     for view_type in ALL_VIEW_TYPES:
         record = manifest.components.get(f"views.{view_type.value}")
         if record is not None and record.is_ready:

@@ -101,9 +101,12 @@ class DenseViewIndex:
 
         The universe is applied to the score vector *before* top-k, not after, so
         an unauthorized row cannot consume a slot -- k means k authorized results.
-        """
-        import torch
 
+        The sort is stable, so ties resolve to row order rather than to whatever
+        order a top-k kernel happens to emit. Exact ties are ordinary here: an
+        empty view row is stored as a zero vector and scores 0.0 against every
+        query, so a near-degenerate view can tie dozens of rows at once.
+        """
         raw = self.scores(query_vector)
         if universe is not None:
             raw = universe.restrict(raw)
@@ -112,12 +115,14 @@ class DenseViewIndex:
         if not finite.any():
             return []
         limit = min(k, int(finite.sum()))
-        with torch.inference_mode():
-            values, indices = torch.topk(torch.from_numpy(raw.astype(np.float32)), limit)
+        # -inf (unauthorized) sorts to the end of a descending order and NaN sorts
+        # after everything, so the first `limit` positions are the finite ones; the
+        # isfinite filter below stays as a belt.
+        order = np.argsort(-raw, kind="stable")[:limit]
         return [
-            (int(position), float(score))
-            for position, score in zip(indices.tolist(), values.tolist(), strict=True)
-            if np.isfinite(score)
+            (int(position), float(raw[position]))
+            for position in order
+            if np.isfinite(raw[position])
         ]
 
     # -- build / persist ---------------------------------------------------

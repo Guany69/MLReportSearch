@@ -21,7 +21,7 @@
     "is_conflicting_family",
     "is_missing_context_family"
   ],
-  "expected_calibration_error": 0.1068,
+  "expected_calibration_error": 0.1013,
   "feature_hash": "f54cf25186585c7d",
   "feature_names": [
     "top_family_score",
@@ -46,7 +46,7 @@
     "top_family_instance_count"
   ],
   "feature_source": "serving_pipeline_pass",
-  "final_loss": 0.75039,
+  "final_loss": 0.750731,
   "human_judgement_count": 0,
   "human_validated": false,
   "input_dim": 20,
@@ -57,8 +57,8 @@
   },
   "per_class_recall": {
     "ASK_CLARIFICATION": 0.6667,
-    "NO_CONFIDENT_MATCH": 0.7097,
-    "RETURN_RESULTS": 0.4876
+    "NO_CONFIDENT_MATCH": 0.6774,
+    "RETURN_RESULTS": 0.4975
   },
   "seed": 20260720,
   "splits": {
@@ -66,9 +66,9 @@
     "evaluated_on": "validation",
     "trained_on": "train"
   },
-  "temperature": 0.8437684774398804,
+  "temperature": 0.8407970070838928,
   "train_size": 958,
   "training_label_source": "synthetic_v2_generative",
   "validation_split_size": 265,
-  "weights_sha256": "e100ccae7c9c386fac7d415b8be782e1"
+  "weights_sha256": "6c26cd99a19e6fb51c70bd044c7d8620"
 }

@@ -161,8 +161,14 @@ def test_search_returns_the_specified_envelope(client):
 
 def test_each_result_carries_family_and_selected_instance(client):
     body = _search(client).json()
-    if not body["results"]:
-        pytest.skip(f"decision {body['decision']} returns no cards by design")
+    # Asserted, not skipped. This used to skip when the pipeline returned nothing,
+    # so a decision policy that regressed to always-abstain would have reported
+    # "skipped" for the result-shape contract instead of failing. The stub scores
+    # R0105 at 6.0 against a 0.0 default, which is a decisive margin by design.
+    assert body["results"], (
+        f"the scripted pipeline decided {body['decision']}, so the result contract "
+        "is unreachable -- fix the fixture rather than skipping the assertion"
+    )
 
     item = body["results"][0]
     assert set(item) >= {
@@ -326,6 +332,11 @@ def test_feedback_is_recorded_with_the_full_slate(client, tmp_path):
     # Recorded as what it is. Nothing downstream may mistake it for adjudicated
     # relevance.
     assert record["label_basis"] == "implicit impression; not a relevance judgement"
+    # Both config hashes, so a judgement can be tied to the configuration that
+    # produced the slate. `policy_version` alone is the coarse retrieval mode,
+    # which two materially different runs share.
+    assert "build_config_hash" in record
+    assert "runtime_config_hash" in record
 
 
 def test_replaying_a_feedback_key_is_a_no_op_not_an_error(client, tmp_path):
@@ -364,6 +375,14 @@ def test_model_info_states_what_is_not_trained(client):
     assert body["decision_trained"] is False
     assert body["decision_calibrated"] is False
     assert body["retrieval_mode"] == "generators"
+
+
+def test_model_info_reports_build_and_runtime_configuration(client):
+    """The bundle id keys on corpus content plus index config only, so it cannot
+    distinguish two runs that retrieve differently. These fields can."""
+    body = client.get("/v1/model-info").json()
+    assert set(body) >= {"build_config_hash", "runtime_config_hash", "config_drift"}
+    assert isinstance(body["config_drift"], bool)
 
 
 def test_model_info_discloses_the_development_authorization_default(client):

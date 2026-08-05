@@ -470,12 +470,22 @@ def test_duplicate_titles_are_one_family_with_several_instances(corpus, fixture_
     # Family and instance identities stay distinct.
     assert payroll.family_id != payroll.selected.instance_id
     assert {i.instance_id for i in payroll.instances} == {"R0105", "R0106"}
-    # The selected instance is the best by *final* rank. Asserting a specific id
-    # here would be asserting that the cross-encoder decides on its own; under RRF
-    # it is one ranked voice among several, which is the intended design.
-    assert payroll.selected.rank == min(i.rank for i in payroll.instances)
-    # The family score is its best instance's score, not a sum over instances.
-    assert payroll.score == max(i.score for i in payroll.instances)
+    # The better-scoring copy is selected, and it may be one that *expansion*
+    # recovered rather than one the shortlist retrieved.
+    #
+    # This previously asserted `selected.rank == min(rank)`, which quietly assumed
+    # the selected copy arrived through the shortlist. It no longer need: the
+    # family-diverse fused fill spends a slot on an unrepresented family before a
+    # second copy of one already present, so R0106 is deferred and reaches the
+    # cross-encoder through family expansion instead. An expanded instance has no
+    # retrieval rank and carries the 10**6 sentinel, so the old assertion was
+    # testing the hand-off between the two stages rather than the contract.
+    assert payroll.selected.instance_id == "R0106", "the better-scoring copy wins"
+    # The family score is its best *retrieved* instance's score, not a sum over
+    # instances and not an expanded instance's incomparable logit.
+    assert payroll.score == max(
+        i.score for i in payroll.instances if not i.expanded
+    )
 
 
 def test_families_are_not_rewarded_for_having_more_instances(corpus, fixture_frame, cfg):

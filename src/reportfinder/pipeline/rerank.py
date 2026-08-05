@@ -56,6 +56,9 @@ class RerankResult:
     dtype: str = "float32"
     dtype_escalated: bool = False
     non_finite_scores: int = 0
+    pairs_submitted: int = 0
+    model_pair_count: int = 0
+    deduplicated_pairs: int = 0
 
     @property
     def ran(self) -> bool:
@@ -73,7 +76,51 @@ class RerankResult:
             # scorer escalated to float64 to stay correct.
             "cross_encoder_dtype_escalated": self.dtype_escalated,
             "cross_encoder_non_finite_scores": self.non_finite_scores,
+            # Candidates in, forward passes actually run, and the difference.
+            # Reranking is the dominant stage, so the gap between the first two
+            # is the only honest place to look for its cost -- these are counters,
+            # not a claimed saving.
+            "cross_encoder_pairs_submitted": self.pairs_submitted,
+            "cross_encoder_model_pairs": self.model_pair_count,
+            "cross_encoder_deduplicated_pairs": self.deduplicated_pairs,
         }
+
+
+def score_pairs_deduplicated(
+    scorer: PairScorer, query: str, texts: Sequence[str],
+) -> tuple[np.ndarray, int]:
+    """Score each distinct text once, then fan the results back out.
+
+    Within one query the model input is `(query, text)`, so two candidates whose
+    authoritative text is byte-identical are the same forward pass computed
+    twice. Duplicate text is ordinary here: the estate carries families whose
+    instances differ only in fields that the authoritative text truncation drops.
+
+    Returns the scores in the caller's order together with the number of pairs the
+    model actually saw. Order of first appearance is preserved so a scorer that
+    batches sequentially sees the same prefix it would have seen before.
+    """
+    if not texts:
+        return np.zeros(0, dtype=np.float32), 0
+
+    unique: dict[str, int] = {}
+    positions = []
+    for text in texts:
+        if text not in unique:
+            unique[text] = len(unique)
+        positions.append(unique[text])
+
+    unique_texts = list(unique)
+    scores = np.asarray(scorer.score_pairs(query, unique_texts))
+    if scores.shape != (len(unique_texts),):
+        raise ValueError(
+            f"{getattr(scorer, 'name', type(scorer).__name__)} returned "
+            f"{scores.shape} scores for {len(unique_texts)} unique texts; a "
+            "scorer that does not return one score per input cannot be aligned "
+            "back to candidates, and guessing the alignment would silently "
+            "attach one report's score to another"
+        )
+    return scores[np.asarray(positions, dtype=np.int64)], len(unique_texts)
 
 
 # A pair long enough to exercise the attention kernels that misbehave. Used once
@@ -234,7 +281,7 @@ def rerank_shortlist(
         authoritative_text(corpus.instance(instance_id), max_chars=max_report_chars)
         for instance_id in instance_ids
     ]
-    raw_scores = scorer.score_pairs(raw_query, texts)
+    raw_scores, model_pairs = score_pairs_deduplicated(scorer, raw_query, texts)
 
     # A non-finite score must never reach the ranker: it would silently poison
     # every margin and comparison downstream. Any that survive are dropped and
@@ -257,5 +304,10 @@ def rerank_shortlist(
         model_revision=getattr(scorer, "revision", ""),
         dtype=getattr(scorer, "dtype", "float32"),
         dtype_escalated=bool(getattr(scorer, "dtype_escalated", False)),
+        # Counted per candidate, not per unique text: a non-finite score really
+        # does cost every candidate that shares that text its reranking.
         non_finite_scores=int((~finite).sum()),
+        pairs_submitted=len(texts),
+        model_pair_count=model_pairs,
+        deduplicated_pairs=len(texts) - model_pairs,
     )

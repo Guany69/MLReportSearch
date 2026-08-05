@@ -24,6 +24,7 @@ import numpy as np
 
 from reportfinder.config import DEFAULT, from_mapping
 from reportfinder.corpus import authoritative_text, build_corpus_model
+from reportfinder.evaluation.metrics import discordant_pairs
 from reportfinder.ingest import build_corpus
 
 DEFAULT_OUT = Path("artifacts/onnx/cross_encoder.onnx")
@@ -131,7 +132,10 @@ def verify(out_path: Path, cfg, *, tolerance: float) -> dict:
         pairs += int(finite.sum())
         if finite.any():
             max_delta = max(max_delta, float(np.abs(reference[finite] - candidate[finite]).max()))
-        if list(np.argsort(-reference)) != list(np.argsort(-candidate)):
+        # Tie-aware: two backends breaking a genuine tie differently is not a
+        # disagreement about ordering, and diffing sorted index lists would have
+        # counted it as one.
+        if finite.any() and discordant_pairs(reference[finite], candidate[finite]):
             order_mismatches += 1
 
     passed = (

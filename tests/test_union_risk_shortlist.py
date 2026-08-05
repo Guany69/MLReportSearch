@@ -408,3 +408,129 @@ def test_an_empty_union_yields_an_empty_shortlist():
     union = _union()
     shortlist = select_shortlist(union, _risk(union, _plan(), DEFAULT), DEFAULT)
     assert len(shortlist) == 0
+
+
+# --- family diversity in the fused remainder ---------------------------------
+#
+# `_family_of` above is injective, so every fixture instance is its own family and
+# diversification is a no-op there. These tests give instances shared families
+# explicitly, which is the only way to exercise the two-pass fill.
+
+
+def _shared_family(instance_id: str) -> str:
+    """Instances named `A1`, `A2` share family `fam-A`; `B1` is `fam-B`."""
+    return f"fam-{instance_id[0]}"
+
+
+def _shared_union(*results, constant=60):
+    return build_union(results, family_of=_shared_family, rrf_constant=constant)
+
+
+def _diverse_cfg(depth, *, enabled=True, **quota_overrides):
+    """Floors zeroed unless a test asks for one, so the whole depth is remainder.
+
+    `ShortlistConfig` refuses quotas that cannot fit the depth -- correctly -- so
+    a test about the fused fill has to leave the fill somewhere to happen.
+    """
+    quotas = {
+        "fused": depth, "bm25_exclusive": 0, "splade_exclusive": 0,
+        "schema_exclusive": 0, "purpose_exclusive": 0, "prototype_exclusive": 0,
+        "alternate_query_exclusive": 0,
+    }
+    quotas.update(quota_overrides)
+    return from_mapping({"shortlist": {
+        "standard_rerank_depth": depth,
+        "high_risk_rerank_depth": depth,
+        "diversify_families": enabled,
+        "quotas": quotas,
+    }})
+
+
+def _fused_only(*hits):
+    """One generator, so no exclusive floor claims anything and the whole
+    shortlist is decided by the fused remainder."""
+    return _shared_union(_result("bm25f", list(hits)))
+
+
+def test_the_fused_remainder_prefers_an_unseen_family_over_a_sibling():
+    """Aggregation is max-oriented over families: a second copy of a family
+    already present can only change *which copy* it offers, while a family with
+    no representative cannot be returned at all."""
+    union = _fused_only(("A1", 9.0), ("A2", 8.0), ("A3", 7.0), ("B1", 6.0))
+    plan = _plan()
+    risk = _risk(union, plan, _diverse_cfg(2))
+    shortlist = select_shortlist(union, risk, _diverse_cfg(2))
+
+    assert set(shortlist.instance_ids) == {"A1", "B1"}, (
+        "B1 is fused-worst but is the only member of its family"
+    )
+    assert shortlist.telemetry()["distinct_families"] == 2
+
+
+def test_deferred_siblings_fill_capacity_the_unseen_pass_left_over():
+    """Deferral is not exclusion. If depth remains after every family has a
+    representative, the passed-over siblings take the rest."""
+    union = _fused_only(("A1", 9.0), ("A2", 8.0), ("A3", 7.0), ("B1", 6.0))
+    cfg = _diverse_cfg(4)
+    risk = _risk(union, _plan(), cfg)
+    shortlist = select_shortlist(union, risk, cfg)
+
+    assert set(shortlist.instance_ids) == {"A1", "A2", "A3", "B1"}
+    assert shortlist.telemetry()["deferred_then_admitted"] == 2
+    assert shortlist.telemetry()["sibling_entries"] == 2
+
+
+def test_disabling_diversification_reproduces_the_plain_fused_cut():
+    """The ablation must be exact, not merely similar -- otherwise it cannot be
+    used to attribute a measured difference to this change."""
+    hits = [("A1", 9.0), ("A2", 8.0), ("A3", 7.0), ("B1", 6.0)]
+    cfg = _diverse_cfg(2, enabled=False)
+    union = _fused_only(*hits)
+    shortlist = select_shortlist(union, _risk(union, _plan(), cfg), cfg)
+
+    assert shortlist.instance_ids == ["A1", "A2"], "strict fused order"
+    assert shortlist.telemetry()["family_diversity_enabled"] is False
+    assert shortlist.telemetry()["deferred_then_admitted"] == 0
+
+
+def test_diversification_leaves_the_source_exclusive_floors_alone():
+    """The floors are the whole point of the shortlist; the remainder is the only
+    thing this change is allowed to touch."""
+    union = _shared_union(
+        _result("bm25f", [("A1", 9.0), ("A2", 8.0)]),
+        _result("dense_purpose", [("A3", 0.2)]),   # only purpose found A3
+    )
+    cfg = _diverse_cfg(3, purpose_exclusive=1)
+    shortlist = select_shortlist(union, _risk(union, _plan(), cfg), cfg)
+
+    assert "A3" in shortlist.instance_ids, (
+        "a purpose-exclusive candidate keeps its reserved slot even though its "
+        "family is already represented"
+    )
+    assert shortlist.admitted_via("A3") == "purpose_exclusive"
+
+
+def test_a_union_of_unique_families_is_unchanged_by_diversification():
+    hits = [("A1", 9.0), ("B1", 8.0), ("C1", 7.0)]
+    union_on, union_off = _fused_only(*hits), _fused_only(*hits)
+    on, off = _diverse_cfg(2), _diverse_cfg(2, enabled=False)
+
+    assert (
+        select_shortlist(union_on, _risk(union_on, _plan(), on), on)
+        .instance_ids
+        == select_shortlist(union_off, _risk(union_off, _plan(), off), off)
+        .instance_ids
+    )
+
+
+def test_diversification_respects_depth_and_admits_nothing_twice():
+    union = _fused_only(("A1", 9.0), ("A2", 8.0), ("B1", 7.0), ("B2", 6.0))
+    cfg = _diverse_cfg(3)
+    shortlist = select_shortlist(union, _risk(union, _plan(), cfg), cfg)
+
+    assert len(shortlist) == 3
+    assert len(set(shortlist.instance_ids)) == 3
+    # Final ordering is by fused rank, including anything admitted in pass two.
+    ranks = [e.record.fused_rank for e in shortlist.entries]
+    assert ranks == sorted(ranks)
+    assert [e.position for e in shortlist.entries] == list(range(len(shortlist)))

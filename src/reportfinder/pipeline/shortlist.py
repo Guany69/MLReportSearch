@@ -62,6 +62,8 @@ class Shortlist:
     quota_usage: dict[str, int] = field(default_factory=dict)
     quota_available: dict[str, int] = field(default_factory=dict)
     redistributed: dict[str, int] = field(default_factory=dict)
+    family_diversified: bool = False
+    deferred_then_admitted: int = 0
 
     def __len__(self) -> int:
         return len(self.entries)
@@ -92,6 +94,12 @@ class Shortlist:
             "source_exclusive_admitted": sum(
                 1 for e in self.entries if e.admitted_via != "fused"
             ),
+            "family_diversity_enabled": self.family_diversified,
+            "distinct_families": len({e.record.family_id for e in self.entries}),
+            "sibling_entries": (
+                len(self.entries) - len({e.record.family_id for e in self.entries})
+            ),
+            "deferred_then_admitted": self.deferred_then_admitted,
         }
 
 
@@ -152,14 +160,61 @@ def select_shortlist(union, risk, cfg) -> Shortlist:
 
     # `fused` takes the remainder, so the shortlist always reaches its full depth.
     fused_used = 0
-    for record in union.ordered():
-        if len(admitted) >= depth:
-            break
-        if record.instance_id in admitted:
-            continue
-        admitted.add(record.instance_id)
-        shortlist.entries.append(ShortlistEntry(record, "fused", len(shortlist.entries)))
-        fused_used += 1
+    if cfg.shortlist.diversify_families:
+        # Two passes over the same fused ordering. The first spends the remainder
+        # on families nothing has admitted yet; the second gives whatever is left
+        # to the siblings it passed over.
+        #
+        # The reason is that aggregation is max-oriented over families, so the
+        # second copy of a family already in the shortlist can only improve *which
+        # copy* that family offers -- while a family with no representative at all
+        # cannot be returned no matter how good it is. Family-first expansion then
+        # cross-encodes the skipped siblings anyway, so a deferred sibling is not
+        # lost, only deprioritised for a slot.
+        #
+        # This never touches the exclusive floors above, and it cannot change the
+        # shortlist's size: every deferred candidate is reconsidered in pass two.
+        shortlist.family_diversified = True
+        represented = {entry.record.family_id for entry in shortlist.entries}
+        deferred: list[UnionRecord] = []
+
+        for record in union.ordered():
+            if len(admitted) >= depth:
+                break
+            if record.instance_id in admitted:
+                continue
+            if record.family_id in represented:
+                deferred.append(record)
+                continue
+            admitted.add(record.instance_id)
+            represented.add(record.family_id)
+            shortlist.entries.append(
+                ShortlistEntry(record, "fused", len(shortlist.entries))
+            )
+            fused_used += 1
+
+        for record in deferred:
+            if len(admitted) >= depth:
+                break
+            if record.instance_id in admitted:
+                continue
+            admitted.add(record.instance_id)
+            shortlist.entries.append(
+                ShortlistEntry(record, "fused", len(shortlist.entries))
+            )
+            fused_used += 1
+            shortlist.deferred_then_admitted += 1
+    else:
+        for record in union.ordered():
+            if len(admitted) >= depth:
+                break
+            if record.instance_id in admitted:
+                continue
+            admitted.add(record.instance_id)
+            shortlist.entries.append(
+                ShortlistEntry(record, "fused", len(shortlist.entries))
+            )
+            fused_used += 1
 
     shortlist.quota_usage["fused"] = fused_used
     available["fused"] = depth - sum(

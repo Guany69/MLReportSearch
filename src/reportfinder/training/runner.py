@@ -81,12 +81,20 @@ def gather_passes(
         pipeline.bundle.manifest.bundle_version if pipeline.bundle else ""
     )
 
+    # The bundle id covers only what was encoded; this covers how it is served --
+    # shortlist depth and policy, rerank, fusion, decision, risk. Both change what
+    # a pass records.
+    from ..index.bundle import config_hash
+
+    serving_config_hash = config_hash(cfg)
+
     out: dict[str, list] = {}
     for split in splits:
         key = cache_key(
             bundle_version=bundle_version,
             dataset_version=str(manifest.get("version", "unknown")),
             split=split,
+            serving_config_hash=serving_config_hash,
         )
         directory = Path(cache_root) / key
         cached = load_passes(directory, key=key)
@@ -195,7 +203,7 @@ def train_decision_end_to_end(
     cache_root: Path = CACHE_ROOT,
     verbose: bool = False,
 ) -> tuple[dict, Path]:
-    from .evaluate import write_eval_report
+    from .evaluate import evaluate_decision, slice_metrics, write_eval_report
     from .nets import save_model, weights_sha256
     from .train_decision import load_answerability_labels, train_decision
 
@@ -215,6 +223,12 @@ def train_decision_end_to_end(
     digest = weights_sha256(
         torch.load(out, map_location="cpu", weights_only=False)["state_dict"]
     )
+    # Slices were previously omitted here, so every decision report shipped
+    # `slices: {}` while the fusion path reported ten archetypes. That made the
+    # approval gate structurally unable to see a per-archetype regression in the
+    # one model whose whole purpose is per-class behaviour. The subset filter
+    # matches train_decision's: evaluate_decision indexes `labels` directly.
+    labelled_validation = [p for p in passes["validation"] if p.scenario_id in labels]
     report_path = write_eval_report(
         "decision", out, metrics,
         weights_sha256=digest, feature_hash=metadata["feature_hash"],
@@ -222,6 +236,12 @@ def train_decision_end_to_end(
         dataset_manifest=_dataset_manifest(relevance_root),
         split="validation",
         query_count=metadata["validation_split_size"],
+        slices=slice_metrics(
+            labelled_validation,
+            lambda subset: evaluate_decision(
+                model, metadata["temperature"], subset, labels
+            ),
+        ),
         config_path=str(config_path or ""),
         bundle_version=(
             pipeline.bundle.manifest.bundle_version if pipeline.bundle else ""

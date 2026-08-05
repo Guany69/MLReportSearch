@@ -31,6 +31,20 @@ FUSION_PRIMARY_METRIC = "family_ndcg@5"
 # while never abstaining, which is the one behaviour the head exists to provide.
 DECISION_PRIMARY_METRIC = "macro_per_class_recall"
 
+# Which way is better, stated by the report rather than guessed by the reader.
+# `approve` refuses any comparable metric whose direction it cannot resolve, so a
+# new metric added here without an entry fails loudly at the gate instead of
+# being silently compared as if larger were better.
+METRIC_DIRECTIONS = {
+    "family_ndcg@5": "higher",
+    "family_mrr": "higher",
+    "family_recall@10": "higher",
+    "instance_recall@1_within_family": "higher",
+    "macro_per_class_recall": "higher",
+    "accuracy": "higher",
+    "ece": "lower",
+}
+
 
 def _ndcg(ranked: list[str], grades: dict[str, int], k: int) -> float:
     gains = [grades.get(item, 0) for item in ranked[:k]]
@@ -259,6 +273,7 @@ def write_eval_report(
             "delta": round(float(candidate_value) - float(fallback_value), 4),
         },
         "metrics": metrics,
+        "metric_directions": METRIC_DIRECTIONS,
         "slices": slices or {},
         "config": {"path": config_path, "bundle_version": bundle_version},
         "label_basis": (

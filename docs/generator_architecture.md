@@ -79,7 +79,11 @@ the union and is eligible for the shortlist.
 ## Measured results
 
 120 v2 validation queries, real models, real 4000-row estate
-(`artifacts/candidate_survival_v2.json`). Reproduce with:
+(`artifacts/candidate_survival_v2.json`). These describe the plain fused shortlist
+fill, which is what serves. They predate the dense tie-determinism fix, whose
+effect is bounded: on the 265-query fusion evaluation it moved
+`instance_recall@1_within_family` from 0.8947 to 0.8684, about one query out of
+38 measurable ones. Reproduce with:
 
 ```bash
 uv run python scripts/measure_survival.py --config configs/legacy_generators.yaml \
@@ -140,12 +144,72 @@ unstarted work.
 
 **Neither learned model is served.** Both were trained on v2, evaluated against the
 fallback each would replace, and refused by the approval gate: the decision head
-loses to the deterministic policy (0.621 vs 0.713 macro per-class recall, and
-0.710 vs **1.000** on NO_CONFIDENT_MATCH), and the fusion model's +0.0031 nDCG gain
-comes with a regression in instance selection. RRF and the deterministic policy
+loses to the deterministic policy (0.6139 vs 0.7151 macro per-class recall, and
+0.677 vs **1.000** on NO_CONFIDENT_MATCH), and the fusion model loses to RRF
+(0.0931 vs 0.1064 family nDCG@5). An earlier run had the fusion model ahead by
++0.0031; that did not survive regenerating the feature pass, which is the correct
+reading of a delta that small on 265 queries. RRF and the deterministic policy
 still serve, and still say so in every response.
 
 ## Component notes
+
+### Source floors, then family-diverse remainder
+
+The shortlist is filled in two parts, and only the second changed.
+
+**The exclusive floors are untouched.** Each source keeps its reserved slots for
+candidates only it found, unclaimed reservations still widen the fused fill, and
+a purpose-exclusive candidate still takes its slot even when its family is
+already represented. That is the whole point of the shortlist and nothing here
+negotiates with it.
+
+**The fused remainder now prefers unrepresented families.** It walks the same
+fused ordering twice: the first pass admits candidates whose family nothing has
+admitted yet and defers siblings of families already present; the second gives
+whatever depth is left to those deferred siblings. Depth is never exceeded, no
+instance is admitted twice, and the final ordering is still by fused rank.
+
+The reason is that aggregation is max-oriented over families. A second copy of a
+family already in the shortlist can only improve *which copy* that family offers;
+a family with no representative at all cannot be returned however good it is. And
+a deferred sibling is not lost — family-first expansion cross-encodes every
+authorized instance of a leading family anyway, so deferral moves work from the
+shortlist to expansion rather than discarding it. That hand-off is visible in the
+tests: a sibling that used to be selected with a retrieval rank is now selected
+with the "no fused rank" sentinel, having arrived through expansion.
+
+`shortlist.diversify_families: false` restores the plain fused fill exactly, as an
+ablation. Telemetry reports `family_diversity_enabled`, `distinct_families`,
+`sibling_entries` and `deferred_then_admitted`.
+
+**No recall gain is claimed for this.** The survival numbers below predate it and
+are labelled as such; re-measuring under the new fill is a run of
+`scripts/measure_survival.py`, not an assumption.
+
+### Cross-encoder pair deduplication
+
+Within one query the model input is `(query, text)`, so two candidates whose
+authoritative text is byte-identical are the same forward pass computed twice.
+One shared helper — used by both the shortlist rerank and the expansion rerank —
+scores each distinct text once in first-seen order and fans the results back to
+every candidate that shares it. A scorer returning anything but one score per
+unique input raises rather than being padded or truncated into alignment, because
+a misalignment attaches one report's score to another and looks exactly like a
+correct answer.
+
+Scores are unchanged by construction: identical text implies an identical logit,
+so this is cost and telemetry only, and no evaluation or cache is invalidated.
+
+Telemetry separates candidates from work: `cross_encoder_pairs_submitted`,
+`cross_encoder_model_pairs`, `cross_encoder_deduplicated_pairs`, and the same trio
+for expansion, plus `expansion_non_finite_scores` (previously filtered without
+being counted, so a batch that scored nothing was indistinguishable from one that
+never ran).
+
+**No latency improvement is claimed.** Reranking is 85% of measured query latency,
+which is why the duplicate work is worth removing, but the size of the saving
+depends on how much duplicate text real shortlists actually contain. These
+counters are the instrument for measuring that, not the measurement.
 
 ### The purpose view has almost no recall and is kept anyway
 

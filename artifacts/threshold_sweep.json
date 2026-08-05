@@ -16,33 +16,33 @@
     {
       "abstain_rate": 0.1229,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.467,
+      "macro_per_class_recall": 0.4653,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3667,
         "NO_CONFIDENT_MATCH": 0.4062,
-        "RETURN_RESULTS": 0.6281
+        "RETURN_RESULTS": 0.6231
       },
       "weak_rerank_logit": -12.0
     },
     {
       "abstain_rate": 0.1229,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.6052,
+      "macro_per_class_recall": 0.6035,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 0.4062,
-        "RETURN_RESULTS": 0.5427
+        "RETURN_RESULTS": 0.5377
       },
       "weak_rerank_logit": -12.0
     },
     {
       "abstain_rate": 0.1229,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.5952,
+      "macro_per_class_recall": 0.5935,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 0.4062,
-        "RETURN_RESULTS": 0.5126
+        "RETURN_RESULTS": 0.5075
       },
       "weak_rerank_logit": -12.0
     },
@@ -159,33 +159,33 @@
     {
       "abstain_rate": 0.1229,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.467,
+      "macro_per_class_recall": 0.4653,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3667,
         "NO_CONFIDENT_MATCH": 0.4062,
-        "RETURN_RESULTS": 0.6281
+        "RETURN_RESULTS": 0.6231
       },
       "weak_rerank_logit": -11.5
     },
     {
       "abstain_rate": 0.1229,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.6052,
+      "macro_per_class_recall": 0.6035,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 0.4062,
-        "RETURN_RESULTS": 0.5427
+        "RETURN_RESULTS": 0.5377
       },
       "weak_rerank_logit": -11.5
     },
     {
       "abstain_rate": 0.1229,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.5952,
+      "macro_per_class_recall": 0.5935,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 0.4062,
-        "RETURN_RESULTS": 0.5126
+        "RETURN_RESULTS": 0.5075
       },
       "weak_rerank_logit": -11.5
     },
@@ -302,33 +302,33 @@
     {
       "abstain_rate": 0.2935,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6095,
+      "macro_per_class_recall": 0.6078,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3667,
         "NO_CONFIDENT_MATCH": 0.8438,
-        "RETURN_RESULTS": 0.6181
+        "RETURN_RESULTS": 0.6131
       },
       "weak_rerank_logit": -11.0
     },
     {
       "abstain_rate": 0.2935,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7477,
+      "macro_per_class_recall": 0.746,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 0.8438,
-        "RETURN_RESULTS": 0.5327
+        "RETURN_RESULTS": 0.5276
       },
       "weak_rerank_logit": -11.0
     },
     {
       "abstain_rate": 0.2935,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7376,
+      "macro_per_class_recall": 0.736,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 0.8438,
-        "RETURN_RESULTS": 0.5025
+        "RETURN_RESULTS": 0.4975
       },
       "weak_rerank_logit": -11.0
     },
@@ -445,33 +445,33 @@
     {
       "abstain_rate": 0.3481,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6505,
+      "macro_per_class_recall": 0.6488,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.6181
+        "RETURN_RESULTS": 0.6131
       },
       "weak_rerank_logit": -10.5
     },
     {
       "abstain_rate": 0.3481,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7887,
+      "macro_per_class_recall": 0.787,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5327
+        "RETURN_RESULTS": 0.5276
       },
       "weak_rerank_logit": -10.5
     },
     {
       "abstain_rate": 0.3481,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7786,
+      "macro_per_class_recall": 0.7769,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5025
+        "RETURN_RESULTS": 0.4975
       },
       "weak_rerank_logit": -10.5
     },
@@ -588,33 +588,33 @@
     {
       "abstain_rate": 0.3686,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6488,
+      "macro_per_class_recall": 0.6471,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.6131
+        "RETURN_RESULTS": 0.608
       },
       "weak_rerank_logit": -10.0
     },
     {
       "abstain_rate": 0.3686,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7887,
+      "macro_per_class_recall": 0.787,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5327
+        "RETURN_RESULTS": 0.5276
       },
       "weak_rerank_logit": -10.0
     },
     {
       "abstain_rate": 0.3686,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7786,
+      "macro_per_class_recall": 0.7769,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5025
+        "RETURN_RESULTS": 0.4975
       },
       "weak_rerank_logit": -10.0
     },
@@ -731,33 +731,33 @@
     {
       "abstain_rate": 0.3788,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6488,
+      "macro_per_class_recall": 0.6471,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.6131
+        "RETURN_RESULTS": 0.608
       },
       "weak_rerank_logit": -9.5
     },
     {
       "abstain_rate": 0.3788,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7887,
+      "macro_per_class_recall": 0.787,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5327
+        "RETURN_RESULTS": 0.5276
       },
       "weak_rerank_logit": -9.5
     },
     {
       "abstain_rate": 0.3788,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7786,
+      "macro_per_class_recall": 0.7769,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5025
+        "RETURN_RESULTS": 0.4975
       },
       "weak_rerank_logit": -9.5
     },
@@ -874,33 +874,33 @@
     {
       "abstain_rate": 0.3959,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6327,
+      "macro_per_class_recall": 0.631,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.598
+        "RETURN_RESULTS": 0.593
       },
       "weak_rerank_logit": -9.0
     },
     {
       "abstain_rate": 0.3959,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7725,
+      "macro_per_class_recall": 0.7709,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5176
+        "RETURN_RESULTS": 0.5126
       },
       "weak_rerank_logit": -9.0
     },
     {
       "abstain_rate": 0.3959,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7625,
+      "macro_per_class_recall": 0.7608,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4874
+        "RETURN_RESULTS": 0.4824
       },
       "weak_rerank_logit": -9.0
     },
@@ -1017,64 +1017,53 @@
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.631,
+      "macro_per_class_recall": 0.6293,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.593
+        "RETURN_RESULTS": 0.5879
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7725,
+      "macro_per_class_recall": 0.7692,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5176
+        "RETURN_RESULTS": 0.5075
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7625,
+      "macro_per_class_recall": 0.7591,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4874
+        "RETURN_RESULTS": 0.4774
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7491,
+      "macro_per_class_recall": 0.7474,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4472
+        "RETURN_RESULTS": 0.4422
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 1.25,
-      "macro_per_class_recall": 0.7568,
+      "macro_per_class_recall": 0.7552,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4372
-      },
-      "weak_rerank_logit": -8.5
-    },
-    {
-      "abstain_rate": 0.4027,
-      "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7663,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.4322
       },
@@ -1082,7 +1071,7 @@
     },
     {
       "abstain_rate": 0.4027,
-      "clarify_margin": 1.75,
+      "clarify_margin": 1.5,
       "macro_per_class_recall": 0.7646,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
@@ -1093,56 +1082,67 @@
     },
     {
       "abstain_rate": 0.4027,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7629,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.4221
+      },
+      "weak_rerank_logit": -8.5
+    },
+    {
+      "abstain_rate": 0.4027,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7613,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.8667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7629,
+      "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7629,
+      "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.774,
+      "macro_per_class_recall": 0.7724,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.5
     },
     {
       "abstain_rate": 0.4027,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7724,
+      "macro_per_class_recall": 0.7707,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.4121
       },
       "weak_rerank_logit": -8.5
     },
@@ -1160,72 +1160,61 @@
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6293,
+      "macro_per_class_recall": 0.6276,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5879
+        "RETURN_RESULTS": 0.5829
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7709,
+      "macro_per_class_recall": 0.7675,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5126
+        "RETURN_RESULTS": 0.5025
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7608,
+      "macro_per_class_recall": 0.7575,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4824
+        "RETURN_RESULTS": 0.4724
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7474,
+      "macro_per_class_recall": 0.7457,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4422
+        "RETURN_RESULTS": 0.4372
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 1.25,
-      "macro_per_class_recall": 0.7552,
+      "macro_per_class_recall": 0.7535,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
+        "RETURN_RESULTS": 0.4271
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7663,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.8667,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
-      },
-      "weak_rerank_logit": -8.0
-    },
-    {
-      "abstain_rate": 0.4061,
-      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7646,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
@@ -1236,56 +1225,67 @@
     },
     {
       "abstain_rate": 0.4061,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7629,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.4221
+      },
+      "weak_rerank_logit": -8.0
+    },
+    {
+      "abstain_rate": 0.4061,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7613,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.8667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7629,
+      "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7629,
+      "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.774,
+      "macro_per_class_recall": 0.7724,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -8.0
     },
     {
       "abstain_rate": 0.4061,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7724,
+      "macro_per_class_recall": 0.7707,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.4121
       },
       "weak_rerank_logit": -8.0
     },
@@ -1303,72 +1303,61 @@
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6276,
+      "macro_per_class_recall": 0.626,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5829
+        "RETURN_RESULTS": 0.5779
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7692,
+      "macro_per_class_recall": 0.7658,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5075
+        "RETURN_RESULTS": 0.4975
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7591,
+      "macro_per_class_recall": 0.7558,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4774
+        "RETURN_RESULTS": 0.4673
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7474,
+      "macro_per_class_recall": 0.7457,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4422
+        "RETURN_RESULTS": 0.4372
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 1.25,
-      "macro_per_class_recall": 0.7552,
+      "macro_per_class_recall": 0.7535,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
+        "RETURN_RESULTS": 0.4271
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7663,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.8667,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
-      },
-      "weak_rerank_logit": -7.5
-    },
-    {
-      "abstain_rate": 0.4164,
-      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7646,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
@@ -1379,56 +1368,67 @@
     },
     {
       "abstain_rate": 0.4164,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7629,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.4221
+      },
+      "weak_rerank_logit": -7.5
+    },
+    {
+      "abstain_rate": 0.4164,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7613,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.8667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7629,
+      "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7629,
+      "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.774,
+      "macro_per_class_recall": 0.7724,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -7.5
     },
     {
       "abstain_rate": 0.4164,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7724,
+      "macro_per_class_recall": 0.7707,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.4121
       },
       "weak_rerank_logit": -7.5
     },
@@ -1446,72 +1446,61 @@
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6243,
+      "macro_per_class_recall": 0.6226,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5729
+        "RETURN_RESULTS": 0.5678
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7658,
+      "macro_per_class_recall": 0.7625,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4975
+        "RETURN_RESULTS": 0.4874
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7558,
+      "macro_per_class_recall": 0.7524,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4673
+        "RETURN_RESULTS": 0.4573
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7441,
+      "macro_per_class_recall": 0.7424,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
+        "RETURN_RESULTS": 0.4271
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 1.25,
-      "macro_per_class_recall": 0.7518,
+      "macro_per_class_recall": 0.7501,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7629,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.8667,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
-      },
-      "weak_rerank_logit": -7.0
-    },
-    {
-      "abstain_rate": 0.4266,
-      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
@@ -1522,56 +1511,67 @@
     },
     {
       "abstain_rate": 0.4266,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7596,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.4121
+      },
+      "weak_rerank_logit": -7.0
+    },
+    {
+      "abstain_rate": 0.4266,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7579,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.8667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7596,
+      "macro_per_class_recall": 0.7579,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7596,
+      "macro_per_class_recall": 0.7579,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7707,
+      "macro_per_class_recall": 0.769,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -7.0
     },
     {
       "abstain_rate": 0.4266,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.769,
+      "macro_per_class_recall": 0.7673,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -7.0
     },
@@ -1589,72 +1589,61 @@
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6226,
+      "macro_per_class_recall": 0.6209,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5678
+        "RETURN_RESULTS": 0.5628
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7658,
+      "macro_per_class_recall": 0.7625,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4975
+        "RETURN_RESULTS": 0.4874
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7558,
+      "macro_per_class_recall": 0.7524,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4673
+        "RETURN_RESULTS": 0.4573
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7441,
+      "macro_per_class_recall": 0.7424,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
+        "RETURN_RESULTS": 0.4271
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 1.25,
-      "macro_per_class_recall": 0.7518,
+      "macro_per_class_recall": 0.7501,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7629,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.8667,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
-      },
-      "weak_rerank_logit": -6.5
-    },
-    {
-      "abstain_rate": 0.4334,
-      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7613,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
@@ -1665,56 +1654,67 @@
     },
     {
       "abstain_rate": 0.4334,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7596,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.4121
+      },
+      "weak_rerank_logit": -6.5
+    },
+    {
+      "abstain_rate": 0.4334,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7579,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.8667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7596,
+      "macro_per_class_recall": 0.7579,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7596,
+      "macro_per_class_recall": 0.7579,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7707,
+      "macro_per_class_recall": 0.769,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -6.5
     },
     {
       "abstain_rate": 0.4334,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.769,
+      "macro_per_class_recall": 0.7673,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.9,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -6.5
     },
@@ -1732,72 +1732,61 @@
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.6209,
+      "macro_per_class_recall": 0.6193,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.3,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5628
+        "RETURN_RESULTS": 0.5578
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7642,
+      "macro_per_class_recall": 0.7608,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4925
+        "RETURN_RESULTS": 0.4824
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7541,
+      "macro_per_class_recall": 0.7508,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4623
+        "RETURN_RESULTS": 0.4523
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7424,
+      "macro_per_class_recall": 0.7407,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4271
+        "RETURN_RESULTS": 0.4221
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 1.25,
-      "macro_per_class_recall": 0.739,
+      "macro_per_class_recall": 0.7374,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.4121
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7501,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.8333,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
-      },
-      "weak_rerank_logit": -6.0
-    },
-    {
-      "abstain_rate": 0.4437,
-      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7485,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
@@ -1808,56 +1797,67 @@
     },
     {
       "abstain_rate": 0.4437,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7468,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.407
+      },
+      "weak_rerank_logit": -6.0
+    },
+    {
+      "abstain_rate": 0.4437,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7451,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.8333,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7468,
+      "macro_per_class_recall": 0.7451,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7468,
+      "macro_per_class_recall": 0.7451,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7579,
+      "macro_per_class_recall": 0.7562,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -6.0
     },
     {
       "abstain_rate": 0.4437,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7562,
+      "macro_per_class_recall": 0.7546,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.402
+        "RETURN_RESULTS": 0.397
       },
       "weak_rerank_logit": -6.0
     },
@@ -1875,50 +1875,39 @@
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.5954,
+      "macro_per_class_recall": 0.5937,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5528
+        "RETURN_RESULTS": 0.5477
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7386,
+      "macro_per_class_recall": 0.7352,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4824
+        "RETURN_RESULTS": 0.4724
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7302,
+      "macro_per_class_recall": 0.7269,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4573
+        "RETURN_RESULTS": 0.4472
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7185,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7333,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4221
-      },
-      "weak_rerank_logit": -5.5
-    },
-    {
-      "abstain_rate": 0.4573,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.7168,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
@@ -1929,18 +1918,18 @@
     },
     {
       "abstain_rate": 0.4573,
-      "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7279,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.7151,
       "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7667,
+        "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.4121
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
-      "clarify_margin": 1.75,
+      "clarify_margin": 1.5,
       "macro_per_class_recall": 0.7262,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
@@ -1951,56 +1940,67 @@
     },
     {
       "abstain_rate": 0.4573,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7246,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.407
+      },
+      "weak_rerank_logit": -5.5
+    },
+    {
+      "abstain_rate": 0.4573,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7229,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.7667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7246,
+      "macro_per_class_recall": 0.7229,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7246,
+      "macro_per_class_recall": 0.7229,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7357,
+      "macro_per_class_recall": 0.734,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -5.5
     },
     {
       "abstain_rate": 0.4573,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.734,
+      "macro_per_class_recall": 0.7323,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.402
+        "RETURN_RESULTS": 0.397
       },
       "weak_rerank_logit": -5.5
     },
@@ -2018,50 +2018,39 @@
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.5887,
+      "macro_per_class_recall": 0.587,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5327
+        "RETURN_RESULTS": 0.5276
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7336,
+      "macro_per_class_recall": 0.7302,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4673
+        "RETURN_RESULTS": 0.4573
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7252,
+      "macro_per_class_recall": 0.7218,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4422
+        "RETURN_RESULTS": 0.4322
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7151,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7333,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
-      },
-      "weak_rerank_logit": -5.0
-    },
-    {
-      "abstain_rate": 0.4744,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.7135,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
@@ -2072,18 +2061,18 @@
     },
     {
       "abstain_rate": 0.4744,
-      "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7246,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.7118,
       "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7667,
+        "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
-      "clarify_margin": 1.75,
+      "clarify_margin": 1.5,
       "macro_per_class_recall": 0.7229,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
@@ -2094,56 +2083,67 @@
     },
     {
       "abstain_rate": 0.4744,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7212,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.397
+      },
+      "weak_rerank_logit": -5.0
+    },
+    {
+      "abstain_rate": 0.4744,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7195,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.7667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.392
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7212,
+      "macro_per_class_recall": 0.7195,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.397
+        "RETURN_RESULTS": 0.392
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7212,
+      "macro_per_class_recall": 0.7195,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.397
+        "RETURN_RESULTS": 0.392
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7323,
+      "macro_per_class_recall": 0.7307,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.397
+        "RETURN_RESULTS": 0.392
       },
       "weak_rerank_logit": -5.0
     },
     {
       "abstain_rate": 0.4744,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7307,
+      "macro_per_class_recall": 0.729,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.392
+        "RETURN_RESULTS": 0.3869
       },
       "weak_rerank_logit": -5.0
     },
@@ -2161,50 +2161,39 @@
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.582,
+      "macro_per_class_recall": 0.5803,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.5126
+        "RETURN_RESULTS": 0.5075
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7269,
+      "macro_per_class_recall": 0.7235,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4472
+        "RETURN_RESULTS": 0.4372
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.7202,
+      "macro_per_class_recall": 0.7168,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4271
+        "RETURN_RESULTS": 0.4171
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.7118,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7333,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.402
-      },
-      "weak_rerank_logit": -4.5
-    },
-    {
-      "abstain_rate": 0.4949,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.7101,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
@@ -2215,18 +2204,18 @@
     },
     {
       "abstain_rate": 0.4949,
-      "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7212,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.7084,
       "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7667,
+        "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.397
+        "RETURN_RESULTS": 0.392
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
-      "clarify_margin": 1.75,
+      "clarify_margin": 1.5,
       "macro_per_class_recall": 0.7195,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
@@ -2237,56 +2226,67 @@
     },
     {
       "abstain_rate": 0.4949,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7179,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.3869
+      },
+      "weak_rerank_logit": -4.5
+    },
+    {
+      "abstain_rate": 0.4949,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7162,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.7667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.3819
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7179,
+      "macro_per_class_recall": 0.7162,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3869
+        "RETURN_RESULTS": 0.3819
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7179,
+      "macro_per_class_recall": 0.7162,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3869
+        "RETURN_RESULTS": 0.3819
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.729,
+      "macro_per_class_recall": 0.7273,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3869
+        "RETURN_RESULTS": 0.3819
       },
       "weak_rerank_logit": -4.5
     },
     {
       "abstain_rate": 0.4949,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7273,
+      "macro_per_class_recall": 0.7256,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.8,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3819
+        "RETURN_RESULTS": 0.3769
       },
       "weak_rerank_logit": -4.5
     },
@@ -2304,50 +2304,39 @@
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.5769,
+      "macro_per_class_recall": 0.5753,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4975
+        "RETURN_RESULTS": 0.4925
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7107,
+      "macro_per_class_recall": 0.7074,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
+        "RETURN_RESULTS": 0.4221
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.704,
+      "macro_per_class_recall": 0.7007,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.6956,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3869
-      },
-      "weak_rerank_logit": -4.0
-    },
-    {
-      "abstain_rate": 0.5154,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.694,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
@@ -2358,18 +2347,18 @@
     },
     {
       "abstain_rate": 0.5154,
-      "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7051,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.6923,
       "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7333,
+        "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3819
+        "RETURN_RESULTS": 0.3769
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
-      "clarify_margin": 1.75,
+      "clarify_margin": 1.5,
       "macro_per_class_recall": 0.7034,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
@@ -2380,56 +2369,67 @@
     },
     {
       "abstain_rate": 0.5154,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7017,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.3719
+      },
+      "weak_rerank_logit": -4.0
+    },
+    {
+      "abstain_rate": 0.5154,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7001,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.7333,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7017,
+      "macro_per_class_recall": 0.7001,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7017,
+      "macro_per_class_recall": 0.7001,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7017,
+      "macro_per_class_recall": 0.7001,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -4.0
     },
     {
       "abstain_rate": 0.5154,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7001,
+      "macro_per_class_recall": 0.6984,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3668
+        "RETURN_RESULTS": 0.3618
       },
       "weak_rerank_logit": -4.0
     },
@@ -2447,50 +2447,39 @@
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.5753,
+      "macro_per_class_recall": 0.5736,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4925
+        "RETURN_RESULTS": 0.4874
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.7107,
+      "macro_per_class_recall": 0.7074,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4322
+        "RETURN_RESULTS": 0.4221
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.704,
+      "macro_per_class_recall": 0.7007,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4121
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.6956,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3869
-      },
-      "weak_rerank_logit": -3.5
-    },
-    {
-      "abstain_rate": 0.5188,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.694,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
@@ -2501,18 +2490,18 @@
     },
     {
       "abstain_rate": 0.5188,
-      "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.7051,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.6923,
       "per_class_recall": {
-        "ASK_CLARIFICATION": 0.7333,
+        "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3819
+        "RETURN_RESULTS": 0.3769
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
-      "clarify_margin": 1.75,
+      "clarify_margin": 1.5,
       "macro_per_class_recall": 0.7034,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
@@ -2523,56 +2512,67 @@
     },
     {
       "abstain_rate": 0.5188,
-      "clarify_margin": 2.0,
+      "clarify_margin": 1.75,
       "macro_per_class_recall": 0.7017,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
         "RETURN_RESULTS": 0.3719
+      },
+      "weak_rerank_logit": -3.5
+    },
+    {
+      "abstain_rate": 0.5188,
+      "clarify_margin": 2.0,
+      "macro_per_class_recall": 0.7001,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.7333,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.7017,
+      "macro_per_class_recall": 0.7001,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.7017,
+      "macro_per_class_recall": 0.7001,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.7017,
+      "macro_per_class_recall": 0.7001,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
+        "RETURN_RESULTS": 0.3668
       },
       "weak_rerank_logit": -3.5
     },
     {
       "abstain_rate": 0.5188,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.7001,
+      "macro_per_class_recall": 0.6984,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7333,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3668
+        "RETURN_RESULTS": 0.3618
       },
       "weak_rerank_logit": -3.5
     },
@@ -2590,50 +2590,39 @@
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.5591,
+      "macro_per_class_recall": 0.5575,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4774
+        "RETURN_RESULTS": 0.4724
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.6946,
+      "macro_per_class_recall": 0.6912,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.6879,
+      "macro_per_class_recall": 0.6845,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.397
+        "RETURN_RESULTS": 0.3869
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.6795,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.6667,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
-      },
-      "weak_rerank_logit": -3.0
-    },
-    {
-      "abstain_rate": 0.5392,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.6778,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
@@ -2644,78 +2633,89 @@
     },
     {
       "abstain_rate": 0.5392,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.6762,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.6667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.3618
+      },
+      "weak_rerank_logit": -3.0
+    },
+    {
+      "abstain_rate": 0.5392,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.6889,
+      "macro_per_class_recall": 0.6873,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3668
+        "RETURN_RESULTS": 0.3618
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 1.75,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 2.0,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -3.0
     },
     {
       "abstain_rate": 0.5392,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.6856,
+      "macro_per_class_recall": 0.6839,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3568
+        "RETURN_RESULTS": 0.3518
       },
       "weak_rerank_logit": -3.0
     },
@@ -2733,50 +2733,39 @@
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 0.25,
-      "macro_per_class_recall": 0.5558,
+      "macro_per_class_recall": 0.5541,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.2,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4673
+        "RETURN_RESULTS": 0.4623
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.6946,
+      "macro_per_class_recall": 0.6912,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.4171
+        "RETURN_RESULTS": 0.407
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.6879,
+      "macro_per_class_recall": 0.6845,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.397
+        "RETURN_RESULTS": 0.3869
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 1.0,
-      "macro_per_class_recall": 0.6795,
-      "per_class_recall": {
-        "ASK_CLARIFICATION": 0.6667,
-        "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3719
-      },
-      "weak_rerank_logit": -2.5
-    },
-    {
-      "abstain_rate": 0.5495,
-      "clarify_margin": 1.25,
       "macro_per_class_recall": 0.6778,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
@@ -2787,78 +2776,89 @@
     },
     {
       "abstain_rate": 0.5495,
+      "clarify_margin": 1.25,
+      "macro_per_class_recall": 0.6762,
+      "per_class_recall": {
+        "ASK_CLARIFICATION": 0.6667,
+        "NO_CONFIDENT_MATCH": 1.0,
+        "RETURN_RESULTS": 0.3618
+      },
+      "weak_rerank_logit": -2.5
+    },
+    {
+      "abstain_rate": 0.5495,
       "clarify_margin": 1.5,
-      "macro_per_class_recall": 0.6889,
+      "macro_per_class_recall": 0.6873,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3668
+        "RETURN_RESULTS": 0.3618
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 1.75,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 2.0,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 2.25,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 2.5,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 2.75,
-      "macro_per_class_recall": 0.6873,
+      "macro_per_class_recall": 0.6856,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3618
+        "RETURN_RESULTS": 0.3568
       },
       "weak_rerank_logit": -2.5
     },
     {
       "abstain_rate": 0.5495,
       "clarify_margin": 3.0,
-      "macro_per_class_recall": 0.6856,
+      "macro_per_class_recall": 0.6839,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.7,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3568
+        "RETURN_RESULTS": 0.3518
       },
       "weak_rerank_logit": -2.5
     },
@@ -2887,22 +2887,22 @@
     {
       "abstain_rate": 0.5631,
       "clarify_margin": 0.5,
-      "macro_per_class_recall": 0.6912,
+      "macro_per_class_recall": 0.6896,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.407
+        "RETURN_RESULTS": 0.402
       },
       "weak_rerank_logit": -2.0
     },
     {
       "abstain_rate": 0.5631,
       "clarify_margin": 0.75,
-      "macro_per_class_recall": 0.6845,
+      "macro_per_class_recall": 0.6829,
       "per_class_recall": {
         "ASK_CLARIFICATION": 0.6667,
         "NO_CONFIDENT_MATCH": 1.0,
-        "RETURN_RESULTS": 0.3869
+        "RETURN_RESULTS": 0.3819
       },
       "weak_rerank_logit": -2.0
     },
@@ -3022,22 +3022,22 @@
   "recommended_on_validation": {
     "abstain_rate": 0.234,
     "clarify_margin": 2.75,
-    "macro_per_class_recall": 0.7203,
+    "macro_per_class_recall": 0.722,
     "per_class_recall": {
       "ASK_CLARIFICATION": 0.7879,
       "NO_CONFIDENT_MATCH": 1.0,
-      "RETURN_RESULTS": 0.3731
+      "RETURN_RESULTS": 0.3781
     },
     "weak_rerank_logit": -10.5
   },
   "shipped_defaults_on_validation": {
     "abstain_rate": 0.2792,
     "clarify_margin": 1.0,
-    "macro_per_class_recall": 0.7134,
+    "macro_per_class_recall": 0.7151,
     "per_class_recall": {
       "ASK_CLARIFICATION": 0.7273,
       "NO_CONFIDENT_MATCH": 1.0,
-      "RETURN_RESULTS": 0.4129
+      "RETURN_RESULTS": 0.4179
     },
     "weak_rerank_logit": -9.0
   },

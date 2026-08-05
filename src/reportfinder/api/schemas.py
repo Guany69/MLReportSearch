@@ -145,6 +145,11 @@ class ModelInfoResponse(BaseModel):
     decision_calibrated: bool = False
     authorization_resolver: str = ""
     authorization_is_development_default: bool = True
+    # The bundle id covers corpus content and index config only, so it cannot
+    # distinguish two runs that retrieve differently. These can.
+    build_config_hash: str = ""
+    runtime_config_hash: str = ""
+    config_drift: bool = False
 
 
 class HealthResponse(BaseModel):

@@ -452,3 +452,34 @@ def test_an_expanded_instance_with_no_advantage_does_not_displace_a_retrieved_on
     # The sibling is still *present* -- it is a real authorized copy of the family,
     # and suppressing it would hide it from clarification and detail views too.
     assert SIBLING in [m.instance_id for m in family.instances]
+
+
+# --- 6. pair-count telemetry -------------------------------------------------
+
+
+def test_expansion_reports_what_the_model_actually_scored(corpus, fixture_frame, cfg):
+    """Expansion is where duplicate text is most likely -- these are siblings of
+    one family by construction. The counters distinguish candidates considered
+    from forward passes run; they are the measurement hook, not a measurement."""
+    outcome, _ = _run(
+        corpus, fixture_frame, cfg,
+        retrieves=[RETRIEVED, OTHER],
+        scores={RETRIEVED: 1.0, SIBLING: 8.0, OTHER: 0.5},
+    )
+    aggregation = outcome.telemetry.aggregation
+
+    for key in (
+        "expansion_pairs_submitted",
+        "expansion_model_pairs",
+        "expansion_deduplicated_pairs",
+        "expansion_non_finite_scores",
+    ):
+        assert key in aggregation, f"{key} missing from expansion telemetry"
+
+    submitted = aggregation["expansion_pairs_submitted"]
+    model_pairs = aggregation["expansion_model_pairs"]
+    assert submitted >= model_pairs >= 0
+    assert aggregation["expansion_deduplicated_pairs"] == submitted - model_pairs
+    # These fixture instances differ in their fields, so nothing should collapse.
+    assert aggregation["expansion_deduplicated_pairs"] == 0
+    assert aggregation["expansion_non_finite_scores"] == 0

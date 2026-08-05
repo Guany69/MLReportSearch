@@ -3,20 +3,35 @@
 Reconstructs the report->fields relationship that Phase 1 read straight from the
 `Fields` column, by inverting each field's `Where_Used` list.
 
-The hard problem is identity, not parsing. Report titles are not unique in this
-estate (533 titles occur on more than one catalog row), so ~30% of Where_Used
-entries name a report that could be several different rows. Matching therefore runs
-as an ordered precedence, and every link records how it was made:
+`Where_Used` is not a list of report titles. It is a list of *typed* Workday
+references -- `Custom Report - Headcount by Org`, `Calculated Field - CF_TF_CSO`,
+`Condition Rule - Location is US Region 4` -- and only the first kind names
+anything in a report catalog. On the supplied estate, 20,951 distinct entries
+carry 60 distinct type prefixes; comparing them raw against catalog titles
+matched **zero** of them, because the catalog stores `Headcount by Org` and the
+dictionary stores `Custom Report - Headcount by Org`.
 
-    1. exact_name                 unique exact title match
+The hard problem after that is identity, not parsing. Report titles are not unique
+in this estate, so many entries name a report that could be several different
+rows. Matching therefore runs as an ordered precedence, and every link records how
+it was made:
+
+    1. exact_name                 unique exact title match on the raw value
     2. normalized_name            unique match after cosmetic normalization
+    -- typed parse: strip a recognized `Type - ` prefix and retry 1-2 --
     3. composite_business_object  name + Business Object == Data Source narrows to 1
     4. ambiguous_multi            still >1 candidate; see AmbiguityPolicy
     5. fuzzy                      opt-in only, blocked candidates, never Cartesian
 
+The raw value is tried *first*, before any prefix is stripped, because a report
+may legitimately be titled `Position Management Report - Calculations`. Stripping
+first would destroy such a title; matching first cannot.
+
 Nothing here fabricates certainty: a link that could not be uniquely determined is
 flagged AMBIGUOUS and keeps the full candidate list, regardless of whether the
-policy chose to attach it.
+policy chose to attach it. And nothing here guesses at an unfamiliar prefix -- an
+unrecognized type falls through to `unmatched_where_used`, which is the actionable
+channel, rather than being silently discarded as "probably not a report".
 """
 
 from __future__ import annotations
@@ -47,6 +62,80 @@ _CONFIDENCE = {
     MatchMethod.AMBIGUOUS_MULTI: 0.50,
     MatchMethod.FUZZY: 0.60,
 }
+
+# The Workday reference types observed in `Where_Used`, normalized. Enumerated
+# from the supplied field dictionary (60 distinct prefixes over 20,951 distinct
+# entries) rather than inferred structurally, because "anything before the first
+# ' - ' is a type" is wrong on exactly the entries that matter: a reference to a
+# report titled `Position Management Report - Calculations` that no longer exists
+# in the catalog would be silently reclassified as a non-report and disappear,
+# instead of being reported as unmatched.
+#
+# An unlisted prefix therefore falls through to the untyped path and lands in
+# `unmatched_where_used`. That is deliberate. A human sees the unfamiliar prefix
+# in the unmatched list and adds one string here; silently skipping unknown
+# prefixes would be unfalsifiable.
+RECOGNIZED_REFERENCE_TYPES = frozenset({
+    "alert notification", "alert notification sort item", "analytic indicator",
+    "business view data source (workday owned)", "calculated field",
+    "calibration program", "candidate communication", "composite report",
+    "computed view data source extension", "condition rule",
+    "curated field list", "custom data source",
+    "custom data source extension field", "custom object", "custom report",
+    "custom validation", "discovery board",
+    "document distribution configuration", "document snapshot",
+    "drill configuration", "employee",
+    "external field and parameter initialization", "field values group",
+    "field view", "geolocation saved search data",
+    "instance set comparison calculation", "instance value calculation",
+    "integration attribute (audited)", "integration document field",
+    "integration launch parameter initialization (audited)",
+    "integration map (audited)", "integration system", "job posting template",
+    "job posting template content", "landing page setup",
+    "launch parameter (audited)", "leave family", "leave type",
+    "lookup prior period calculated measure", "message template",
+    "minimum weekly hours calculation", "navigable class configuration detail",
+    "notification configuration", "reminder", "report group",
+    "report parameter initialization", "report scheduled process",
+    "review document step configuration", "saved filter",
+    "saved report execution callback transactional", "search criteria",
+    "security rule", "shared participation step",
+    "standard overtime calculation", "statistical condition item",
+    "summarization calculation", "text block",
+    "time block conditional calculation", "time block create calculation",
+    "trending custom field configuration", "trending org type crf map",
+    "workday account", "workflow notification", "workflow step",
+    "worklet page layout configuration", "worklet personalization",
+})
+
+# The one type that names a row in a report catalog. `Composite Report` is a
+# different Workday object and the catalog is "All Custom Reports"; treating it
+# as linkable would attach fields to reports that are not in this estate.
+REPORT_REFERENCE_TYPE = "custom report"
+
+_TYPE_SEPARATOR = " - "
+
+
+def parse_typed_reference(name: str) -> tuple[str, str] | None:
+    """Split `Type - Name` at the first separator whose left side is a known type.
+
+    Returns `(normalized_type, remainder)`, or None when the value carries no
+    recognized type -- including the case where it contains ` - ` but the left
+    side is not an enumerated Workday type, which is an ordinary report title
+    containing a dash and must be treated as untyped.
+
+    Only the ASCII ` - ` form is recognized, which is what the supplied estate
+    uses. An en-dash variant stays untyped and reaches the normalized matcher,
+    where dash folding already handles it.
+    """
+    if _TYPE_SEPARATOR not in name:
+        return None
+    head, remainder = name.split(_TYPE_SEPARATOR, 1)
+    type_key = normalize_match(head)
+    if type_key not in RECOGNIZED_REFERENCE_TYPES:
+        return None
+    remainder = remainder.strip()
+    return (type_key, remainder) if remainder else None
 
 
 class ReportFieldLinker:
@@ -112,12 +201,17 @@ class ReportFieldLinker:
     ) -> list[int]:
         """Corroborate a name match with the field's business object.
 
-        `Business Object` (field dictionary) and `Data Source` (catalog) share an
-        identical 68-value vocabulary in this dataset, and narrowing on it never
-        contradicted a name match across 12,629 resolutions -- strong evidence they
-        denote the same thing. It remains an inference about the data rather than a
-        documented guarantee, so it is confined to this one method and is
-        switchable via `enable_composite`.
+        The two columns do *not* share a vocabulary. On the supplied estate the
+        catalog carries 255 distinct `Data Source` values against the dictionary's
+        5,490 distinct `Business Object` values, overlapping on 13. So this
+        narrows a candidate list only in the minority of cases where the two
+        happen to agree, and it is corroboration rather than evidence: it never
+        invents a match, and an empty narrowing falls back to the un-narrowed
+        candidates at the call site. Switchable via `enable_composite`.
+
+        (An earlier version of this docstring claimed an identical 68-value
+        vocabulary. That was measured on the synthetic fixture estate, not this
+        one, and is not true here.)
         """
         key = normalize_match(business_object)
         if not key:
@@ -153,7 +247,28 @@ class ReportFieldLinker:
 
             for name in field_record.where_used_report_names:
                 summary.where_used_entries += 1
+                # The raw value first, always. A report legitimately titled
+                # `Position Management Report - Calculations` matches here and is
+                # never handed to the type parser.
                 candidates, method = self._candidates(name, by_exact, by_normalized)
+
+                if not candidates:
+                    parsed = parse_typed_reference(name)
+                    if parsed is not None:
+                        type_key, title = parsed
+                        if type_key != REPORT_REFERENCE_TYPE:
+                            # A calculated field or a condition rule is not a
+                            # report that went missing. Counting it as unmatched
+                            # would bury the entries that genuinely did.
+                            summary.non_report_where_used_skipped += 1
+                            continue
+                        candidates, method = self._candidates(
+                            title, by_exact, by_normalized
+                        )
+                        if not candidates and self.enable_fuzzy:
+                            candidates = self._fuzzy_candidates(title, by_normalized)
+                            if candidates:
+                                method = MatchMethod.FUZZY
 
                 if not candidates and self.enable_fuzzy:
                     candidates = self._fuzzy_candidates(name, by_normalized)
@@ -161,6 +276,8 @@ class ReportFieldLinker:
                         method = MatchMethod.FUZZY
 
                 if not candidates:
+                    # Recorded under the original cell value, prefix included, so
+                    # the diagnostic points back at something greppable.
                     summary.unmatched_where_used += 1
                     unmatched.append(
                         UnmatchedWhereUsed(

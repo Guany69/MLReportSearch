@@ -187,7 +187,8 @@ def test_cached_passes_round_trip(tmp_path, corpus, fixture_frame, cfg):
         pipeline, [_Labelled("Q1", "payroll earnings", {"R0105": 2})],
         principal=DEVELOPMENT_PRINCIPAL, archetypes={"Q1": "test"},
     )
-    key = cache_key(bundle_version="b1", dataset_version="2.0.0", split="train")
+    key = cache_key(bundle_version="b1", dataset_version="2.0.0", split="train",
+                    serving_config_hash="cfg1")
     save_passes(passes, tmp_path, key=key)
 
     reloaded = load_passes(tmp_path, key=key)
@@ -207,15 +208,38 @@ def test_a_cache_from_another_build_is_ignored(tmp_path, corpus, fixture_frame, 
         principal=DEVELOPMENT_PRINCIPAL, archetypes={},
     )
     save_passes(passes, tmp_path, key=cache_key(
-        bundle_version="old", dataset_version="2.0.0", split="train"))
+        bundle_version="old", dataset_version="2.0.0", split="train",
+        serving_config_hash="cfg1"))
 
     assert load_passes(tmp_path, key=cache_key(
-        bundle_version="new", dataset_version="2.0.0", split="train")) is None
+        bundle_version="new", dataset_version="2.0.0", split="train",
+        serving_config_hash="cfg1")) is None
+
+
+def test_a_cache_from_another_serving_config_is_ignored(
+    tmp_path, corpus, fixture_frame, cfg
+):
+    """The bundle id deliberately excludes serving settings so a shortlist tweak
+    does not re-encode 4,000 documents -- but those settings decide which
+    candidates a pass records, so the cache must still notice."""
+    pipeline = _pipeline(corpus, fixture_frame, cfg)
+    passes = run_feature_pass(
+        pipeline, [_Labelled("Q1", "payroll", {"R0105": 2})],
+        principal=DEVELOPMENT_PRINCIPAL, archetypes={},
+    )
+    save_passes(passes, tmp_path, key=cache_key(
+        bundle_version="b", dataset_version="2.0.0", split="train",
+        serving_config_hash="depth-120"))
+
+    assert load_passes(tmp_path, key=cache_key(
+        bundle_version="b", dataset_version="2.0.0", split="train",
+        serving_config_hash="depth-200")) is None
 
 
 def test_the_cache_key_covers_both_feature_schemas():
     """A feature *rename* leaves the width unchanged, so only the hash catches it."""
-    key = cache_key(bundle_version="b", dataset_version="d", split="train")
+    key = cache_key(bundle_version="b", dataset_version="d", split="train",
+                    serving_config_hash="cfg")
     from reportfinder.pipeline.fuse import FUSION_FEATURE_HASH
     from reportfinder.training.features import DECISION_FEATURE_HASH
 
@@ -304,7 +328,10 @@ def _artifact(tmp_path, *, name="fusion.pt", architecture="pytorch_mlp_64_32_1")
     return path
 
 
-def _report(tmp_path, artifact, *, delta=0.05, split="validation", digest=None):
+def _report(
+    tmp_path, artifact, *, delta=0.05, split="validation", digest=None,
+    metrics=None, slices=None, directions=None,
+):
     import torch
 
     from reportfinder.pipeline.fuse import FUSION_FEATURE_HASH
@@ -312,7 +339,7 @@ def _report(tmp_path, artifact, *, delta=0.05, split="validation", digest=None):
 
     payload = torch.load(artifact, map_location="cpu", weights_only=False)
     path = tmp_path / "eval.json"
-    path.write_text(json.dumps({
+    report = {
         "schema_version": "1", "kind": "fusion",
         "artifact": {
             "path": str(artifact),
@@ -325,7 +352,14 @@ def _report(tmp_path, artifact, *, delta=0.05, split="validation", digest=None):
             "name": "family_ndcg@5", "candidate": 0.71,
             "fallback": round(0.71 - delta, 4), "delta": delta,
         },
-    }))
+    }
+    if metrics is not None:
+        report["metrics"] = metrics
+    if slices is not None:
+        report["slices"] = slices
+    if directions is not None:
+        report["metric_directions"] = directions
+    path.write_text(json.dumps(report))
     return path
 
 
@@ -362,6 +396,120 @@ def test_approve_stamps_a_basis_and_keeps_human_validated_false(tmp_path):
     # Beating a fallback on synthetic labels does not make them human ones.
     assert metadata["human_validated"] is False
     assert metadata["approval"]["primary_metric"]["delta"] == 0.05
+
+
+def test_a_lower_is_better_metric_is_not_a_regression_when_it_falls(tmp_path):
+    """Every metric used to be compared as if larger were better, which inverts
+    the judgement on calibration error: halving it read as a regression."""
+    artifact = _artifact(tmp_path)
+    report = _report(tmp_path, artifact, delta=0.05, metrics={
+        "candidate": {"family_ndcg@5": 0.71, "ece": 0.05},
+        "fallback": {"family_ndcg@5": 0.66, "ece": 0.10},
+    })
+    metadata = approve(artifact, report)
+    assert metadata["approval"]["metric_directions"]["ece"] == "lower"
+
+
+def test_a_lower_is_better_metric_that_rises_is_a_regression(tmp_path):
+    artifact = _artifact(tmp_path)
+    report = _report(tmp_path, artifact, delta=0.05, metrics={
+        "candidate": {"family_ndcg@5": 0.71, "latency_p50_ms": 900.0},
+        "fallback": {"family_ndcg@5": 0.66, "latency_p50_ms": 300.0},
+    })
+    with pytest.raises(ApprovalRefused, match="latency_p50_ms"):
+        approve(artifact, report)
+
+
+def test_an_undeclarable_metric_refuses_even_with_regressions_allowed(tmp_path):
+    """--allow-regressions permits a *known* trade-off. A metric whose sign
+    nobody can state is not a known anything, so it is refused either way."""
+    artifact = _artifact(tmp_path)
+    report = _report(tmp_path, artifact, delta=0.05, metrics={
+        "candidate": {"family_ndcg@5": 0.71, "widget_quotient": 0.5},
+        "fallback": {"family_ndcg@5": 0.66, "widget_quotient": 0.9},
+    })
+    with pytest.raises(ApprovalRefused, match="widget_quotient"):
+        approve(artifact, report)
+    with pytest.raises(ApprovalRefused, match="widget_quotient"):
+        approve(artifact, report, allow_regressions=True)
+
+
+def test_a_declared_direction_resolves_an_unknown_metric(tmp_path):
+    artifact = _artifact(tmp_path)
+    metadata = approve(artifact, _report(
+        tmp_path, artifact, delta=0.05,
+        metrics={
+            "candidate": {"family_ndcg@5": 0.71, "widget_quotient": 0.4},
+            "fallback": {"family_ndcg@5": 0.66, "widget_quotient": 0.9},
+        },
+        directions={"widget_quotient": "  LOWER "},   # normalised, not rejected
+    ))
+    assert metadata["approval"]["metric_directions"]["widget_quotient"] == "lower"
+
+
+def test_an_unreadable_direction_declaration_refuses(tmp_path):
+    """A declaration that cannot be parsed is worse than none: it looks like the
+    question was answered."""
+    artifact = _artifact(tmp_path)
+    with pytest.raises(ApprovalRefused, match="must be exactly"):
+        approve(artifact, _report(
+            tmp_path, artifact, delta=0.05,
+            metrics={
+                "candidate": {"family_ndcg@5": 0.71, "widget_quotient": 0.4},
+                "fallback": {"family_ndcg@5": 0.66, "widget_quotient": 0.9},
+            },
+            directions={"widget_quotient": "up"},
+        ))
+
+
+def test_a_slice_only_regression_refuses_approval(tmp_path):
+    """The aggregate averages a slice regression away. The shipped fusion model
+    gains +0.0031 nDCG overall while losing on `sibling_discriminating` -- the
+    one archetype the v2 labels were built to measure."""
+    artifact = _artifact(tmp_path)
+    report = _report(
+        tmp_path, artifact, delta=0.05,
+        metrics={
+            "candidate": {"family_ndcg@5": 0.71},
+            "fallback": {"family_ndcg@5": 0.66},
+        },
+        slices={
+            "vague_outcome": {
+                "candidate": {"family_ndcg@5": 0.80},
+                "fallback": {"family_ndcg@5": 0.70},
+            },
+            "sibling_discriminating": {
+                "candidate": {"family_ndcg@5": 0.169},
+                "fallback": {"family_ndcg@5": 0.1803},
+            },
+        },
+    )
+    with pytest.raises(ApprovalRefused, match="sibling_discriminating/family_ndcg@5"):
+        approve(artifact, report)
+
+    # ...and it is exactly the kind of trade-off the explicit flag exists for.
+    metadata = approve(artifact, report, allow_regressions=True)
+    assert metadata["approval"]["allowed_regressions"] is True
+    assert "sibling_discriminating" in metadata["approval"]["slices_compared"]
+
+
+def test_approval_records_what_it_actually_judged(tmp_path):
+    artifact = _artifact(tmp_path)
+    metadata = approve(artifact, _report(
+        tmp_path, artifact, delta=0.05,
+        metrics={
+            "candidate": {"family_ndcg@5": 0.71, "queries": 265},
+            "fallback": {"family_ndcg@5": 0.66, "queries": 265},
+        },
+    ))
+    approval = metadata["approval"]
+    assert approval["kind"] == "fusion"
+    assert approval["architecture"] == "pytorch_mlp_64_32_1"
+    assert approval["split"] == "validation"
+    assert approval["query_count"] == 265
+    assert approval["compared_metrics"] == ["family_ndcg@5"], (
+        "`queries` describes the run, not the ranking"
+    )
 
 
 def test_a_refused_approval_leaves_the_artifact_untouched(tmp_path):
@@ -500,23 +648,60 @@ def test_approve_refuses_a_model_that_regresses_a_secondary_metric(tmp_path):
 # --- the replay must equal the real pipeline, on real data -------------------
 
 
-CACHE_ROOT = Path("artifacts/feature_cache")
+# Anchored to the repo, not the cwd, so the cache is found wherever pytest runs.
+CACHE_ROOT = Path(__file__).resolve().parents[1] / "artifacts" / "feature_cache"
+
+
+def _find_validation_cache() -> tuple[list | None, str]:
+    """(passes, skip reason). Discovered, not hardcoded.
+
+    This used to pin one bundle id in the skip predicate. Any index rebuild moved
+    the id, `load_passes` returned None for a key mismatch rather than for an
+    absent cache, and both replay tests skipped forever -- while telling the
+    operator to run a command that would not have fixed it. The two causes are
+    now distinguished in the message.
+    """
+    from reportfinder.pipeline.fuse import FUSION_FEATURE_HASH
+    from reportfinder.training.features import DECISION_FEATURE_HASH
+    from reportfinder.training.passes import CACHE_SCHEMA_VERSION, load_passes
+
+    if not CACHE_ROOT.exists() or not any(CACHE_ROOT.iterdir()):
+        return None, (
+            "no feature cache under artifacts/feature_cache; generate one with "
+            "`uv run reportfinder-train fusion --config configs/legacy_generators.yaml`"
+        )
+
+    suffix = f"-{FUSION_FEATURE_HASH}-{DECISION_FEATURE_HASH}"
+    # Newest first: key formats can coexist across a schema change, and the most
+    # recently written cache is the one that describes the current pipeline.
+    candidates = sorted(
+        CACHE_ROOT.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True
+    )
+    stale = []
+    for directory in candidates:
+        key = directory.name
+        if "-validation-" not in key:
+            continue
+        if key.startswith(f"{CACHE_SCHEMA_VERSION}-") and key.endswith(suffix):
+            passes = load_passes(directory, key=key)
+            if passes:
+                return passes, ""
+        stale.append(key)
+    return None, (
+        "validation feature caches exist but none matches the current schema, "
+        f"feature or serving-config key (found: {stale}); regenerate with "
+        "`uv run reportfinder-train fusion --config configs/legacy_generators.yaml`"
+    )
+
+
+_REPLAY_PASSES, _REPLAY_SKIP_REASON = _find_validation_cache()
 
 
 def _cached_validation_passes():
-    from reportfinder.training.passes import cache_key, load_passes
-
-    key = cache_key(
-        bundle_version="b-d196fdc6dba2f2ba-021cf6db",
-        dataset_version="2.0.0", split="validation",
-    )
-    return load_passes(CACHE_ROOT / key, key=key)
+    return _REPLAY_PASSES
 
 
-@pytest.mark.skipif(
-    _cached_validation_passes() is None,
-    reason="no cached feature pass; run `reportfinder-train fusion` first",
-)
+@pytest.mark.skipif(_REPLAY_PASSES is None, reason=_REPLAY_SKIP_REASON)
 def test_the_replayed_policy_reproduces_every_real_decision():
     """The check that caught the sweep scoring a policy nobody runs.
 
@@ -561,10 +746,7 @@ def test_the_replayed_policy_reproduces_every_real_decision():
     )
 
 
-@pytest.mark.skipif(
-    _cached_validation_passes() is None,
-    reason="no cached feature pass; run `reportfinder-train fusion` first",
-)
+@pytest.mark.skipif(_REPLAY_PASSES is None, reason=_REPLAY_SKIP_REASON)
 def test_hard_gated_queries_are_recorded_as_such():
     passes = _cached_validation_passes()
     gated = [p for p in passes if p.hard_gate_decision is not None]
@@ -572,3 +754,91 @@ def test_hard_gated_queries_are_recorded_as_such():
     assert gated, "the estate has impossible-combination queries; some must gate"
     assert all(p.hard_gate_decision == "NO_CONFIDENT_MATCH" for p in gated)
     assert all(p.fallback_decision == p.hard_gate_decision for p in gated)
+
+
+# --- answerability labels without a parquet runtime --------------------------
+
+
+def _raw_root(tmp_path, rows, filename="scenarios_v2.csv", bom=False):
+    root = tmp_path / "rel"
+    (root / "raw").mkdir(parents=True)
+    body = "Scenario ID,Answerability,Archetype\n" + "".join(
+        f"{sid},{label},arch\n" for sid, label in rows
+    )
+    path = root / "raw" / filename
+    path.write_text(("﻿" if bom else "") + body, encoding="utf-8")
+    return root
+
+
+def test_labels_fall_back_to_the_raw_csv_when_no_parquet_engine_exists(tmp_path):
+    """pyarrow is a declared dependency, so this is resilience, not a supported
+    training path -- but a broken engine should not make the labels unreadable."""
+    from reportfinder.training.train_decision import load_answerability_labels
+
+    root = _raw_root(tmp_path, [
+        ("Q1", "Answerable"),
+        ("Q2", "Partial / needs clarification"),
+        ("Q3", "No answer"),
+    ])
+    labels = load_answerability_labels(root)
+    assert labels == {
+        "Q1": "RETURN_RESULTS",
+        "Q2": "ASK_CLARIFICATION",
+        "Q3": "NO_CONFIDENT_MATCH",
+    }
+
+
+def test_the_v1_bom_header_does_not_break_the_id_column(tmp_path):
+    """The v1 export carries a BOM, which turns the first header into
+    '﻿Scenario ID' under a plain utf-8 read."""
+    from reportfinder.training.train_decision import load_answerability_labels
+
+    root = _raw_root(
+        tmp_path, [("Q1", "Answerable")],
+        filename="axis_report_search_scenarios_10000.csv", bom=True,
+    )
+    assert load_answerability_labels(root) == {"Q1": "RETURN_RESULTS"}
+
+
+def test_label_strings_normalise_whitespace_and_case(tmp_path):
+    from reportfinder.training.train_decision import load_answerability_labels
+
+    root = _raw_root(tmp_path, [("Q1", "  ANSWERABLE "), ("Q2", "no   answer")])
+    assert load_answerability_labels(root) == {
+        "Q1": "RETURN_RESULTS", "Q2": "NO_CONFIDENT_MATCH",
+    }
+
+
+def test_an_unknown_label_string_refuses_rather_than_guessing(tmp_path):
+    from reportfinder.training.train_decision import load_answerability_labels
+
+    root = _raw_root(tmp_path, [("Q1", "Answerable"), ("Q2", "Maybe")])
+    with pytest.raises(ValueError, match="maybe"):
+        load_answerability_labels(root)
+
+
+def test_no_label_source_at_all_names_every_path_it_tried(tmp_path):
+    from reportfinder.training.train_decision import load_answerability_labels
+
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    with pytest.raises(FileNotFoundError, match="answerability_labels.parquet"):
+        load_answerability_labels(empty)
+
+
+def test_the_partial_phrasings_all_mean_ask(tmp_path):
+    """Measured, not assumed: joining both raw CSVs to their own parquet on
+    scenario id (10,000 v1 + 1,771 v2 rows) maps all three 'partial' and
+    'clarification' phrasings to the same code, with no exceptions."""
+    from reportfinder.training.train_decision import (
+        CSV_ANSWERABILITY_TO_BUNDLE_LABEL,
+    )
+
+    assert {
+        CSV_ANSWERABILITY_TO_BUNDLE_LABEL[phrase]
+        for phrase in (
+            "needs clarification",
+            "partial / needs clarification",
+            "partial / missing conversation context",
+        )
+    } == {1}

@@ -111,6 +111,27 @@ def test_split_guard_rejects_overlapping_splits():
         SplitGuard({"train": {"Q1"}, "test": {"Q1"}})
 
 
+def test_split_guard_rejects_calibration_overlap():
+    """Calibration was the one split the overlap check skipped. A temperature
+    fitted on rows the model trained on is not a calibration."""
+    from reportfinder.relevance.splits import SplitGuard, SplitLeakageError
+
+    with pytest.raises(SplitLeakageError, match="train/calibration"):
+        SplitGuard({"train": {"Q1"}, "calibration": {"Q1"}})
+    with pytest.raises(SplitLeakageError, match="test/calibration"):
+        SplitGuard({"test": {"Q1"}, "calibration": {"Q1"}})
+
+
+def test_split_guard_refuses_an_unknown_operation_name():
+    """A misspelled operation used to disable the guard silently -- the exact
+    defect this section exists to pin, one level up."""
+    from reportfinder.relevance.splits import SplitGuard
+
+    guard = SplitGuard({"train": {"Q1"}, "test": {"Q3"}})
+    with pytest.raises(ValueError, match="unknown split-guard operation"):
+        guard.assert_allowed(["Q3"], "ranker_trainingg")
+
+
 # --- artifact weight digests -------------------------------------------------
 
 

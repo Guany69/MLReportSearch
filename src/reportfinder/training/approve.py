@@ -27,6 +27,7 @@ import argparse
 import getpass
 import hashlib
 import json
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -55,28 +56,139 @@ _DESCRIPTIVE_METRICS = frozenset({
     "queries", "sibling_queries_measured", "fallback_name",
     "per_class_recall", "confusion_matrix", "predicted_distribution",
     "abstain_rate",  # a rate to be judged, not maximised
-    "ece",           # lower is better, and the fallback has none to compare
 })
 
 # Numeric noise, not a regression: a metric rounded to 4 places can differ in the
 # last digit for reasons no one should be asked to explain.
 _REGRESSION_TOLERANCE = 1e-4
 
+# Which way is better. This exists because the gate previously compared every
+# metric as if larger were better, which silently inverts the judgement on every
+# error, loss and latency measure -- a model with twice the calibration error
+# would have read as an improvement.
+_LOWER_IS_BETTER = frozenset({
+    "latency", "ece", "nll", "brier", "loss", "risk", "error", "regret",
+})
+_HIGHER_IS_BETTER = frozenset({
+    "recall", "precision", "f1", "accuracy", "auc", "auroc", "mrr", "map",
+    "ndcg", "dcg", "hit", "hits", "coverage", "specificity", "sensitivity",
+    "agreement", "throughput", "qps",
+})
+_LOWER_IS_BETTER_SUFFIXES = ("_ms", "_loss", "_error", "_seconds", "_s")
 
-def _regressions(report: dict) -> list[tuple[str, float, float]]:
-    """Reported metrics where the candidate is worse than the fallback."""
-    candidate = report.get("metrics", {}).get("candidate", {})
-    fallback = report.get("metrics", {}).get("fallback", {})
 
+def _pattern_direction(name: str) -> str | None:
+    """Direction inferred from the metric's name, or None when it is not obvious.
+
+    None is not a default -- it is a refusal trigger. Guessing "higher" for an
+    unrecognised name is exactly the bug this replaces.
+    """
+    lowered = name.strip().lower()
+    if lowered.endswith(_LOWER_IS_BETTER_SUFFIXES):
+        return "lower"
+    # Split on anything that is not alphanumeric, and drop @k tails: the metric
+    # `family_ndcg@5` is a `ndcg`.
+    tokens = {token for token in re.split(r"[^a-z0-9]+", lowered.split("@")[0]) if token}
+    lower_hit, higher_hit = tokens & _LOWER_IS_BETTER, tokens & _HIGHER_IS_BETTER
+    if lower_hit and not higher_hit:
+        return "lower"
+    if higher_hit and not lower_hit:
+        return "higher"
+    # Both or neither: ambiguous by name. `error_recall` deserves a declaration,
+    # not a coin flip.
+    return None
+
+
+def _comparable(candidate: dict, fallback: dict) -> list[str]:
+    """Metric names present and numeric in both arms."""
     out = []
-    for name, value in sorted(candidate.items()):
+    for name, value in candidate.items():
         if name in _DESCRIPTIVE_METRICS or name not in fallback:
             continue
         other = fallback[name]
-        if not isinstance(value, (int, float)) or not isinstance(other, (int, float)):
+        if isinstance(value, bool) or isinstance(other, bool):
             continue
-        if float(value) < float(other) - _REGRESSION_TOLERANCE:
-            out.append((name, float(value), float(other)))
+        if isinstance(value, (int, float)) and isinstance(other, (int, float)):
+            out.append(name)
+    return out
+
+
+def _resolve_directions(report: dict) -> dict[str, str]:
+    """A direction for every comparable metric, aggregate and per-slice.
+
+    Declared directions in the report win; name patterns fill the rest; anything
+    still unresolved refuses the approval. A metric nobody can say the sign of is
+    a metric the gate cannot use, and pretending otherwise is how a regression
+    gets approved as an improvement.
+    """
+    metrics = report.get("metrics") or {}
+    names = set(_comparable(metrics.get("candidate") or {}, metrics.get("fallback") or {}))
+    for arms in (report.get("slices") or {}).values():
+        if isinstance(arms, dict):
+            names |= set(_comparable(arms.get("candidate") or {}, arms.get("fallback") or {}))
+
+    declared_raw = report.get("metric_directions") or {}
+    declared: dict[str, str] = {}
+    for name, value in declared_raw.items():
+        normalized = str(value).strip().lower()
+        if normalized not in ("higher", "lower"):
+            raise ApprovalRefused(
+                f"metric_directions[{name!r}] is {value!r}; it must be exactly "
+                "'higher' or 'lower'. An unreadable declaration is worse than "
+                "none, because it looks like the question was answered."
+            )
+        declared[name] = normalized
+
+    directions, unresolved = {}, []
+    for name in sorted(names):
+        direction = declared.get(name) or _pattern_direction(name)
+        if direction is None:
+            unresolved.append(name)
+        else:
+            directions[name] = direction
+    if unresolved:
+        raise ApprovalRefused(
+            f"cannot tell which direction is better for {unresolved}. Declare them "
+            "in the evaluation report's `metric_directions` as 'higher' or "
+            "'lower'. Assuming higher-is-better would silently invert the "
+            "judgement on any error or latency measure."
+        )
+    return directions
+
+
+def _regressions(
+    candidate: dict, fallback: dict, directions: dict[str, str],
+) -> list[tuple[str, float, float]]:
+    """Metrics where the candidate is worse than the fallback, in its own direction."""
+    out = []
+    for name in sorted(_comparable(candidate, fallback)):
+        value, other = float(candidate[name]), float(fallback[name])
+        worse = (
+            value < other - _REGRESSION_TOLERANCE if directions[name] == "higher"
+            else value > other + _REGRESSION_TOLERANCE
+        )
+        if worse:
+            out.append((name, value, other))
+    return out
+
+
+def _slice_regressions(
+    report: dict, directions: dict[str, str],
+) -> list[tuple[str, float, float]]:
+    """Per-slice regressions, named `slice/metric`.
+
+    Aggregate metrics average a regression away. The fusion model's headline gain
+    is +0.0031 nDCG while it loses on the one archetype the label set was built to
+    measure -- a gate that reads only the aggregate cannot see that.
+    """
+    out = []
+    for slice_name, arms in sorted((report.get("slices") or {}).items()):
+        if not isinstance(arms, dict):
+            continue
+        for name, value, other in _regressions(
+            arms.get("candidate") or {}, arms.get("fallback") or {}, directions
+        ):
+            out.append((f"{slice_name}/{name}", value, other))
     return out
 
 
@@ -167,17 +279,25 @@ def approve(
     # headline metric by noise while regressing something the headline does not
     # capture. That is a trade-off, and a trade-off is a decision for a person --
     # so it is refused by default rather than approved automatically.
+    #
+    # Directions are resolved unconditionally, including under
+    # --allow-regressions: that flag permits a *known* trade-off, and a metric
+    # whose sign nobody can state is not a known anything.
+    directions = _resolve_directions(report)
+    metrics = report.get("metrics") or {}
     if not allow_regressions:
-        regressions = _regressions(report)
+        regressions = _regressions(
+            metrics.get("candidate") or {}, metrics.get("fallback") or {}, directions,
+        ) + _slice_regressions(report, directions)
         if regressions:
             listed = "; ".join(
                 f"{name} {candidate} vs fallback {fallback}"
                 for name, candidate, fallback in regressions
             )
             raise ApprovalRefused(
-                f"the primary metric improved by {delta:+.4f} but other metrics "
-                f"went backwards: {listed}. Approving would trade a measured "
-                "regression for an unmeasured gain. Re-run with "
+                f"the primary metric improved by {delta:+.4f} but other measured "
+                f"results went backwards: {listed}. Approving would trade a "
+                "measured regression for an unmeasured gain. Re-run with "
                 "--allow-regressions only if that trade is deliberate."
             )
 
@@ -189,6 +309,17 @@ def approve(
         "primary_metric": primary,
         "min_delta": min_delta,
         "allowed_regressions": allow_regressions,
+        # What the gate actually judged, so a later reader can tell whether a
+        # metric was compared, skipped as descriptive, or absent from one arm.
+        "kind": expected_kind,
+        "architecture": architecture,
+        "split": report.get("split"),
+        "query_count": report.get("query_count"),
+        "metric_directions": directions,
+        "compared_metrics": sorted(
+            _comparable(metrics.get("candidate") or {}, metrics.get("fallback") or {})
+        ),
+        "slices_compared": sorted(report.get("slices") or {}),
         "approved_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "approved_by": approved_by or _current_user(),
     }

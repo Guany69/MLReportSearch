@@ -24,7 +24,9 @@ from reportfinder.config import DEFAULT, from_mapping
 from reportfinder.pipeline.onnx_scorer import OnnxPairScorer, build_scorer
 from reportfinder.pipeline.rerank import PairScorer, TorchCrossEncoder
 
-ONNX_MODEL = Path("artifacts/onnx/cross_encoder.onnx")
+# Anchored to the repo, not the cwd: a cwd-relative artifact path makes the skip
+# decision depend on where pytest was launched from.
+ONNX_MODEL = Path(__file__).resolve().parents[1] / "artifacts" / "onnx" / "cross_encoder.onnx"
 
 requires_export = pytest.mark.skipif(
     not ONNX_MODEL.exists(),
@@ -74,6 +76,18 @@ def test_both_backends_satisfy_the_scorer_protocol(tmp_path):
 
 def test_a_missing_graph_names_the_command_that_makes_it(tmp_path):
     """An error that does not say what to run is a error someone has to research."""
+    scorer = OnnxPairScorer(tmp_path / "absent.onnx", "checkpoint", "revision")
+    with pytest.raises(FileNotFoundError, match="export_cross_encoder_onnx"):
+        scorer.score_pairs("query", ["document"])
+
+
+def test_the_missing_graph_beats_a_missing_runtime(tmp_path, monkeypatch):
+    """Both are wrong, but only one is actionable. A host with neither the runtime
+    nor the graph used to be told to install onnxruntime, which would have taken
+    it straight back to this same missing file."""
+    import sys
+
+    monkeypatch.setitem(sys.modules, "onnxruntime", None)  # import raises ImportError
     scorer = OnnxPairScorer(tmp_path / "absent.onnx", "checkpoint", "revision")
     with pytest.raises(FileNotFoundError, match="export_cross_encoder_onnx"):
         scorer.score_pairs("query", ["document"])

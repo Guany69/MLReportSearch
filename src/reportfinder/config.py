@@ -314,6 +314,32 @@ class ShortlistConfig:
     quotas: tuple[tuple[str, int], ...] = DEFAULT_SHORTLIST_QUOTAS
     # HIGH risk widens the exclusive floors by this factor.
     high_risk_quota_scale: float = 1.5
+    # Spend the *fused remainder* on families not yet represented before spending
+    # it on a second copy of one already in the shortlist. Source-exclusive floors
+    # are untouched either way.
+    #
+    # Implemented, switchable, and **off by default because it was measured and it
+    # lost.** Isolated A/B on the same code over 265 v2 validation queries,
+    # comparing the deterministic serving arm:
+    #
+    #     metric                            on        off      delta
+    #     family_ndcg@5                     0.1026    0.1064   -0.0038
+    #     family_mrr                        0.1143    0.1194   -0.0051
+    #     family_recall@10                  0.1679    0.1755   -0.0076
+    #     instance_recall@1_within_family   0.7750    0.8684   -0.0934
+    #
+    # The mechanism is the last row. Deferring a sibling out of the shortlist
+    # makes the choice of *which copy* to return depend on family expansion, which
+    # is capped by max_expanded_instances -- so the sibling that would have won
+    # sometimes never reaches the cross-encoder at all. The hoped-for family-level
+    # gain did not appear either: at depth 120 the plain fused remainder already
+    # reaches enough distinct families that reordering it only costs.
+    #
+    # Kept rather than deleted because the reasoning behind it is sound for a
+    # narrower shortlist or an uncapped expansion, and a switch with a recorded
+    # measurement is worth more than a deleted branch. Turn it on with
+    # `shortlist.diversify_families: true` and re-measure before trusting it.
+    diversify_families: bool = False
 
     def __post_init__(self) -> None:
         object.__setattr__(
@@ -692,6 +718,15 @@ class Config:
         ):
             if getattr(self, name) is None:
                 object.__setattr__(self, name, factory())
+
+        # YAML has no Path type, so a config file supplies these as strings while
+        # the annotation and every consumer expect a Path. Coerced here rather
+        # than at each use site, where one missed `.name` or `.exists()` is an
+        # AttributeError on a path that is perfectly valid.
+        for name in ("data_path", "catalog_path", "field_dictionary_path", "cache_dir"):
+            value = getattr(self, name, None)
+            if isinstance(value, str):
+                object.__setattr__(self, name, Path(value))
 
         if self.retrieval_mode not in {"hybrid", "legacy_weighted_logit", "generators"}:
             raise ValueError(f"Unsupported retrieval_mode: {self.retrieval_mode}")

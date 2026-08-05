@@ -27,8 +27,25 @@ def binary_nll(scores, labels):
     p=np.clip(np.asarray(scores,dtype=float),1e-7,1-1e-7); y=np.asarray(labels,dtype=float)
     return float(np.mean(-(y*np.log(p)+(1-y)*np.log(1-p))))
 def risk_coverage(scores, correct):
-    order=np.argsort(-np.asarray(scores)); hits=np.asarray(correct,dtype=float)[order]
+    # Stable: the curve is a prefix mean, so tie order changes the reported risk at
+    # every coverage point a tie straddles -- and an uncalibrated policy score ties
+    # constantly.
+    order=np.argsort(-np.asarray(scores), kind="stable"); hits=np.asarray(correct,dtype=float)[order]
     return [{"coverage":float(i/len(hits)),"risk":float(1-hits[:i].mean())} for i in range(1,len(hits)+1)] if len(hits) else []
+
+def discordant_pairs(reference, correct) -> int:
+    """Pairs two scorings order strictly *oppositely*.
+
+    An ordering comparison that sorts both sides and diffs the index lists counts
+    a tie broken two different ways as a disagreement, which it is not: neither
+    scorer expressed a preference. This compares sign of difference per pair, so
+    only a genuine inversion counts.
+    """
+    a, b = np.asarray(reference, dtype=float), np.asarray(correct, dtype=float)
+    if a.shape != b.shape:
+        raise ValueError(f"orderings differ in length: {a.shape} vs {b.shape}")
+    left, right = np.sign(a[:, None] - a[None, :]), np.sign(b[:, None] - b[None, :])
+    return int((np.triu(left * right, k=1) < 0).sum())
 def expected_calibration_error(scores, labels, bins=10):
     scores, labels = np.asarray(scores), np.asarray(labels)
     total = max(1, len(scores)); value = 0.0

@@ -12,12 +12,18 @@ Two things live here:
    ingest-mode string in a fixture, not for anything the assertions needed.
 
 2. The `integration` marker for tests that load real model checkpoints. These are
-   deselected by default so a plain `pytest` run stays fast and offline.
+   deselected by default via `addopts` in `pyproject.toml`, so a plain `pytest`
+   run stays fast and offline; run them with `uv run pytest -m integration`.
+
+   That deselection is new. The claim was here before it was true: nothing
+   implemented it, so the two ONNX integration tests ran on every plain `pytest`
+   invocation whenever the exported graph happened to exist -- loading a real
+   cross-encoder inside a run documented as offline. A second, unused
+   `RF_INTEGRATION` env guard existed alongside the marker and has been removed
+   rather than left as a decoy.
 """
 
 from __future__ import annotations
-
-import os
 
 import pytest
 
@@ -31,13 +37,9 @@ requires_real_estate = pytest.mark.skipif(
     ),
 )
 
-requires_integration = pytest.mark.skipif(
-    os.environ.get("RF_INTEGRATION") != "1",
-    reason="set RF_INTEGRATION=1 to run tests that load real model checkpoints",
-)
-
 
 def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line(
-        "markers", "integration: loads real model checkpoints; needs RF_INTEGRATION=1"
+        "markers",
+        "integration: loads real model checkpoints; run with `pytest -m integration`",
     )

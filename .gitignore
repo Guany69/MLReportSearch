@@ -7,9 +7,10 @@
 .bundle/
 
 # Report workbooks are local-only by default, except the two Phase 2 inputs
-# below, which are tracked so the repo carries the real data.
-data/*.xlsx
-data/*.xls
+# below, which are tracked so the repo carries the real data. Matches at any
+# depth so bundle-nested workbooks (e.g. data/*_bundle/*.xlsx) are covered too.
+data/**/*.xlsx
+data/**/*.xls
 !data/Phase2_Field_Dictionary.xlsx
 !data/Phase2_Report_Catalog_No_Fields.xlsx
 .DS_Store

@@ -30,3 +30,7 @@ artifacts/onnx/
 # Cached pipeline feature passes. Keyed on bundle id, so they are valid only on
 # the host that built that bundle; regenerate with `reportfinder-train`.
 artifacts/feature_cache/
+
+# Docs and CI workflow kept local-only.
+docs/
+.github/

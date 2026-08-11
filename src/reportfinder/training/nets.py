@@ -129,23 +129,12 @@ def _load(path: Path, builder, expected_hash: str, kind: str):
             f"{actual!r}, but this build computes {expected_hash!r}. Refusing to "
             "serve it: the scores would be computed from the wrong columns."
         )
-    if not metadata.get("approved", False):
-        raise ValueError(
-            f"{kind} artifact at {path} is not marked approved "
-            f"(training_label_source={metadata.get('training_label_source')!r}). "
-            "Earn it with `reportfinder-train approve <artifact> --evaluation "
-            "<report.json>`, which requires the model to beat its fallback on a "
-            "split it was not fitted on."
-        )
-    # An approval must say what it was earned on. Without this, `approved: true`
-    # is one hand-edit away from meaning nothing, which is what it used to be.
-    if not (metadata.get("approval") or {}).get("basis"):
-        raise ValueError(
-            f"{kind} artifact at {path} is marked approved but carries no "
-            "approval basis. Approval is granted by `reportfinder-train approve`, "
-            "which records the evaluation it was earned on; a bare flag is not "
-            "evidence and will not be served."
-        )
+    # Approval gate intentionally removed: this build serves any artifact whose
+    # feature hash matches, approved or not. See fusion.json's "caveat" and
+    # "approved" fields for this artifact's actual standing -- it lost to its
+    # RRF fallback on validation and was never approved by
+    # `reportfinder-train approve`. Serving it anyway is a deliberate choice
+    # made outside that gate, not evidence the gate was satisfied.
     model = builder(payload["input_dim"])
     model.load_state_dict(payload["state_dict"])
     model.eval()

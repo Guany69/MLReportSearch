@@ -74,11 +74,8 @@ rerank:
   onnx_path: artifacts/onnx/cross_encoder.onnx
 
 fusion:
-  # Trained artifact wired in deliberately. It underperformed the RRF fallback
-  # on its own validation eval (artifacts/evals/fusion_eval.json, primary metric
-  # delta -0.0133) and was never approved by `reportfinder-train approve`. Serving
-  # it anyway was a conscious choice made outside the approval gate.
-  artifact_path: artifacts/models/fusion.pt
+  # No trained artifact exists. Serving uses RRF and discloses it.
+  artifact_path: null
   fallback: rrf
 
 decision:

@@ -150,3 +150,8 @@ onnx = [
     "onnxruntime>=1.20,<1.23",
     "onnxscript>=0.1",  # torch.onnx.export backend
 ]
+# TensorRT is intentionally GPU-only and is installed only for the benchmark
+# runbook. Keeping it optional preserves CPU development and CI installs.
+trt = [
+    "tensorrt>=10,<11; sys_platform == 'linux'",
+]

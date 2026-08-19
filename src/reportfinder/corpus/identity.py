@@ -109,8 +109,7 @@ class ReportFamily:
 def content_hash(*parts: str) -> str:
     """Stable 16-hex digest over ordered text parts.
 
-    Used for view identity, so it must not depend on dict ordering, locale or
-    process state -- only on the text itself.
+    for old cache artifacts
     """
     digest = hashlib.sha256()
     for part in parts:

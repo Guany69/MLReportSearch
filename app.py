@@ -8,19 +8,33 @@ the grounded clarification, the active fallbacks and the catalog and bundle vers
 all reach the screen instead of being flattened away.
 """
 
+
+#Even if we don't find confident matches, we still want to show the user what we did find
+# only in streamlit aapp
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
+import yaml
 
 from reportfinder.auth import DEVELOPMENT_PRINCIPAL, SearchRequest
-from reportfinder.config import DEFAULT
+from reportfinder.config import from_mapping
 from reportfinder.model import ReportFinder, explain_fields, why_matched
 from reportfinder.represent import load_or_build
 
 st.set_page_config(page_title="Report Finder", page_icon="🔎", layout="centered")
+
+# The config the bundle in .bundle/ was built with, and the one every measured
+# number in the project was produced against. Serving from the built-in defaults
+# instead left rerank on the torch backend while the bundle recorded onnx, which
+# the orchestrator reports as configuration drift: same weights, different
+# execution path, so a recorded result could not be reproduced from the bundle
+# id alone.
+CONFIG_PATH = Path(__file__).parent / "configs" / "legacy_generators.yaml"
+BASE_CONFIG = from_mapping(yaml.safe_load(CONFIG_PATH.read_text()) or {})
 
 
 @st.cache_resource(show_spinner="Building index (first run only)...")
@@ -31,7 +45,7 @@ def get_finder(data_path: str, top_k: int):
     cache the whole representation -- and, in generator mode, every index in the
     bundle -- would be rebuilt on each keystroke.
     """
-    cfg = DEFAULT.with_overrides(
+    cfg = BASE_CONFIG.with_overrides(
         data_path=Path(data_path),
         top_k=int(top_k),
     )
@@ -122,10 +136,10 @@ st.caption(
 
 with st.sidebar:
     st.header("Ingestion")
-    data_path = st.text_input("Report workbook", value=str(DEFAULT.data_path))
+    data_path = st.text_input("Report workbook", value=str(BASE_CONFIG.data_path))
 
     st.header("Search")
-    top_k = st.number_input("results to show", 1, 20, DEFAULT.top_k)
+    top_k = st.number_input("results to show", 1, 20, BASE_CONFIG.top_k)
     st.divider()
     st.caption(
         "These are report **definitions**, not result-sets. The app identifies "
@@ -162,9 +176,13 @@ if submitted and query.strip():
             render_card(candidate, rank=i)
         st.stop()
 
-    outcome = finder.search(
+    # `run_traced` rather than `search`, only so the abstained-on candidates are
+    # reachable below. It returns the same outcome plus the pre-suppression family
+    # list; the served contract is untouched.
+    state = finder.pipeline.run_traced(
         SearchRequest(query, DEVELOPMENT_PRINCIPAL, top_k=int(top_k))
     )
+    outcome = state.outcome
 
     decision = outcome.decision.value
     detail = outcome.decision_detail

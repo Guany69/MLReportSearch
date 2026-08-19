@@ -362,9 +362,20 @@ class SearchPipeline:
         cursor = mark("shortlist", cursor)
 
         # -- rerank -------------------------------------------------------
+        # The expanded query, not the raw one. Expansion resolves this estate's
+        # vocabulary ("fires" -> Termination Type/Reason/Date/Count); the
+        # cross-encoder has no such mapping of its own, and scoring the raw
+        # wording left it unable to separate any candidate from any other on
+        # exactly the queries expansion exists to rescue. Falls back to the raw
+        # query when nothing expanded, so an unexpanded query is unchanged.
+        rerank_query = (
+            plan.intent.expanded_query
+            if plan.intent is not None and plan.intent.expanded_query
+            else plan.raw_query
+        )
         rerank = rerank_shortlist(
             shortlist, self.corpus, self.reranker,
-            raw_query=plan.raw_query,
+            query=rerank_query,
             max_report_chars=self.cfg.rerank.max_report_chars,
         )
         if rerank.ran:

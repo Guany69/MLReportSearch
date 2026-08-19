@@ -293,7 +293,7 @@ def test_cross_encoder_receives_the_raw_query_verbatim(
     shortlist = select_shortlist(union, risk, cfg)
     scorer = ScriptedPairScorer({TARGET: 5.0}, default=0.0, corpus=corpus)
 
-    rerank_shortlist(shortlist, corpus, scorer, raw_query=QUERY)
+    rerank_shortlist(shortlist, corpus, scorer, query=QUERY)
 
     assert scorer.seen_queries == [QUERY]
     assert scorer.seen_queries[0] == QUERY
@@ -309,7 +309,7 @@ def test_cross_encoder_scores_the_entire_shortlist(
     shortlist = select_shortlist(union, risk, cfg)
     scorer = ScriptedPairScorer(corpus=corpus)
 
-    result = rerank_shortlist(shortlist, corpus, scorer, raw_query=QUERY)
+    result = rerank_shortlist(shortlist, corpus, scorer, query=QUERY)
 
     assert scorer.pair_count == len(shortlist)
     assert result.scored_count == len(shortlist)
@@ -325,7 +325,7 @@ def test_cross_encoder_reads_catalog_text_not_prototype_text(
     )
     shortlist = select_shortlist(union, risk, cfg)
     scorer = ScriptedPairScorer(corpus=corpus)
-    rerank_shortlist(shortlist, corpus, scorer, raw_query=QUERY)
+    rerank_shortlist(shortlist, corpus, scorer, query=QUERY)
 
     shown = " ".join(scorer.seen_texts[0])
     assert "Attrition and Replacement Lag Analysis" in shown or len(shortlist) > 0

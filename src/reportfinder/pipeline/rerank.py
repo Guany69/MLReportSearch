@@ -253,10 +253,17 @@ def rerank_shortlist(
     corpus,
     scorer: PairScorer | None,
     *,
-    raw_query: str,
+    query: str,
     max_report_chars: int = 1200,
 ) -> RerankResult:
-    """Score every shortlisted candidate against the raw query.
+    """Score every shortlisted candidate against `query`.
+
+    The caller chooses which form of the query to send. The orchestrator sends the
+    *expanded* one: the cross-encoder is a general MS-MARCO model that knows no more
+    of this estate's vocabulary than the corpus index does, so on a query whose
+    wording the catalog never uses it scores every candidate at the floor and the
+    system abstains on reports that retrieval ranked correctly. Appending the
+    canonical terms the expansion resolved is what lets it discriminate at all.
 
     Note there is no depth parameter. The shortlist *is* the depth -- the risk
     policy already decided how wide to go, and silently rescoring only its head
@@ -281,7 +288,7 @@ def rerank_shortlist(
         authoritative_text(corpus.instance(instance_id), max_chars=max_report_chars)
         for instance_id in instance_ids
     ]
-    raw_scores, model_pairs = score_pairs_deduplicated(scorer, raw_query, texts)
+    raw_scores, model_pairs = score_pairs_deduplicated(scorer, query, texts)
 
     # A non-finite score must never reach the ranker: it would silently poison
     # every margin and comparison downstream. Any that survive are dropped and

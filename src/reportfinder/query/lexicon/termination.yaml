@@ -12,6 +12,19 @@ rules:
     emits:
       - {canonical: "Termination Reason", kind: field, confidence: 0.85}
       - {canonical: "Termination Type", kind: field, confidence: 0.82}
+  # The involuntary counterpart to term.voluntary_exit. Everyday speech for this
+  # end of the catalog's vocabulary is almost entirely colloquial -- the workbook
+  # only ever says "Termination", so "fires", "laid off" and "let go" reach the
+  # corpus vocabulary with no signal at all and the reranker cannot separate any
+  # candidate from any other. Termination Type is emitted highest because it is
+  # the field that actually records voluntary versus involuntary.
+  - id: term.involuntary_exit
+    phrases: ["fires", "fired", "firings", "laid off", "layoff", "layoffs", "let go", "dismissed", "dismissal", "dismissals", "involuntary termination", "involuntary exit", "involuntary separation", "terminated for cause"]
+    emits:
+      - {canonical: "Termination Type", kind: field, confidence: 0.85}
+      - {canonical: "Termination Reason", kind: field, confidence: 0.85}
+      - {canonical: "Termination Date", kind: field, confidence: 0.82}
+      - {canonical: "Termination Count", kind: field, confidence: 0.80}
   - id: term.turnover_rate
     phrases: ["turnover rate", "attrition rate", "churn rate", "employee turnover", "workforce attrition", "employee churn"]
     emits:

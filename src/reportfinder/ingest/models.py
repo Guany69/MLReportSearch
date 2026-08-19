@@ -90,6 +90,7 @@ class ReportCatalogRecord:
     @property
     def report_key_id(self) -> str:
         """Compatibility spelling used by early relevance-data prototypes."""
+
         return self.report_key
 
 

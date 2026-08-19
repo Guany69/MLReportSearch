@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "kind": "tensorrt_cross_encoder_benchmark",
-  "measurement_status": "Verified",
+  "result_type": "illustrative_estimate",
   "generated_at": "2026-08-19T12:00:00+00:00",
   "artifact": {
     "onnx_path": "artifacts/onnx/cross_encoder.onnx",
@@ -83,8 +83,5 @@
       },
       "passed": true
     }
-  },
-  "notes": [
-        " these values were produced by a GPU benchmark."
-  ]
+  }
 }

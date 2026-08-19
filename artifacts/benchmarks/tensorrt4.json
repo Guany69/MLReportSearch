@@ -6,10 +6,10 @@
   "generated_at": "2026-08-19T12:00:00+00:00",
   "artifact": {
     "onnx_path": "artifacts/onnx/cross_encoder.onnx",
-    "onnx_sha256": "mock-not-a-measured-artifact",
+    "onnx_sha256": "mock-unavailable",
     "engine_path": "artifacts/onnx/cross_encoder.fp16.engine",
-    "engine_sha256": "mock-not-a-measured-artifact",
-    "engine_size_bytes": 90439680
+    "engine_sha256": "mock-unavailable",
+    "engine_size_bytes": 47382528
   },
   "config": {
     "checkpoint": "cross-encoder/ms-marco-MiniLM-L-6-v2",
@@ -21,17 +21,17 @@
   },
   "dataset": {
     "human_validated": false,
-    "label_source": "synthetic_mock_torch_reference_scores",
-    "workload_source": "synthetic_workday_style"
+        "label_source": "synthetic_mock_torch_reference_scores",
+        "workload_source": "synthetic_workday_style"
   },
   "environment": {
-    "cuda": "mock-12.4",
-    "gpu_name": "NVIDIA T4 (mock environment)",
-    "onnxruntime": "mock-1.20.1",
-    "platform": "Google Colab Linux (mock environment)",
-    "python": "mock-3.11.11",
-    "tensorrt": "mock-10.7.0",
-    "torch": "mock-2.5.1+cu124"
+        "cuda": "mock-12.4",
+        "gpu_name": "NVIDIA T4 (mock environment)",
+        "onnxruntime": "mock-1.20.1",
+        "platform": "Google Colab Linux (mock environment)",
+        "python": "mock-3.11.11",
+        "tensorrt": "mock-10.7.0",
+        "torch": "mock-2.5.1+cu124"
   },
   "workload": {
     "profile_max": [
@@ -54,16 +54,16 @@
   "metrics": {
     "latency_ms_per_query": {
       "onnxruntime_gpu": {
-        "p50": 7.8,
-        "p95": 9.6
+                "p50": 6.8,
+                "p95": 8.7
       },
       "tensorrt_fp16": {
-        "p50": 4.9,
-        "p95": 6.2
+                "p50": 3.9,
+                "p95": 5.1
       },
       "torch": {
-        "p50": 13.7,
-        "p95": 17.4
+                "p50": 11.9,
+                "p95": 15.8
       }
     },
     "ordering_gate": {
@@ -86,7 +86,7 @@
     }
   },
   "notes": [
-    "Mock fixture only; these values were not produced by a GPU benchmark.",
-    "Do not cite this artifact as measured performance."
+        "Mock fixture only; these values were not produced by a GPU benchmark.",
+        "Do not cite this artifact as measured performance."
   ]
 }
